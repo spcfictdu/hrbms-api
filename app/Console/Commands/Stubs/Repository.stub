@@ -1,0 +1,12 @@
+<?php
+
+namespace DummyNamespace;
+
+use App\Repositories\BaseRepository;
+
+class DummyClass extends BaseRepository
+{
+    public function execute(){
+
+    }
+}
