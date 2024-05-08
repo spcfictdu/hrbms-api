@@ -1,0 +1,61 @@
+<?php
+
+namespace DummyNamespace;
+
+use App\Http\Controllers\Controller;
+
+use App\Http\Requests\Dummy\IndexDummyRequest;
+use App\Http\Requests\Dummy\CreateDummyRequest;
+use App\Http\Requests\Dummy\ShowDummyRequest;
+use App\Http\Requests\Dummy\UpdateDummyRequest;
+use App\Http\Requests\Dummy\DeleteDummyRequest;
+
+use App\Repositories\Dummy\IndexDummyRepository;
+use App\Repositories\Dummy\CreateDummyRepository;
+use App\Repositories\Dummy\ShowDummyRepository;
+use App\Repositories\Dummy\UpdateDummyRepository;
+use App\Repositories\Dummy\DeleteDummyRepository;
+
+class DummyController extends Controller
+{
+    protected $index, $create, $show, $update, $delete;
+
+    // * CONSTRUCTOR INJECTION
+    public function __construct(
+        IndexDummyRepository   $index,
+        CreateDummyRepository  $create,
+        ShowDummyRepository    $show,
+        UpdateDummyRepository  $update,
+        DeleteDummyRepository  $delete
+    ){
+        $this->index   = $index;
+        $this->create  = $create;
+        $this->show    = $show;
+        $this->update  = $update;
+        $this->delete  = $delete;
+    }
+
+    protected function index(IndexDummyRequest $request) {
+        return $this->index->execute();
+    }
+
+    
+    protected function create(CreateDummyRequest $request) {
+        return $this->create->execute($request);
+    }
+
+    
+    protected function show(ShowDummyRequest $request, $id) {
+        return $this->show->execute($id);
+    }
+
+    
+    protected function update(UpdateDummyRequest $request, $id) {
+        return $this->update->execute($request, $id);
+    }
+
+
+    protected function delete(DeleteDummyRequest $request, $id) {
+        return $this->delete->execute($id);
+    }
+}
