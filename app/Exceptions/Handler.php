@@ -54,7 +54,7 @@ class Handler extends ExceptionHandler
         $this->renderable(function (RouteNotFoundException $e) {
             return response()->json(
                 [
-                    'message' => "Route Not Found",
+                    'message' => "User Not Authenticated",
                     'results' => [],
                     'code' => 404,
                     'errors' => true,
