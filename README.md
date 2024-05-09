@@ -65,8 +65,9 @@ To be able for us to easily track our repository progress please use appropriate
 
 
 ## Authors (Software Engineers)
-- Lapid, Cathlyn Mae D.
-
+- Lapid, Cathlyn Mae 
+- Camaddo, Alexander John
+- Baquing, Aaron Joseph
 
 ## License
 
