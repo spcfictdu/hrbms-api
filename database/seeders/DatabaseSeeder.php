@@ -7,7 +7,8 @@ use Illuminate\Database\Seeder;
 
 use Database\Seeders\{
     RoleSeeder,
-    UserSeeder
+    UserSeeder,
+    AmenitySeeder
 };
 
 class DatabaseSeeder extends Seeder
@@ -19,7 +20,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RoleSeeder::class,
-            UserSeeder::class
+            UserSeeder::class,
+            AmenitySeeder::class
         ]);
     }
 }

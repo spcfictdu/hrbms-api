@@ -3,7 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
-    AuthController
+    Auth\AuthController,
+    Room\RoomTypeController
 };
 
 /*
@@ -33,4 +34,14 @@ Route::group([
 ], function ($route) {
     $route->post('/register', [AuthController::class, 'register']);
     $route->get('/logout', [AuthController::class, 'logout']);
+});
+
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'room-type'
+], function ($route) {
+    $route->get('/', [RoomTypeController::class, 'index']);
+    $route->post('/create', [RoomTypeController::class, 'create']);
+    $route->get('/{referenceNumber}', [RoomTypeController::class, 'show']);
+    $route->put('/update/{referenceNumber}', [RoomTypeController::class, 'update']);
 });
