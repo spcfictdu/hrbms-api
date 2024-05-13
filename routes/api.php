@@ -64,5 +64,6 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'booking'
 ], function ($route) {
+    $route->get('/{referenceNumber}', [BookingController::class, 'show']);
     $route->post('/create', [BookingController::class, 'create']);
 });
