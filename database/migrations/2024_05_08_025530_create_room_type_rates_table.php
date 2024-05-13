@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('room_type_rates', function (Blueprint $table) {
             $table->id();
-            $table->string('reference_number');
+            $table->string('reference_number')->unique();
             $table->unsignedBigInteger('room_type_id');
             $table->foreign('room_type_id')->references('id')->on('room_types')->onDelete('cascade');
             $table->enum('type', ['REGULAR', 'SPECIAL']);
-            $table->string('discount_name')->nullable();
+            $table->string('discount_name')->nullable()->unique();
             $table->date('start_date')->format('m/d/Y')->nullable();
             $table->date('end_date')->format('m/d/Y')->nullable();
             $table->float('monday');

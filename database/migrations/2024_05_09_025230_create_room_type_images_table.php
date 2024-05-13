@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('room_type_id');
             $table->foreign('room_type_id')->references('id')->on('room_types')->onDelete('cascade');
-            $table->string('filename')->unique();
+            $table->string('filename');
         });
     }
 
