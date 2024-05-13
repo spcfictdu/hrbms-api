@@ -5,9 +5,12 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Amenity\Amenity;
+use App\Traits\Generator;
 
 class AmenitySeeder extends Seeder
 {
+
+    use Generator;
 
     /**
      * Run the database seeds.
@@ -16,142 +19,143 @@ class AmenitySeeder extends Seeder
     {
         $amenities = [
             [
-                'referenceNumber' => '3352df',
+                'id' => 1,
                 'name' => 'ADAPTER'
             ],
             [
-                'referenceNumber' => '78a9sd',
+                'id' => 2,
                 'name' => 'AIR CONDITIONING'
             ],
             [
-                'referenceNumber' => '23bc45',
+                'id' => 3,
                 'name' => 'BATHTUB'
             ],
             [
-                'referenceNumber' => '9d87ef',
+                'id' => 4,
                 'name' => 'BOARD GAMES/PUZZLES'
             ],
             [
-                'referenceNumber' => '65fg12',
+                'id' => 5,
                 'name' => 'CLOTHES RACK'
             ],
             [
-                'referenceNumber' => '45hj34',
+                'id' => 6,
                 'name' => 'CLOSET'
             ],
             [
-                'referenceNumber' => '89kl56',
+                'id' => 7,
                 'name' => 'DVD/CD PLAYER'
             ],
             [
-                'referenceNumber' => '12mn78',
+                'id' => 8,
                 'name' => 'ELECTRIC KETTLE'
             ],
             [
-                'referenceNumber' => '34op90',
+                'id' => 9,
                 'name' => 'FREE WI-FI'
             ],
             [
-                'referenceNumber' => 'ab1cde',
+                'id' => 10,
                 'name' => 'FULL KITCHEN'
             ],
             [
-                'referenceNumber' => 'de2fgh',
+                'id' => 11,
                 'name' => 'HAIR DRYER'
             ],
             [
-                'referenceNumber' => 'gh3ijk',
+                'id' => 12,
                 'name' => 'IN-ROOM SAFE'
             ],
             [
-                'referenceNumber' => 'ij4lmn',
+                'id' => 13,
                 'name' => 'IRONING FACILITIES'
             ],
             [
-                'referenceNumber' => 'kl5opq',
+                'id' => 14,
                 'name' => 'KITCHENETTE'
             ],
             [
-                'referenceNumber' => 'mn6rst',
+                'id' => 15,
                 'name' => 'LAPTOP SAFE'
             ],
             [
-                'referenceNumber' => 'op7uvw',
+                'id' => 16,
                 'name' => 'LOCKER'
             ],
             [
-                'referenceNumber' => 'xy8zab',
+                'id' => 17,
                 'name' => 'MICROWAVE'
             ],
             [
-                'referenceNumber' => 'cd9efg',
+                'id' => 18,
                 'name' => 'MINI BAR'
             ],
             [
-                'referenceNumber' => 'ef0ghi',
+                'id' => 19,
                 'name' => 'ON-DEMAND MOVIES'
             ],
             [
-                'referenceNumber' => 'gh1ijkl',
+                'id' => 20,
                 'name' => 'PETS ALLOWED'
             ],
             [
-                'referenceNumber' => '23klmn4',
+                'id' => 21,
                 'name' => 'POOL FACILITIES'
             ],
             [
-                'referenceNumber' => 'qrs5tuv',
+                'id' => 22,
                 'name' => 'REFRIGERATOR'
             ],
             [
-                'referenceNumber' => 'wxy6zab',
+                'id' => 23,
                 'name' => 'ROLL-IN SHOWER'
             ],
             [
-                'referenceNumber' => 'cde7fgh',
+                'id' => 24,
                 'name' => 'SATELLITE/CABLE TV'
             ],
             [
-                'referenceNumber' => 'efg8hij',
+                'id' => 25,
                 'name' => 'SEATING AREA'
             ],
             [
-                'referenceNumber' => '9klmnop',
+                'id' => 26,
                 'name' => 'SEPARATE DINING AREA'
             ],
             [
-                'referenceNumber' => '1qrstuv',
+                'id' => 27,
                 'name' => 'SOFA'
             ],
             [
-                'referenceNumber' => '2vwxyza',
+                'id' => 28,
                 'name' => 'SOUNDPROOFING'
             ],
             [
-                'referenceNumber' => '3bcdefg',
+                'id' => 29,
                 'name' => 'STREAMING SERVICES'
             ],
             [
-                'referenceNumber' => '4hijklm',
+                'id' => 30,
                 'name' => 'TELEPHONE'
             ],
             [
-                'referenceNumber' => '5nopqrs',
+                'id' => 31,
                 'name' => 'TRANSFER SHOWER'
             ],
             [
-                'referenceNumber' => '6tuvwx',
+                'id' => 32,
                 'name' => 'WAKE-UP SERVICE'
             ],
             [
-                'referenceNumber' => '7yzabcd',
+                'id' => 33,
                 'name' => 'WASHING MACHINE'
             ]
         ];
 
         foreach ($amenities as $amenity) {
-            Amenity::create([
-                'reference_number' => $amenity['referenceNumber'],
+            Amenity::insert([
+                'id' => $amenity['id'],
+                'reference_number' => $this->amenityReferenceNumber(),
                 'name' => $amenity['name']
             ]);
         }

@@ -5,7 +5,9 @@ namespace App\Traits;
 use App\Models\{
     Room\RoomType,
     Amenity\Amenity,
-    Room\RoomTypeAmenity
+    Room\RoomTypeAmenity,
+    Room\RoomTypeRate,
+    Room\Room
 };
 
 trait Generator
@@ -28,6 +30,28 @@ trait Generator
             $referenceNumber = bin2hex(random_bytes(3));
 
         } while (Amenity::where("reference_number", $referenceNumber)->first());
+
+        return $referenceNumber;
+    }
+
+    protected function ratesReferenceNumber()
+    {
+        do {
+
+            $referenceNumber = bin2hex(random_bytes(4));
+
+        } while (RoomTypeRate::where("reference_number", $referenceNumber)->first());
+
+        return $referenceNumber;
+    }
+
+    protected function roomReferenceNumber()
+    {
+        do {
+
+            $referenceNumber = bin2hex(random_bytes(4));
+
+        } while (Room::where("reference_number", $referenceNumber)->first());
 
         return $referenceNumber;
     }
