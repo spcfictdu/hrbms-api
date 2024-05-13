@@ -7,6 +7,7 @@ use App\Http\Controllers\{
     Room\RoomTypeController,
     Room\RoomController
 };
+use App\Http\Controllers\Booking\BookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,4 +58,11 @@ Route::group([
     $route->get('/{referenceNumber}', [RoomController::class, 'show']);
     $route->put('/update/{referenceNumber}', [RoomController::class, 'update']);
     $route->delete('/delete/{referenceNumber}', [RoomController::class, 'delete']);
+});
+
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'booking'
+], function ($route) {
+    $route->post('/create', [BookingController::class, 'create']);
 });

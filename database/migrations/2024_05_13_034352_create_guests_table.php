@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('province');
             $table->string('city');
-            $table->tinyInteger('phone_number');
+            $table->string('phone_number');
             $table->string('email');
             $table->string('id_type');
             $table->string('id_number');

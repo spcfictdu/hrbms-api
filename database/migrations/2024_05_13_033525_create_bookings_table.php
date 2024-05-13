@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('room_id');
-            $table->string('status');
-            $table->enum('payment_type', ['cash', 'gcash']);
+            $table->string('status')->nullable();
+            $table->enum('payment_type', ['cash', 'gcash'])->nullable();
             $table->date('check_in_date');
             $table->time('check_in_time');
             $table->date('check_out_date');
