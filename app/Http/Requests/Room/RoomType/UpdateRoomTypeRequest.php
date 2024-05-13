@@ -4,6 +4,10 @@ namespace App\Http\Requests\Room\RoomType;
 
 use App\Http\Requests\ResponseRequest;
 
+use Illuminate\Validation\Rule;
+
+use App\Models\Room\RoomType;
+
 class UpdateRoomTypeRequest extends ResponseRequest
 {
      /**
@@ -23,8 +27,10 @@ class UpdateRoomTypeRequest extends ResponseRequest
      */
     public function rules()
     {
+        $roomType = RoomType::where('reference_number', $this->referenceNumber)->firstOrFail();
+
         return [
-            'name' => ['required', 'string'],
+            'name' => ['required', 'string', Rule::unique('room_types', 'name')->ignore($roomType->id)],
             'description' => ['required', 'string'],
             'bedSize' => ['required', 'string'],
             'propertySize' => ['required', 'string'],

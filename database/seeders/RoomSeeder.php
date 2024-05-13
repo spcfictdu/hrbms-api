@@ -50,7 +50,8 @@ class RoomSeeder extends Seeder
                 'id' => $room['id'],
                 'reference_number' => $this->roomReferenceNumber(),
                 'room_number' => $room['room_number'],
-                'room_type_id' => $room['room_type_id']
+                'room_type_id' => $room['room_type_id'],
+                'status' => 'READY FOR OCCUPANCY'
             ]);
         }
     }

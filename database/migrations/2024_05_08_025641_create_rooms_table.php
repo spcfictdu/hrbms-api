@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('room_number')->unique();
             $table->unsignedBigInteger('room_type_id');
             $table->foreign('room_type_id')->references('id')->on('room_types')->onDelete('cascade');
-            $table->enum('status', ['CONFIRMED','RESERVED','HOUSEKEEPING','CHECKED IN','CHECKED OUT','UNALLOCATED']);
+            $table->enum('status', ['OCCUPIED', 'DIRTY', 'READY FOR OCCUPANCY', 'UNALLOCATED']);
         });
     }
 

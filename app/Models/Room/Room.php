@@ -5,6 +5,8 @@ namespace App\Models\Room;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\Room\RoomType;
+
 class Room extends Model
 {
     use HasFactory;
@@ -13,6 +15,7 @@ class Room extends Model
         'reference_number',
         'room_number',
         'room_type_id',
+        'status'
     ];
 
     protected $hidden = [
@@ -21,4 +24,9 @@ class Room extends Model
     ];
 
     public $timestamps = false;
+
+    protected function roomType()
+    {
+        return $this->belongsTo(RoomType::class, 'room_type_id');
+    }
 }

@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     Auth\AuthController,
-    Room\RoomTypeController
+    Room\RoomTypeController,
+    Room\RoomController
 };
 
 /*
@@ -44,4 +45,16 @@ Route::group([
     $route->post('/create', [RoomTypeController::class, 'create']);
     $route->get('/{referenceNumber}', [RoomTypeController::class, 'show']);
     $route->put('/update/{referenceNumber}', [RoomTypeController::class, 'update']);
+    $route->delete('/delete/{referenceNumber}', [RoomTypeController::class, 'delete']);
+});
+
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'room'
+], function ($route) {
+    $route->get('/', [RoomController::class, 'index']);
+    $route->post('/create', [RoomController::class, 'create']);
+    $route->get('/{referenceNumber}', [RoomController::class, 'show']);
+    $route->put('/update/{referenceNumber}', [RoomController::class, 'update']);
+    $route->delete('/delete/{referenceNumber}', [RoomController::class, 'delete']);
 });

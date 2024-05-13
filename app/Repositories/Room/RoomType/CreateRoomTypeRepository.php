@@ -47,7 +47,7 @@ class CreateRoomTypeRepository extends BaseRepository
 
                 RoomTypeAmenity::create([
                     'room_type_id' => $roomType->id,
-                    'amenity_id' => $this->getAmenityId(strtoupper($amenity))
+                    'amenity_id' => $this->getAmenityIdFromName(strtoupper($amenity))
                 ]);
             }
         }
@@ -55,6 +55,7 @@ class CreateRoomTypeRepository extends BaseRepository
         if ($request['rates']) {
 
             RoomTypeRate::create([
+                'reference_number' => $this->ratesReferenceNumber(),
                 'room_type_id' => $roomType->id,
                 'type' => 'REGULAR',
                 'monday' => $request['rates']['monday'],

@@ -57,7 +57,7 @@ class UpdateRoomTypeRepository extends BaseRepository
 
             foreach($request['amenities']['delete'] as $amenity){
 
-                $roomType->amenities->where('amenity_id', $this->getAmenityId(strtoupper($amenity)))->first()->delete();
+                $roomType->amenities->where('amenity_id', $this->getAmenityIdFromName(strtoupper($amenity)))->first()->delete();
             }
         }
 
@@ -67,7 +67,7 @@ class UpdateRoomTypeRepository extends BaseRepository
 
                 RoomTypeAmenity::create([
                     'room_type_id' => $roomType->id,
-                    'amenity_id' => $this->getAmenityId(strtoupper($amenity))
+                    'amenity_id' => $this->getAmenityIdFromName(strtoupper($amenity))
                 ]);
             }
         }

@@ -10,6 +10,7 @@ class RoomTypeRate extends Model
     use HasFactory;
 
     protected $fillable = [
+        'reference_number',
         'room_type_id',
         'type',
         'start_date',

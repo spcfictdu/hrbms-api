@@ -9,7 +9,8 @@ use App\Http\Requests\Room\RoomType\{
     IndexRoomTypeRequest,
     CreateRoomTypeRequest,
     ShowRoomTypeRequest,
-    UpdateRoomTypeRequest
+    UpdateRoomTypeRequest,
+    DeleteRoomTypeRequest
 };
 
 // * REPOSITORY
@@ -17,23 +18,26 @@ use App\Repositories\Room\RoomType\{
     IndexRoomTypeRepository,
     CreateRoomTypeRepository,
     ShowRoomTypeRepository,
-    UpdateRoomTypeRepository
+    UpdateRoomTypeRepository,
+    DeleteRoomTypeRepository
 };
 
 class RoomTypeController extends Controller
 {
-    protected $index, $create, $show, $update;
+    protected $index, $create, $show, $update, $delete;
 
     public function __construct(
         IndexRoomTypeRepository $index,
         CreateRoomTypeRepository $create,
         ShowRoomTypeRepository $show,
-        UpdateRoomTypeRepository $update
+        UpdateRoomTypeRepository $update,
+        DeleteRoomTypeRepository $delete
     ) {
         $this->index = $index;
         $this->create = $create;
         $this->show = $show;
         $this->update = $update;
+        $this->delete = $delete;
     }
 
     protected function index(IndexRoomTypeRequest $request)
@@ -54,5 +58,10 @@ class RoomTypeController extends Controller
     protected function update(UpdateRoomTypeRequest $request, $referenceNumber)
     {
         return $this->update->execute($request, $referenceNumber);
+    }
+
+    protected function delete(DeleteRoomTypeRequest $request, $referenceNumber)
+    {
+        return $this->delete->execute($referenceNumber);
     }
 }
