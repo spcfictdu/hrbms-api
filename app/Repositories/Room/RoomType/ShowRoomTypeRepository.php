@@ -15,7 +15,7 @@ class ShowRoomTypeRepository extends BaseRepository
 
         $roomType = RoomType::where('reference_number', $referenceNumber)->firstOrFail();
 
-        return $this->success("Room type created successfully.", Arr::collapse([
+        return $this->success("Room type found.", Arr::collapse([
             $this->getCamelCase($roomType->toArray()),
             [
                 'images' => $roomType->images->map(function ($image) use ($roomType) {
