@@ -37,7 +37,7 @@ class Transaction extends Model
         'updated_at'
     ];
 
-    protected function room()
+    public function room()
     {
         return $this->belongsTo(Room::class, 'room_id');
     }

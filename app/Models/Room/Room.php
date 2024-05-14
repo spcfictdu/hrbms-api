@@ -26,7 +26,7 @@ class Room extends Model
 
     public $timestamps = false;
 
-    protected function roomType()
+    public function roomType()
     {
         return $this->belongsTo(RoomType::class, 'room_type_id');
     }
