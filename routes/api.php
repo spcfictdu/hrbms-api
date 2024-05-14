@@ -6,7 +6,8 @@ use App\Http\Controllers\{
     Auth\AuthController,
     Room\RoomTypeController,
     Room\RoomController,
-    Transaction\TransactionController
+    Transaction\TransactionController,
+    AvailabilityCalendar\AvailabilityCalendarController,
 };
 
 /*
@@ -66,4 +67,15 @@ Route::group([
 ], function ($route) {
     $route->get('/{referenceNumber}', [TransactionController::class, 'show']);
     $route->post('/create', [TransactionController::class, 'create']);
+});
+
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'availability-calendar'
+], function ($route) {
+    $route->get('/', [AvailabilityCalendarController::class, 'index']);
+    $route->post('/create', [AvailabilityCalendarController::class, 'create']);
+    $route->get('/{referenceNumber}', [AvailabilityCalendarController::class, 'show']);
+    $route->put('/update/{referenceNumber}', [AvailabilityCalendarController::class, 'update']);
+    $route->delete('/delete/{referenceNumber}', [AvailabilityCalendarController::class, 'delete']);
 });

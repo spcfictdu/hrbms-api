@@ -2,6 +2,7 @@
 
 namespace App\Models\Guest;
 
+use App\Models\Transaction\Transaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,4 +29,9 @@ class Guest extends Model
         'created_at',
         'updated_at'
     ];
+
+    protected function transaction()
+    {
+        return $this->hasMany(Transaction::class, 'guest_id');
+    }
 }

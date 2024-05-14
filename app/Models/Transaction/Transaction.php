@@ -2,6 +2,8 @@
 
 namespace App\Models\Transaction;
 
+use App\Models\Guest\Guest;
+use App\Models\Room\Room;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -35,11 +37,18 @@ class Transaction extends Model
         'updated_at'
     ];
 
-    protected function room() {
-        return $this->belongsTo(RoomType::class, 'room_id');
+    protected function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id');
     }
 
-    protected function payment() {
-        return $this->hasMany(Payment::class, 'payment_id');
+    protected function payment()
+    {
+        return $this->belongsTo(Payment::class, 'payment_id');
+    }
+
+    protected function guest()
+    {
+        return $this->belongsTo(Guest::class, 'guest_id');
     }
 }

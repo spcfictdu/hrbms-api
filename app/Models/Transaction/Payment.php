@@ -22,7 +22,8 @@ class Payment extends Model
         "updated_at"
     ];
 
-    protected function transaction() {
-        return $this->belongsTo(Transaction::class, 'payment_id');
+    protected function transaction()
+    {
+        return $this->hasMany(Transaction::class, 'payment_id');
     }
 }
