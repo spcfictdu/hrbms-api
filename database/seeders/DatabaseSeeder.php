@@ -10,7 +10,8 @@ use Database\Seeders\{
     UserSeeder,
     AmenitySeeder,
     RoomTypeSeeder,
-    RoomSeeder
+    RoomSeeder,
+    TransactionSeeder
 };
 
 class DatabaseSeeder extends Seeder
@@ -25,7 +26,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             AmenitySeeder::class,
             RoomTypeSeeder::class,
-            RoomSeeder::class
+            RoomSeeder::class,
+            TransactionSeeder::class
         ]);
     }
 }

@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Booking;
+namespace App\Http\Controllers\Transaction;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 // * REQUEST
-use App\Http\Requests\Booking\{CreateBookingRequest,
+use App\Http\Requests\Transaction\Booking\{CreateBookingRequest,
                                ShowBookingRequest};
 
 // * REPOSITORY
-use App\Repositories\Booking\{CreateBookingRepository,
+use App\Repositories\Transaction\Booking\{CreateBookingRepository,
                               ShowBookingRepository};
 
-class BookingController extends Controller
+class TransactionController extends Controller
 {
     protected $show, $create;
 

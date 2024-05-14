@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Booking;
+namespace App\Http\Requests\Transaction\Booking;
 
 use App\Http\Requests\ResponseRequest;
 

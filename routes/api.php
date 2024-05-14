@@ -5,9 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     Auth\AuthController,
     Room\RoomTypeController,
-    Room\RoomController
+    Room\RoomController,
+    Transaction\TransactionController
 };
-use App\Http\Controllers\Booking\BookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,8 +62,8 @@ Route::group([
 
 Route::group([
     'middleware' => 'auth:sanctum',
-    'prefix' => 'booking'
+    'prefix' => 'transaction'
 ], function ($route) {
-    $route->get('/{referenceNumber}', [BookingController::class, 'show']);
-    $route->post('/create', [BookingController::class, 'create']);
+    $route->get('/{referenceNumber}', [TransactionController::class, 'show']);
+    $route->post('/create', [TransactionController::class, 'create']);
 });

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Repositories\Booking;
+namespace App\Repositories\Transaction\Booking;
 
 use App\Repositories\BaseRepository;
 
-use App\Models\Booking\Booking,
+use App\Models\Transaction\Transaction,
     App\Models\Guest\Guest,
-    App\Models\Room\Room;
+    App\Models\Room\Room,
+    App\Models\Transaction\Payment;
 
 use Illuminate\Support\Arr;
 
@@ -15,6 +16,7 @@ class CreateBookingRepository extends BaseRepository
 {
     public function execute($request)
     {
+        try{
         $room = Room::where('reference_number', $request->room['referenceNumber'])->first();
 
         if($room){
@@ -30,10 +32,15 @@ class CreateBookingRepository extends BaseRepository
                 "id_number" => $request->guest['id']['number']
             ]);
     
-            
-    
-            $booking = Booking::create([
+            $payment = Payment::create([
+                "payment_type" => $request->payment['paymentType'],
+                "amount_received" => $request->payment['amountReceived']
+            ]);
+
+            $transaction = Transaction::create([
                 "room_id" => $room->id,
+                "status" => $request->status,
+                "payment_id" => $payment->id,
                 "check_in_date" => $request->checkIn['date'],
                 "check_in_time" => $request->checkIn['time'],
                 "check_out_date" => $request->checkOut['date'],
@@ -44,11 +51,15 @@ class CreateBookingRepository extends BaseRepository
         } else{
             return $this->error('Something went wrong!');
         }
+    } catch (\Exception $e) {
+        return $this->error("Error: " . $e->getMessage(), 500, [], false);
+    }
         
 
         return $this->success("Room type created successfully.", Arr::collapse([
             $this->getCamelCase($guest->toArray()),
-            $this->getCamelCase($booking->toArray())
+            $this->getCamelCase($transaction->toArray()),
+            $this->getCamelCase($payment->toArray())
             
         ]));
     }
