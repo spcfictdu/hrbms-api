@@ -29,8 +29,10 @@ class TransactionSeeder extends Seeder
             [
                 "id" => 1,
                 "status" => [
-                    "BOOK",
-                    "RESERVE"
+                    "RESERVED",
+                    "CONFIRMED",
+                    "CHECKED-IN",
+                    "CHECKED-OUT"
                 ],
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),
@@ -81,8 +83,10 @@ class TransactionSeeder extends Seeder
             [
                 "id" => 2,
                 "status" => [
-                    "BOOK",
-                    "RESERVE"
+                    "RESERVED",
+                    "CONFIRMED",
+                    "CHECKED-IN",
+                    "CHECKED-OUT"
                 ],
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),
@@ -133,8 +137,10 @@ class TransactionSeeder extends Seeder
             [
                 "id" => 3,
                 "status" => [
-                    "BOOK",
-                    "RESERVE"
+                    "RESERVED",
+                    "CONFIRMED",
+                    "CHECKED-IN",
+                    "CHECKED-OUT"
                 ],
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),
@@ -185,8 +191,10 @@ class TransactionSeeder extends Seeder
             [
                 "id" => 4,
                 "status" => [
-                    "BOOK",
-                    "RESERVE"
+                    "RESERVED",
+                    "CONFIRMED",
+                    "CHECKED-IN",
+                    "CHECKED-OUT"
                 ],
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),
@@ -237,8 +245,10 @@ class TransactionSeeder extends Seeder
             [
                 "id" => 5,
                 "status" => [
-                    "BOOK",
-                    "RESERVE"
+                    "RESERVED",
+                    "CONFIRMED",
+                    "CHECKED-IN",
+                    "CHECKED-OUT"
                 ],
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),

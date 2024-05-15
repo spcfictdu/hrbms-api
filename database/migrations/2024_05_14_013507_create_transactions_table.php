@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('reference_number')->unique();
             $table->unsignedBigInteger('room_id');
             $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
-            $table->enum('status', ['BOOK', 'RESERVE']);
+            $table->enum('status', ['RESERVED', 'CONFIRMED', 'CHECKED-IN', 'CHECKED-OUT']);
             $table->foreignId('payment_id');
             $table->date('check_in_date');
             $table->time('check_in_time');
