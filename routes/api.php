@@ -65,8 +65,11 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'transaction'
 ], function ($route) {
-    $route->get('/{referenceNumber}', [TransactionController::class, 'show']);
-    $route->post('/create', [TransactionController::class, 'create']);
+    $route->get('/booking',                             [TransactionController::class, 'bookIndex']);
+    $route->get('/booking/{referenceNumber}',           [TransactionController::class, 'bookShow']);
+    $route->get('/booking/edit/{referenceNumber}',      [TransactionController::class, 'bookEdit']);
+    $route->put('/booking/update',                      [TransactionController::class, 'bookUpdate']);
+    $route->post('/create',                             [TransactionController::class, 'create']);
 });
 
 Route::group([
