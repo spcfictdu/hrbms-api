@@ -25,7 +25,9 @@ class Transaction extends Model
         'check_out_date',
         'check_out_time',
         'number_of_guest',
-        'guest_id'
+        'guest_id',
+        'created_at',
+        'updated_at'
     ];
 
     protected $hidden = [

@@ -18,10 +18,10 @@ return new class extends Migration
             $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
             $table->enum('status', ['RESERVED', 'CONFIRMED', 'CHECKED-IN', 'CHECKED-OUT']);
             $table->foreignId('payment_id');
-            $table->date('check_in_date');
-            $table->time('check_in_time');
-            $table->date('check_out_date');
-            $table->time('check_out_time');
+            $table->date('check_in_date')->nullable();
+            $table->time('check_in_time')->nullable();
+            $table->date('check_out_date')->nullable();
+            $table->time('check_out_time')->nullable();
             $table->string('number_of_guest');
             $table->unsignedBigInteger('guest_id');
             $table->foreign('guest_id')->references('id')->on('guests')->onDelete('cascade');

@@ -298,6 +298,8 @@ class TransactionSeeder extends Seeder
             ]
         ];
 
+        $now = Carbon::now();
+        
         foreach ($transactions as $transaction){
             $statusIndex = array_rand($transaction['status']);
             $idTypeIndex = array_rand($transaction['idType']);
@@ -331,7 +333,8 @@ class TransactionSeeder extends Seeder
                 'check_out_date' => $transaction['checkOut']['date'],
                 'check_out_time' => $transaction['checkOut']['time'],
                 'number_of_guest' => $transaction['number_of_guest'],
-                'guest_id' => $transaction['id']
+                'guest_id' => $transaction['id'],
+                'created_at' => $now
             ]);
         }
     }
