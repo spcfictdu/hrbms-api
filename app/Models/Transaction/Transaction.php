@@ -4,10 +4,10 @@ namespace App\Models\Transaction;
 
 use App\Models\Guest\Guest;
 use App\Models\Room\Room;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Room\RoomType;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaction extends Model
 {

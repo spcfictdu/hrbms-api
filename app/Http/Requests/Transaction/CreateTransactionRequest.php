@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Transaction\Booking;
+namespace App\Http\Requests\Transaction;
 
 use App\Http\Requests\ResponseRequest;
 
-class CreateBookingRequest extends ResponseRequest
+class CreateTransactionRequest extends ResponseRequest
 {
      /**
      * Determine if the user is authorized to make this request.

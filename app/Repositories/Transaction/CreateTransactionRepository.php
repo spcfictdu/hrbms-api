@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Transaction\Booking;
+namespace App\Repositories\Transaction;
 
 use App\Repositories\BaseRepository;
 
@@ -12,7 +12,7 @@ use App\Models\Transaction\Transaction,
 use Illuminate\Support\Arr;
 
 
-class CreateBookingRepository extends BaseRepository
+class CreateTransactionRepository extends BaseRepository
 {
     public function execute($request)
     {
@@ -20,6 +20,13 @@ class CreateBookingRepository extends BaseRepository
         $room = Room::where('reference_number', $request->room['referenceNumber'])->first();
 
         if($room){
+            if(isset($request->payment)){
+                $payment = Payment::create([
+                    "payment_type" => $request->payment['paymentType'],
+                    "amount_received" => $request->payment['amountReceived']
+                ]);
+            }
+
             $guest = Guest::create([
                 'first_name' => $request->guest['firstName'],
                 "middle_name" => $request->guest['middleName'],
@@ -31,13 +38,9 @@ class CreateBookingRepository extends BaseRepository
                 "id_type" => $request->guest['id']['type'],
                 "id_number" => $request->guest['id']['number']
             ]);
-    
-            $payment = Payment::create([
-                "payment_type" => $request->payment['paymentType'],
-                "amount_received" => $request->payment['amountReceived']
-            ]);
 
             $transaction = Transaction::create([
+                "reference_number" => $this->transactionReferenceNumber(),
                 "room_id" => $room->id,
                 "status" => $request->status,
                 "payment_id" => $payment->id,

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repositories\Transaction\Booking;
 
 use App\Models\Room\{Room,
