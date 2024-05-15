@@ -10,8 +10,13 @@ use App\Models\{Transaction\Transaction,
 use Faker\Factory as Faker, Str, Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Traits\Generator;
+
 class TransactionSeeder extends Seeder
 {
+
+    use Generator;
+
     /**
      * Run the database seeds.
      */
@@ -19,6 +24,7 @@ class TransactionSeeder extends Seeder
     {
         $faker = Faker::create();
         $now = Carbon::now();
+        
         $transactions = [
             [
                 "id" => 1,
@@ -306,6 +312,7 @@ class TransactionSeeder extends Seeder
 
             Transaction::insert([
                 'id' => $transaction['id'],
+                'reference_number' => $this->transactionReferenceNumber(),
                 'room_id' => $transaction['id'],
                 'status' => $transaction['status'][$statusIndex],
                 'payment_id' => $transaction['id'],

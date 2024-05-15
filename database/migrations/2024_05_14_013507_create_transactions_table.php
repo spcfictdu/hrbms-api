@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_id');
+            $table->string('reference_number')->unique();
+            $table->unsignedBigInteger('room_id');
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
             $table->enum('status', ['BOOK', 'RESERVE']);
             $table->foreignId('payment_id');
             $table->date('check_in_date');
@@ -21,7 +23,8 @@ return new class extends Migration
             $table->date('check_out_date');
             $table->time('check_out_time');
             $table->string('number_of_guest');
-            $table->foreignId('guest_id');
+            $table->unsignedBigInteger('guest_id');
+            $table->foreign('guest_id')->references('id')->on('guests')->onDelete('cascade');
             $table->timestamps();
         });
     }

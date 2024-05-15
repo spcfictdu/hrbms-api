@@ -7,7 +7,8 @@ use App\Models\{
     Amenity\Amenity,
     Room\RoomTypeAmenity,
     Room\RoomTypeRate,
-    Room\Room
+    Room\Room,
+    Transaction\Transaction
 };
 
 trait Generator
@@ -52,6 +53,17 @@ trait Generator
             $referenceNumber = bin2hex(random_bytes(4));
 
         } while (Room::where("reference_number", $referenceNumber)->first());
+
+        return $referenceNumber;
+    }
+
+    protected function transactionReferenceNumber()
+    {
+        do {
+
+            $referenceNumber = bin2hex(random_bytes(4));
+
+        } while (Transaction::where("reference_number", $referenceNumber)->first());
 
         return $referenceNumber;
     }
