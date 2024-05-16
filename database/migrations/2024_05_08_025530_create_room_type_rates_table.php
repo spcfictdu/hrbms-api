@@ -17,9 +17,9 @@ return new class extends Migration
             $table->unsignedBigInteger('room_type_id');
             $table->foreign('room_type_id')->references('id')->on('room_types')->onDelete('cascade');
             $table->enum('type', ['REGULAR', 'SPECIAL']);
-            $table->string('discount_name')->nullable()->unique();
-            $table->date('start_date')->format('m/d/Y')->nullable();
-            $table->date('end_date')->format('m/d/Y')->nullable();
+            $table->string('discount_name')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->float('monday');
             $table->float('tuesday');
             $table->float('wednesday');
@@ -27,6 +27,7 @@ return new class extends Migration
             $table->float('friday');
             $table->float('saturday');
             $table->float('sunday');
+            $table->softDeletes();
         });
     }
 

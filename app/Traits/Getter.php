@@ -18,6 +18,13 @@ trait Getter
         return $amenity->id;
     }
 
+    protected function getRoomTypeId($referenceNumber)
+    {
+        $roomType = RoomType::where('reference_number', $referenceNumber)->firstOrFail();
+
+        return $roomType->id;
+    }
+
     protected function getRoomTypeIdFromName($roomTypeName)
     {
         $roomType = RoomType::where('name', $roomTypeName)->firstOrFail();
@@ -32,5 +39,38 @@ trait Getter
             $camelCasedArray[Str::camel($key)] = $value;
         }
         return $camelCasedArray;
+    }
+
+    protected function getRoomTypeRates($roomType)
+    {
+        return [
+            'regular' => $roomType->rates->where('type', 'REGULAR')->flatMap(function ($rate) {
+                return [
+                    'referenceNumber' => $rate->reference_number,
+                    'monday' => $rate->monday,
+                    'tuesday' => $rate->tuesday,
+                    'wednesday' => $rate->wednesday,
+                    'thursday' => $rate->thursday,
+                    'friday' => $rate->friday,
+                    'saturday' => $rate->saturday,
+                    'sunday' => $rate->sunday
+                ];
+            }),
+            'special' => ($roomType->rates->where('type', 'SPECIAL')->first) ? $roomType->rates->where('type', 'SPECIAL')->map(function ($rate) {
+                return [
+                    'referenceNumber' => $rate->reference_number,
+                    'discountName' => $rate->discount_name,
+                    'startDate' => $rate->start_date,
+                    'endDate' => $rate->end_date,
+                    'monday' => $rate->monday,
+                    'tuesday' => $rate->tuesday,
+                    'wednesday' => $rate->wednesday,
+                    'thursday' => $rate->thursday,
+                    'friday' => $rate->friday,
+                    'saturday' => $rate->saturday,
+                    'sunday' => $rate->sunday
+                ];
+            })->values() : null
+        ];
     }
 }

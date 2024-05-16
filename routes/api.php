@@ -6,8 +6,10 @@ use App\Http\Controllers\{
     Auth\AuthController,
     Room\RoomTypeController,
     Room\RoomController,
+    Room\RoomTypeRateController,
     Transaction\TransactionController,
     AvailabilityCalendar\AvailabilityCalendarController,
+    Amenity\AmenityController
 };
 
 /*
@@ -43,6 +45,18 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'room-type'
 ], function ($route) {
+    $route->group([
+        'prefix'=> 'rate'
+    ], function ($route) {
+        $route->get('/', [RoomTypeRateController::class, 'index']);
+        $route->get('/{roomTypeReferenceNumber}', [RoomTypeRateController::class, 'show']);
+        $route->put('/regular/update/{referenceNumber}', [RoomTypeRateController::class, 'updateRegular']);
+        $route->post('/special/create', [RoomTypeRateController::class, 'createSpecial']);
+        $route->get('/special/archived/{roomTypeReferenceNumber}', [RoomTypeRateController::class, 'archivedSpecial']);
+        $route->put('/special/update/{referenceNumber}', [RoomTypeRateController::class, 'updateSpecial']);
+        $route->delete('/special/archive/{referenceNumber}', [RoomTypeRateController::class, 'archiveSpecial']);
+        $route->patch('/special/restore/{referenceNumber}', [RoomTypeRateController::class, 'restoreSpecial']);
+    });
     $route->get('/', [RoomTypeController::class, 'index']);
     $route->post('/create', [RoomTypeController::class, 'create']);
     $route->get('/{referenceNumber}', [RoomTypeController::class, 'show']);
@@ -65,11 +79,11 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'transaction'
 ], function ($route) {
-    $route->get('/booking',                             [TransactionController::class, 'bookIndex']);
-    $route->get('/booking/{referenceNumber}',           [TransactionController::class, 'bookShow']);
-    $route->get('/booking/edit/{referenceNumber}',      [TransactionController::class, 'bookEdit']);
-    $route->put('/booking/update',                      [TransactionController::class, 'bookUpdate']);
-    $route->post('/create',                             [TransactionController::class, 'create']);
+    $route->get('/booking', [TransactionController::class, 'bookIndex']);
+    $route->get('/booking/{referenceNumber}', [TransactionController::class, 'bookShow']);
+    $route->get('/booking/edit/{referenceNumber}', [TransactionController::class, 'bookEdit']);
+    $route->put('/booking/update', [TransactionController::class, 'bookUpdate']);
+    $route->post('/create', [TransactionController::class, 'create']);
 });
 
 Route::group([
@@ -81,4 +95,15 @@ Route::group([
     $route->get('/{referenceNumber}', [AvailabilityCalendarController::class, 'show']);
     $route->put('/update/{referenceNumber}', [AvailabilityCalendarController::class, 'update']);
     $route->delete('/delete/{referenceNumber}', [AvailabilityCalendarController::class, 'delete']);
+});
+
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'amenity'
+], function ($route) {
+    $route->get('/', [AmenityController::class, 'index']);
+    $route->post('/create', [AmenityController::class, 'create']);
+    $route->get('/{referenceNumber}', [AmenityController::class, 'show']);
+    $route->put('/update/{referenceNumber}', [AmenityController::class, 'update']);
+    $route->delete('/delete/{referenceNumber}', [AmenityController::class, 'delete']);
 });
