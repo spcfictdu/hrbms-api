@@ -12,7 +12,6 @@ class ShowRoomTypeRepository extends BaseRepository
 {
     public function execute($referenceNumber)
     {
-
         $roomType = RoomType::where('reference_number', $referenceNumber)->firstOrFail();
 
         return $this->success("Room type found.", Arr::collapse([
