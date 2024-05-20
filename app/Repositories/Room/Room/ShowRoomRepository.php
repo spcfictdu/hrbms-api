@@ -26,17 +26,7 @@ class ShowRoomRepository extends BaseRepository
                     'amenities' => $room->roomType->amenities->pluck('amenity')->map(function ($amenity){
                         return $amenity->name;
                     }),
-                    'rates' => $room->roomType->rates->where('type', 'REGULAR')->flatMap(function ($rate) {
-                        return [
-                            'monday' => $rate->monday,
-                            'tuesday' => $rate->tuesday,
-                            'wednesday' => $rate->wednesday,
-                            'thursday' => $rate->thursday,
-                            'friday' => $rate->friday,
-                            'saturday' => $rate->saturday,
-                            'sunday' => $rate->sunday
-                        ];
-                    })
+                    'rates' => $this->getRoomTypeRates($room->roomType)
                 ]
             ]),
 

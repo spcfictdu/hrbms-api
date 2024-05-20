@@ -5,7 +5,6 @@ namespace App\Traits;
 use App\Models\{
     Room\RoomType,
     Amenity\Amenity,
-    Room\RoomTypeAmenity,
     Room\RoomTypeRate,
     Room\Room,
     Transaction\Transaction

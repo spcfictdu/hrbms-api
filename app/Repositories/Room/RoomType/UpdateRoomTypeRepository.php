@@ -80,7 +80,8 @@ class UpdateRoomTypeRepository extends BaseRepository
                 }),
                 'amenities' => $roomType->amenities->pluck('amenity')->map(function ($amenity) {
                     return $amenity->name;
-                })
+                }),
+                'rates' => $this->getRoomTypeRates($roomType)
             ]
         ]));
     }
