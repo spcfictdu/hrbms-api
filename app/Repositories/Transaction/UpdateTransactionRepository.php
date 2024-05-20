@@ -26,7 +26,7 @@ class UpdateTransactionRepository extends BaseRepository
                     "amount_received" => $request->amountReceived
                 ]);
                 $transaction->update([
-                    "status" => $request->status,
+                    "status" => "CONFIRMED",
                     "payment_id" => $payment->id
                 ]);
             } elseif(!isset($request->status)){
