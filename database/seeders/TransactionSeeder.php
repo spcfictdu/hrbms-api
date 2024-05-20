@@ -316,18 +316,13 @@ class TransactionSeeder extends Seeder
                 'id_type' => $transaction['idType'][$idTypeIndex],
                 'id_number' => $transaction['idNumber']
             ]);
-
-            Payment::insert([
-                'payment_type' => $transaction['payment']['payment_type'][$idPaymentTypeIndex],
-                'amount_received' => $transaction['payment']['amount_received']['tuesday']
-            ]);
-
+            
             Transaction::insert([
                 'id' => $transaction['id'],
                 'reference_number' => $this->transactionReferenceNumber(),
                 'room_id' => $transaction['id'],
                 'status' => $transaction['status'][$statusIndex],
-                'payment_id' => $transaction['id'],
+                // 'payment_id' => $transaction['id'],
                 'check_in_date' => $transaction['checkIn']['date'],
                 'check_in_time' => $transaction['checkIn']['time'],
                 'check_out_date' => $transaction['checkOut']['date'],
@@ -335,6 +330,12 @@ class TransactionSeeder extends Seeder
                 'number_of_guest' => $transaction['number_of_guest'],
                 'guest_id' => $transaction['id'],
                 'created_at' => $now
+            ]);
+
+            Payment::insert([
+                'transaction_id' => $transaction['id'],
+                'payment_type' => $transaction['payment']['payment_type'][$idPaymentTypeIndex],
+                'amount_received' => $transaction['payment']['amount_received']['tuesday']
             ]);
         }
     }
