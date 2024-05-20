@@ -16,6 +16,7 @@ class Transaction extends Model
     protected $table = "transactions";
 
     protected $fillable = [
+        'reference_number',
         'room_id',
         'status',
         'payment_id',
@@ -47,6 +48,10 @@ class Transaction extends Model
     protected function payment()
     {
         return $this->belongsTo(Payment::class, 'payment_id');
+    }
+
+    protected function transactionHistory(){
+        return $this->belongsTo(TransactionHistory::class, 'transaction_history_id');
     }
 
     protected function guest()

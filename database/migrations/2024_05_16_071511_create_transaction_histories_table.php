@@ -11,20 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('transaction_histories', function (Blueprint $table) {
             $table->id();
-            $table->string('reference_number')->unique();
-            $table->unsignedBigInteger('room_id');
-            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
-            $table->enum('status', ['RESERVED', 'CONFIRMED', 'CHECKED-IN', 'CHECKED-OUT']);
-            $table->foreignId('payment_id');
             $table->date('check_in_date')->nullable();
             $table->time('check_in_time')->nullable();
             $table->date('check_out_date')->nullable();
             $table->time('check_out_time')->nullable();
-            $table->string('number_of_guest');
-            $table->unsignedBigInteger('guest_id');
-            $table->foreign('guest_id')->references('id')->on('guests')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -34,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('transaction_histories');
     }
 };
