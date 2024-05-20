@@ -43,7 +43,7 @@ class CreateTransactionRepository extends BaseRepository
                 "reference_number" => $this->transactionReferenceNumber(),
                 "room_id" => $room->id,
                 "status" => $request->status,
-                "payment_id" => $payment->id,
+                "payment_id" => $payment->id ?? null,
                 "check_in_date" => $request->checkIn['date'],
                 "check_in_time" => $request->checkIn['time'],
                 "check_out_date" => $request->checkOut['date'],
@@ -58,12 +58,19 @@ class CreateTransactionRepository extends BaseRepository
         return $this->error("Error: " . $e->getMessage(), 500, [], false);
     }
         
-
+    if(isset($payment)){
         return $this->success("Room type created successfully.", Arr::collapse([
             $this->getCamelCase($guest->toArray()),
             $this->getCamelCase($transaction->toArray()),
             $this->getCamelCase($payment->toArray())
             
         ]));
+    } else{
+        return $this->success("Room type created successfully.", Arr::collapse([
+            $this->getCamelCase($guest->toArray()),
+            $this->getCamelCase($transaction->toArray())
+        ]));
+    }
+        
     }
 }
