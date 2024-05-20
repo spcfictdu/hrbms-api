@@ -14,10 +14,8 @@ use App\Models\Room\{
 
 class UpdateRoomTypeRepository extends BaseRepository
 {
-    public function execute($request, $referenceNumber){
-
-        // return $request['amenities']['delete'];
-
+    public function execute($request, $referenceNumber)
+    {
         $roomType = RoomType::where('reference_number', $referenceNumber)->firstOrFail();
 
         $roomType->update([
@@ -30,19 +28,17 @@ class UpdateRoomTypeRepository extends BaseRepository
             'capacity' => $request->capacity
         ]);
 
-        if($request['images']['delete']){
+        if ($request['images']['delete']) {
 
-            foreach($request['images']['delete'] as $image){
-
-                // return $roomType->images;
+            foreach ($request['images']['delete'] as $image) {
 
                 $roomType->images->where('filename', $image)->first()->delete();
             }
         }
 
-        if($request['images']['add']){
+        if ($request['images']['add']) {
 
-            foreach($request['images']['add'] as $image){
+            foreach ($request['images']['add'] as $image) {
 
                 $imageFilePath = $image->store("public/" . $roomType->reference_number);
 
@@ -53,17 +49,17 @@ class UpdateRoomTypeRepository extends BaseRepository
             }
         }
 
-        if($request['amenities']['delete']){
+        if ($request['amenities']['delete']) {
 
-            foreach($request['amenities']['delete'] as $amenity){
+            foreach ($request['amenities']['delete'] as $amenity) {
 
                 $roomType->amenities->where('amenity_id', $this->getAmenityIdFromName(strtoupper($amenity)))->first()->delete();
             }
         }
 
-        if($request['amenities']['add']){
+        if ($request['amenities']['add']) {
 
-            foreach($request['amenities']['add'] as $amenity){
+            foreach ($request['amenities']['add'] as $amenity) {
 
                 RoomTypeAmenity::create([
                     'room_type_id' => $roomType->id,
@@ -71,6 +67,8 @@ class UpdateRoomTypeRepository extends BaseRepository
                 ]);
             }
         }
+
+        $roomType = RoomType::where('reference_number', $referenceNumber)->firstOrFail();
 
         return $this->success("Room type updated successfully.", Arr::collapse([
             $this->getCamelCase($roomType->toArray()),

@@ -17,6 +17,7 @@ class ShowRoomRepository extends BaseRepository
         return $this->success("Room found.", [
             'referenceNumber' => $room->reference_number,
             'roomNumber' => $room->room_number,
+            'status' => $room->status,
             'roomType' => Arr::collapse([
                 $this->getCamelCase($room->roomType->toArray()),
                 [

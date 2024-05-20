@@ -13,7 +13,7 @@ class UpdateRegularRoomTypeRateRequest extends ResponseRequest
      */
     public function authorize()
     {
-        return true;
+        return $this->user()->hasRole('ADMIN');
     }
 
     /**

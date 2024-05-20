@@ -16,7 +16,15 @@ class IndexRoomRepository extends BaseRepository
             return [
                 'referenceNumber' => $room->reference_number,
                 'roomNumber' => $room->room_number,
-                'roomType' => $room->roomType->name
+                'status' => $room->status,
+                'roomType' => [
+                    'name' => $room->roomType->name,
+                    'capacity' => $room->roomType->capacity,
+                    'amenities' => $room->roomType->amenities->pluck('amenity')->map(function ($amenity){
+                        return $amenity->name;
+                    }),
+                ]
+
             ];
         }));
     }

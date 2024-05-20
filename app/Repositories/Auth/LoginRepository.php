@@ -27,7 +27,7 @@ class LoginRepository extends BaseRepository
             ]);
         } else {
 
-            return $this->error("Incorrect credentials");
+            return $this->error("Incorrect login credentials", 401);
         }
 
         return $this->success("Login successful", [
