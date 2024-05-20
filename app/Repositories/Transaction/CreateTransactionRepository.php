@@ -16,16 +16,10 @@ class CreateTransactionRepository extends BaseRepository
 {
     public function execute($request)
     {
-        try{
         $room = Room::where('reference_number', $request->room['referenceNumber'])->first();
 
         if($room){
-            if(isset($request->payment)){
-                $payment = Payment::create([
-                    "payment_type" => $request->payment['paymentType'],
-                    "amount_received" => $request->payment['amountReceived']
-                ]);
-            }
+            
 
             $guest = Guest::create([
                 'first_name' => $request->guest['firstName'],
@@ -43,7 +37,7 @@ class CreateTransactionRepository extends BaseRepository
                 "reference_number" => $this->transactionReferenceNumber(),
                 "room_id" => $room->id,
                 "status" => $request->status,
-                "payment_id" => $payment->id ?? null,
+                // "payment_id" => $payment->id ?? null,
                 "check_in_date" => $request->checkIn['date'],
                 "check_in_time" => $request->checkIn['time'],
                 "check_out_date" => $request->checkOut['date'],
@@ -51,12 +45,18 @@ class CreateTransactionRepository extends BaseRepository
                 "number_of_guest" => $request->guest['numberOfGuest'],
                 "guest_id" => $guest->id
             ]);
+
+            if(isset($request->payment)){
+                $payment = Payment::create([
+                    "transaction_id" => $transaction->id,
+                    "payment_type" => $request->payment['paymentType'],
+                    "amount_received" => $request->payment['amountReceived']
+                ]);
+            }
         } else{
             return $this->error('Something went wrong!');
         }
-    } catch (\Exception $e) {
-        return $this->error("Error: " . $e->getMessage(), 500, [], false);
-    }
+    
         
     if(isset($payment)){
         return $this->success("Room type created successfully.", Arr::collapse([

@@ -79,15 +79,20 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'transaction'
 ], function ($route) {
-    // $route->get('/booking',                             [TransactionController::class, 'bookIndex']);
-    // $route->get('/booking/{referenceNumber}',           [TransactionController::class, 'bookShow']);
-    // $route->get('/booking/edit/{referenceNumber}',      [TransactionController::class, 'bookEdit']);
-    // $route->put('/booking/update',                      [TransactionController::class, 'bookUpdate']);
-    $route->get('/',                                    [TransactionController::class, 'index']);
-    $route->get('/show/{referenceNumber}',              [TransactionController::class, 'show']);
-    $route->post('/create',                             [TransactionController::class, 'create']);
-    $route->put('/update',                              [TransactionController::class, 'update']);
-});
+    // $route->get('/booking',                                                  [TransactionController::class, 'bookIndex']);
+    // $route->get('/booking/{referenceNumber}',                                [TransactionController::class, 'bookShow']);
+    // $route->get('/booking/edit/{referenceNumber}',                           [TransactionController::class, 'bookEdit']);
+    // $route->put('/booking/update',                                           [TransactionController::class, 'bookUpdate']);
+
+    // MISCELLANEOUS
+    $route->delete('/reservation/delete/{status}/{referenceNumber}',            [TransactionController::class, 'deleteReservation']);
+
+    // TRANSACTION
+    $route->get('/',                                                            [TransactionController::class, 'index']);
+    $route->get('/show/{referenceNumber}',                                      [TransactionController::class, 'show']);
+    $route->post('/create',                                                     [TransactionController::class, 'create']);
+    $route->put('/update',                                                      [TransactionController::class, 'update']);
+});         
 
 Route::group([
     'middleware' => 'auth:sanctum',
