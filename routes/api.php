@@ -9,9 +9,10 @@ use App\Http\Controllers\{
     Room\RoomTypeRateController,
     Transaction\TransactionController,
     AvailabilityCalendar\AvailabilityCalendarController,
-    Amenity\AmenityController
+    Amenity\AmenityController,
+    Enum\EnumController,
+    Guest\GuestController,
 };
-use App\Http\Controllers\Enum\EnumController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,7 +95,7 @@ Route::group([
     $route->get('/show/{referenceNumber}',                                      [TransactionController::class, 'show']);
     $route->post('/create',                                                     [TransactionController::class, 'create']);
     $route->put('/update',                                                      [TransactionController::class, 'update']);
-});         
+});
 
 // To check availability of rooms
 Route::group([
@@ -115,6 +116,15 @@ Route::group([
 ], function ($route) {
     $route->get('/room-type', [EnumController::class, 'roomTypeEnum']);
     $route->get('/room-number', [EnumController::class, 'roomNumberEnum']);
+});
+
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'guest'
+], function ($route) {
+    $route->get('/', [GuestController::class, 'index']);
+    $route->get('/{id}', [GuestController::class, 'show']);
+    $route->delete('/delete/{id}', [GuestController::class, 'delete']);
 });
 
 Route::group([

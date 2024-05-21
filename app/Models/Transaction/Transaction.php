@@ -46,12 +46,18 @@ class Transaction extends Model
         return $this->belongsTo(Room::class, 'room_id');
     }
 
-    protected function payment()
+    // protected function payment()
+    // {
+    //     return $this->belongsTo(Payment::class, 'payment_id');
+    // }
+
+    public function payment()
     {
-        return $this->belongsTo(Payment::class, 'payment_id');
+        return $this->hasOne(Payment::class, 'transaction_id');
     }
 
-    protected function transactionHistory(){
+    protected function transactionHistory()
+    {
         return $this->belongsTo(TransactionHistory::class, 'transaction_history_id');
     }
 

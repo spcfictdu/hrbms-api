@@ -82,6 +82,7 @@ class IndexAvailabilityCalendarRepository extends BaseRepository
             $formattedCheckOutDateTime = new DateTime($transaction->check_out_date . ' ' . $transaction->check_out_time);
 
             return [
+                'roomReferenceNumber' => $transaction->room?->reference_number,
                 'referenceNumber' => $transaction->reference_number,
                 'roomType' => $transaction->room?->roomType->name,
                 'roomNumber' => $transaction->room?->room_number,

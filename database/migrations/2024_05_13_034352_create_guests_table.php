@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('id_type');
             $table->string('id_number');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
