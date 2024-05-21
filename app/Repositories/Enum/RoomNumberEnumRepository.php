@@ -20,7 +20,13 @@ class RoomNumberEnumRepository extends BaseRepository
             });
         }
 
-        $roomNumbers = $roomsQuery->pluck('room_number');
+        // $roomNumbers = $roomsQuery->pluck('room_number');
+        $roomNumbers = $roomsQuery->select('reference_number', 'room_number')->get()->transform(function ($roomNumber) {
+            return [
+                'referenceNumber' => $roomNumber->reference_number,
+                'roomNumber' => $roomNumber->room_number
+            ];
+        });
 
         return response()->json([
             'message' => 'Room numbers fetched successfully', // 'Room numbers fetched successfully

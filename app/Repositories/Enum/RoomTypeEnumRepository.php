@@ -9,7 +9,12 @@ class RoomTypeEnumRepository extends BaseRepository
 {
     public function execute()
     {
-        $roomTypes = RoomType::pluck('name');
+        $roomTypes = RoomType::select('reference_number', 'name')->get()->transform(function ($roomType) {
+            return [
+                'referenceNumber' => $roomType->reference_number,
+                'roomType' => $roomType->name,
+            ];
+        });
 
         return response()->json([
             'message' => 'Room types fetched successfully', // 'Room types fetched successfully
