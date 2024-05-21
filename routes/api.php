@@ -86,6 +86,7 @@ Route::group([
     // $route->put('/booking/update',                                           [TransactionController::class, 'bookUpdate']);
 
     // MISCELLANEOUS
+    $route->get('/form/{referenceNumber}',                                      [TransactionController::class, 'showFormTransaction']);
     $route->delete('/reservation/delete/{status}/{referenceNumber}',            [TransactionController::class, 'deleteReservation']);
 
     // TRANSACTION
