@@ -208,17 +208,9 @@ class MakeModule extends Command
 
             use App\Http\Controllers\Controller;
 
-            use App\Http\Requests\Dummy\IndexDummyRequest;
-            use App\Http\Requests\Dummy\CreateDummyRequest;
-            use App\Http\Requests\Dummy\ShowDummyRequest;
-            use App\Http\Requests\Dummy\UpdateDummyRequest;
-            use App\Http\Requests\Dummy\DeleteDummyRequest;
-
-            use App\Repositories\Dummy\IndexDummyRepository;
-            use App\Repositories\Dummy\CreateDummyRepository;
-            use App\Repositories\Dummy\ShowDummyRepository;
-            use App\Repositories\Dummy\UpdateDummyRepository;
-            use App\Repositories\Dummy\DeleteDummyRepository;
+            use App\Http\Requests\Dummy\{IndexDummyRequest, CreateDummyRequest, ShowDummyRequest, UpdateDummyRequest, DeleteDummyRequest};
+           
+            use App\Repositories\Dummy\{IndexDummyRepository, CreateDummyRepository, ShowDummyRepository, UpdateDummyRepository, DeleteDummyRepository};
 
             class DummyController extends Controller
             {
@@ -258,7 +250,6 @@ class MakeModule extends Command
                     return $this->update->execute($request, $id);
                 }
 
-
                 
                 protected function delete(DeleteDummyRequest $request, $id) {
                     return $this->delete->execute($id);
@@ -284,11 +275,7 @@ class MakeModule extends Command
     {
         $replacements = [
             // Request
-            'use App\Http\Requests\Dummy\IndexDummyRequest;'   => 'use App\Http\Requests\\' . $controllerName . '\Index' . $controllerName . 'Request;',
-            'use App\Http\Requests\Dummy\CreateDummyRequest;'  => 'use App\Http\Requests\\' . $controllerName . '\Create' . $controllerName . 'Request;',
-            'use App\Http\Requests\Dummy\ShowDummyRequest;'    => 'use App\Http\Requests\\' . $controllerName . '\Show' . $controllerName . 'Request;',
-            'use App\Http\Requests\Dummy\UpdateDummyRequest;'  => 'use App\Http\Requests\\' . $controllerName . '\Update' . $controllerName . 'Request;',
-            'use App\Http\Requests\Dummy\DeleteDummyRequest;'  => 'use App\Http\Requests\\' . $controllerName . '\Delete' . $controllerName . 'Request;',
+            'use App\Http\Requests\Dummy\{IndexDummyRequest, CreateDummyRequest, ShowDummyRequest, UpdateDummyRequest, DeleteDummyRequest};' => 'use App\Http\Requests\\' . $controllerName . '\{Index' . $controllerName . 'Request, Create' . $controllerName . 'Request, Show' . $controllerName . 'Request, Update' . $controllerName . 'Request, Delete' . $controllerName . 'Request};',
 
             'IndexDummyRequest'   => 'Index' . $controllerName . 'Request',
             'CreateDummyRequest'  => 'Create' . $controllerName . 'Request',
@@ -296,13 +283,8 @@ class MakeModule extends Command
             'UpdateDummyRequest'  => 'Update' . $controllerName . 'Request',
             'DeleteDummyRequest'  => 'Delete' . $controllerName . 'Request',
 
-
             // Repository
-            'use App\Repositories\Dummy\IndexDummyRepository;'   => 'use App\Repositories\\' . $controllerName . '\Index' . $controllerName . 'Repository;',
-            'use App\Repositories\Dummy\CreateDummyRepository;'  => 'use App\Repositories\\' . $controllerName . '\Create' . $controllerName . 'Repository;',
-            'use App\Repositories\Dummy\ShowDummyRepository;'    => 'use App\Repositories\\' . $controllerName . '\Show' . $controllerName . 'Repository;',
-            'use App\Repositories\Dummy\UpdateDummyRepository;'  => 'use App\Repositories\\' . $controllerName . '\Update' . $controllerName . 'Repository;',
-            'use App\Repositories\Dummy\DeleteDummyRepository;'  => 'use App\Repositories\\' . $controllerName . '\Delete' . $controllerName . 'Repository;',
+            'use App\Repositories\Dummy\{IndexDummyRepository, CreateDummyRepository, ShowDummyRepository, UpdateDummyRepository, DeleteDummyRepository};' => 'use App\Repositories\\' . $controllerName . '\{Index' . $controllerName . 'Repository, Create' . $controllerName . 'Repository, Show' . $controllerName . 'Repository, Update' . $controllerName . 'Repository, Delete' . $controllerName . 'Repository};',
 
             'IndexDummyRepository'   => 'Index' . $controllerName . 'Repository',
             'CreateDummyRepository'  => 'Create' . $controllerName . 'Repository',

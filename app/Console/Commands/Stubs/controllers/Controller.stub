@@ -4,17 +4,10 @@ namespace DummyNamespace;
 
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\Dummy\IndexDummyRequest;
-use App\Http\Requests\Dummy\CreateDummyRequest;
-use App\Http\Requests\Dummy\ShowDummyRequest;
-use App\Http\Requests\Dummy\UpdateDummyRequest;
-use App\Http\Requests\Dummy\DeleteDummyRequest;
+use App\Http\Requests\Dummy\{IndexDummyRequest, CreateDummyRequest, ShowDummyRequest, UpdateDummyRequest, DeleteDummyRequest};
 
-use App\Repositories\Dummy\IndexDummyRepository;
-use App\Repositories\Dummy\CreateDummyRepository;
-use App\Repositories\Dummy\ShowDummyRepository;
-use App\Repositories\Dummy\UpdateDummyRepository;
-use App\Repositories\Dummy\DeleteDummyRepository;
+use App\Repositories\Dummy\{IndexDummyRepository, CreateDummyRepository, ShowDummyRepository, UpdateDummyRepository, DeleteDummyRepository};
+
 
 class DummyController extends Controller
 {
