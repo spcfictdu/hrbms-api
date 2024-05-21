@@ -26,12 +26,13 @@ use App\Repositories\Transaction\{
                                   CreateTransactionRepository,
                                   ShowTransactionRepository,
                                   UpdateTransactionRepository,
-                                  Miscellaneous\DeleteReservationRepository};
+                                  Miscellaneous\DeleteReservationRepository,
+                                  Miscellaneous\ShowFormTransactionRepository};
 
 class TransactionController extends Controller
 {
     // $bookEdit, $bookIndex, $bookShow, $bookUpdate
-    protected $index, $create, $show, $update, $deleteReservation;
+    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction;
 
     public function __construct(
         // IndexBookingRepository $bookIndex,
@@ -42,7 +43,8 @@ class TransactionController extends Controller
         CreateTransactionRepository $create,
         ShowTransactionRepository $show,
         UpdateTransactionRepository $update,
-        DeleteReservationRepository $deleteReservation
+        DeleteReservationRepository $deleteReservation,
+        ShowFormTransactionRepository $showFormTransaction
     ){
         // $this->bookIndex = $bookIndex;
         // $this->bookShow = $bookShow;
@@ -53,6 +55,7 @@ class TransactionController extends Controller
         $this->show = $show;
         $this->update = $update;
         $this->deleteReservation = $deleteReservation;
+        $this->showFormTransaction = $showFormTransaction;
     }
     
     // protected function bookIndex(IndexBookingRequest $request)
@@ -96,5 +99,9 @@ class TransactionController extends Controller
 
     protected function deleteReservation($status, $referenceNumber){
         return $this->deleteReservation->execute($status, $referenceNumber);
+    }
+
+    protected function showFormTransaction($referenceNumber){
+        return $this->showFormTransaction->execute($referenceNumber);
     }
 }
