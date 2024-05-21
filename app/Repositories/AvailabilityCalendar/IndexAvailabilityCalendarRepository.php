@@ -3,8 +3,10 @@
 namespace App\Repositories\AvailabilityCalendar;
 
 use App\Models\AvailabilityCalendar;
+use App\Models\Room\Room;
 use App\Models\Transaction\Transaction;
 use App\Repositories\BaseRepository;
+use DateTime;
 
 class IndexAvailabilityCalendarRepository extends BaseRepository
 {
@@ -13,9 +15,9 @@ class IndexAvailabilityCalendarRepository extends BaseRepository
     // status can be - house keeping, check in, check out, reserved, confirmed
     public function execute($request)
     {
-        $filterRoomType = $request->input('room_type');
-        $filterRoomNumber = $request->input('room_number');
-        $filterDateRange = $request->input('date_range');
+        $filterRoomType = $request->input('roomType');
+        $filterRoomNumber = $request->input('roomNumber');
+        $filterDateRange = $request->input('dateRange');
 
         // Get all transactions initially
         $transactionsQuery = Transaction::query();
@@ -41,24 +43,60 @@ class IndexAvailabilityCalendarRepository extends BaseRepository
         // Apply date range filter
         if ($filterDateRange) {
             $dateRange = explode(',', $filterDateRange);
-            $transactionsQuery->whereBetween('check_in_date', [$dateRange[0], $dateRange[1]])
-                ->whereBetween('check_out_date', [$dateRange[0], $dateRange[1]]);
+
+            if (count($dateRange) === 1) {
+                // If only one date is provided, use it for both the start and end of the range
+                $dateRange[1] = $dateRange[0];
+            }
+
+            // $transactionsQuery->whereBetween('check_in_date', [$dateRange[0], $dateRange[1]])
+            // ->whereBetween('check_out_date', [$dateRange[0], $dateRange[1]]);
+
+            // Apply date range filter considering the overlapping date ranges
+            $transactionsQuery->where(function ($query) use ($dateRange) {
+                $query->whereBetween('check_in_date', [$dateRange[0], $dateRange[1]])
+                    ->orWhereBetween('check_out_date', [$dateRange[0], $dateRange[1]])
+                    ->orWhere(function ($query) use ($dateRange) {
+                        $query->where('check_in_date', '<=', $dateRange[0])
+                            ->where('check_out_date', '>=', $dateRange[1]);
+                    });
+            });
         }
+
+        // return $filterDateRange;
 
         // Execute the query and get the results
         $transactions = $transactionsQuery->get();
 
+        // return Room::where("room_type_id", $transactions->room?->room_type_id)->pluck("room_number");
+
+
         // Map the results to the desired format
-        return $transactions->map(function ($transaction) {
+        $transactions =  $transactions->map(function ($transaction) {
+
+            if ($transaction->room?->status === "DIRTY") {
+                $transaction->status = "HOUSE KEEPING";
+            } else {
+            }
+            $formattedCheckInDateTime = new DateTime($transaction->check_in_date . ' ' . $transaction->check_in_time);
+            $formattedCheckOutDateTime = new DateTime($transaction->check_out_date . ' ' . $transaction->check_out_time);
+
             return [
-                'room_type' => $transaction->room?->roomType->name,
-                'room_number' => $transaction->room?->room_number,
-                'room_status' => $transaction->room?->status, // 'OCCUPIED', 'DIRTY', 'READY FOR OCCUPANCY', 'UNALLOCATED'
+                'referenceNumber' => $transaction->reference_number,
+                'roomType' => $transaction->room?->roomType->name,
+                'roomNumber' => $transaction->room?->room_number,
+                'roomStatus' => $transaction->room?->status, // 'OCCUPIED', 'DIRTY', 'READY FOR OCCUPANCY', 'UNALLOCATED'
                 'guest' => $transaction->guest->first_name . ' ' . $transaction->guest->last_name,
-                'check_in' => $transaction->check_in_date . 'T' . $transaction->check_in_time,
-                'check_out' => $transaction->check_out_date . 'T' . $transaction->check_out_time,
-                'status' => $transaction->status, // Reserved, Booked
+                'checkIn' => $transaction->check_in_date . 'T' . $transaction->check_in_time,
+                'checkOut' => $transaction->check_out_date . 'T' . $transaction->check_out_time,
+                // 'checkIn' => $formattedCheckInDateTime->format('F j, Y - g:i A'),
+                // 'checkOut' => $formattedCheckOutDateTime->format('F j, Y - g:i A'),
+                'status' => $transaction->status, // 'RESERVED', 'CONFIRMED', 'CHECKED-IN', 'CHECKED-OUT'
             ];
         });
+
+
+
+        return $this->success("List of all transactions", $transactions);
     }
 }

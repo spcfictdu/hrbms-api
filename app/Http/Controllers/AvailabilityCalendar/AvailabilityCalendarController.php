@@ -9,12 +9,14 @@ use App\Http\Requests\AvailabilityCalendar\CreateAvailabilityCalendarRequest;
 use App\Http\Requests\AvailabilityCalendar\ShowAvailabilityCalendarRequest;
 use App\Http\Requests\AvailabilityCalendar\UpdateAvailabilityCalendarRequest;
 use App\Http\Requests\AvailabilityCalendar\DeleteAvailabilityCalendarRequest;
-
+use App\Models\Room\Room;
+use App\Models\Room\RoomType;
 use App\Repositories\AvailabilityCalendar\IndexAvailabilityCalendarRepository;
 use App\Repositories\AvailabilityCalendar\CreateAvailabilityCalendarRepository;
 use App\Repositories\AvailabilityCalendar\ShowAvailabilityCalendarRepository;
 use App\Repositories\AvailabilityCalendar\UpdateAvailabilityCalendarRepository;
 use App\Repositories\AvailabilityCalendar\DeleteAvailabilityCalendarRepository;
+use Illuminate\Http\Request;
 
 class AvailabilityCalendarController extends Controller
 {
