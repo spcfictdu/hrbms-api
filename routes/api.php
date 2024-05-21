@@ -11,6 +11,7 @@ use App\Http\Controllers\{
     AvailabilityCalendar\AvailabilityCalendarController,
     Amenity\AmenityController
 };
+use App\Http\Controllers\Enum\EnumController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +47,7 @@ Route::group([
     'prefix' => 'room-type'
 ], function ($route) {
     $route->group([
-        'prefix'=> 'rate'
+        'prefix' => 'rate'
     ], function ($route) {
         $route->get('/', [RoomTypeRateController::class, 'index']);
         $route->get('/{roomTypeReferenceNumber}', [RoomTypeRateController::class, 'show']);
@@ -94,6 +95,7 @@ Route::group([
     $route->put('/update',                                                      [TransactionController::class, 'update']);
 });         
 
+// To check availability of rooms
 Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'availability-calendar'
@@ -103,6 +105,15 @@ Route::group([
     $route->get('/{referenceNumber}', [AvailabilityCalendarController::class, 'show']);
     $route->put('/update/{referenceNumber}', [AvailabilityCalendarController::class, 'update']);
     $route->delete('/delete/{referenceNumber}', [AvailabilityCalendarController::class, 'delete']);
+});
+
+// For enums or dropdowns
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'enum'
+], function ($route) {
+    $route->get('/room-type', [EnumController::class, 'roomTypeEnum']);
+    $route->get('/room-number', [EnumController::class, 'roomNumberEnum']);
 });
 
 Route::group([
