@@ -5,7 +5,7 @@ namespace App\Models\Transaction;
 use App\Models\Guest\Guest;
 use App\Models\Room\Room;
 
-use App\Models\Room\RoomType;
+use App\Models\Transaction\Payment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,7 +20,6 @@ class Transaction extends Model
         'reference_number',
         'room_id',
         'status',
-        'payment_id',
         'payment_type',
         'check_in_date',
         'check_in_time',
@@ -35,7 +34,6 @@ class Transaction extends Model
     protected $hidden = [
         'id',
         'room_id',
-        'payment_id',
         'guest_id',
         'created_at',
         'updated_at'
@@ -54,6 +52,7 @@ class Transaction extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class, 'transaction_id');
+
     }
 
     protected function transactionHistory()

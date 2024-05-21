@@ -12,6 +12,7 @@ use App\Http\Controllers\{
     Amenity\AmenityController,
     Enum\EnumController,
     Guest\GuestController,
+    ReportGeneration\ReportGenerationController
 };
 
 /*
@@ -136,4 +137,11 @@ Route::group([
     $route->get('/{referenceNumber}', [AmenityController::class, 'show']);
     $route->put('/update/{referenceNumber}', [AmenityController::class, 'update']);
     $route->delete('/delete/{referenceNumber}', [AmenityController::class, 'delete']);
+});
+
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'report'
+], function ($route) {
+    $route->post('/revenue', [ReportGenerationController::class, 'revenueReport']);
 });

@@ -6,7 +6,8 @@ use Illuminate\Support\Str;
 
 use App\Models\{
     Amenity\Amenity,
-    Room\RoomType
+    Room\RoomType,
+    Room\Room
 };
 
 trait Getter
@@ -30,6 +31,13 @@ trait Getter
         $roomType = RoomType::where('name', $roomTypeName)->firstOrFail();
 
         return $roomType->id;
+    }
+
+    protected function getRoomIdByRoomNumber($roomNumber)
+    {
+        $room = Room::where('room_number', $roomNumber)->firstOrFail();
+
+        return $room->id;
     }
 
     protected function getCamelCase(array $array)
