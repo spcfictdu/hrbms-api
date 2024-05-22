@@ -87,7 +87,8 @@ class IndexAvailabilityCalendarRepository extends BaseRepository
                 'roomType' => $transaction->room?->roomType->name,
                 'roomNumber' => $transaction->room?->room_number,
                 'roomStatus' => $transaction->room?->status, // 'OCCUPIED', 'DIRTY', 'READY FOR OCCUPANCY', 'UNALLOCATED'
-                'guest' => $transaction->guest->first_name . ' ' . $transaction->guest->last_name,
+                // 'guest' => $transaction->guest?->first_name . ' ' . $transaction->guest?->last_name,
+                'guest' => $transaction->guest?->full_name,
                 'checkIn' => $transaction->check_in_date . 'T' . $transaction->check_in_time,
                 'checkOut' => $transaction->check_out_date . 'T' . $transaction->check_out_time,
                 // 'checkIn' => $formattedCheckInDateTime->format('F j, Y - g:i A'),

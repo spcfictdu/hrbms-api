@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
             return response()->json(
                 [
                     'message' => "Authentication Invalid",
-                    'results' => [],
+                    'results' => [$e->getMessage()],
                     'code' => 401,
                     'errors' => true,
                 ],
@@ -55,7 +55,7 @@ class Handler extends ExceptionHandler
             return response()->json(
                 [
                     'message' => "User Not Authenticated",
-                    'results' => [],
+                    'results' => [$e->getMessage()],
                     'code' => 404,
                     'errors' => true,
                 ],
@@ -67,7 +67,7 @@ class Handler extends ExceptionHandler
             return response()->json(
                 [
                     'message' => "Data not found. Please double check your data.",
-                    'results' => [],
+                    'results' => [$e->getMessage()],
                     'code' => 404,
                     'errors' => true,
                 ],
@@ -79,7 +79,7 @@ class Handler extends ExceptionHandler
             return response()->json(
                 [
                     'message' => "Some data does not exist. Please double check your data.",
-                    'results' => [],
+                    'results' => [$e->getMessage()],
                     'code' => 404,
                     'errors' => true,
                 ],
