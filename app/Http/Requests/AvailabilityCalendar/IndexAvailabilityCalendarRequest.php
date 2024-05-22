@@ -6,7 +6,7 @@ use App\Http\Requests\ResponseRequest;
 
 class IndexAvailabilityCalendarRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -24,7 +24,9 @@ class IndexAvailabilityCalendarRequest extends ResponseRequest
     public function rules()
     {
         return [
-            //
+            'roomType' => 'nullable|exists:room_types,name',
+            'roomNumber' => 'nullable|exists:rooms,room_number',
+            'dateRange' => 'nullable',
         ];
     }
 }
