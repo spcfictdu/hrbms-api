@@ -144,4 +144,5 @@ Route::group([
     'prefix' => 'report'
 ], function ($route) {
     $route->post('/revenue', [ReportGenerationController::class, 'revenueReport']);
+    $route->post('/payment', [ReportGenerationController::class, 'paymentReport']);
 });

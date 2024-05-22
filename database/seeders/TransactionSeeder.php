@@ -335,7 +335,8 @@ class TransactionSeeder extends Seeder
             Payment::insert([
                 'transaction_id' => $transaction['id'],
                 'payment_type' => $transaction['payment']['payment_type'][$idPaymentTypeIndex],
-                'amount_received' => $transaction['payment']['amount_received']['tuesday']
+                'amount_received' => $transaction['payment']['amount_received']['tuesday'],
+                'created_at' => $now
             ]);
         }
     }
