@@ -1,0 +1,99 @@
+### Create Transaction
+
+This endpoint is used to create a transaction.
+
+#### URL
+
+```
+{{base_url}}/api/transaction/create
+```
+
+#### Method
+
+```
+POST
+```
+
+#### Authentication Needed
+
+```
+TRUE
+```
+
+#### Permitted Roles
+
+```
+ADMIN
+FRONT DESK
+```
+
+#### Request Body
+
+``` json
+{
+    "status": "RESERVED",
+    "room": {
+        "referenceNumber": "1a3e4628"
+    },
+    "guest": {
+        "firstName": "Alex",
+        "middleName": "Mosing",
+        "lastName": "Camaddo",
+        "address": {
+            "province": "Pampanga",
+            "city": "Angeles"
+        },
+        "contact": {
+            "phoneNum": "09605607559",
+            "email": "test@gmail.com"
+        },
+        "id": {
+            "type": "National-ID",
+            "number": "1234"
+        }
+    },
+    
+    // IF HAVE PAYMENTS E.G BOOKING FORM
+    // "payment": {
+    //     "paymentType": "CASH",
+    //     "amountReceived": 1858
+    // },
+
+    "checkIn": {
+        "date": "2024-05-13",
+        "time": "09:00"
+    },
+    "checkOut": {
+        "date": "2024-05-14",
+        "time": "14:00"
+    }
+}
+```
+
+#### Response Example (Success)
+
+```json
+{
+    "message": "Room type created successfully.",
+    "results": {
+        "firstName": "Alex",
+        "middleName": "Mosing",
+        "lastName": "Camaddo",
+        "province": "Pampanga",
+        "city": "Angeles",
+        "phoneNumber": "09605607559",
+        "email": "test@gmail.com",
+        "idType": "National-ID",
+        "idNumber": "1234",
+        "referenceNumber": "d9fb48e9",
+        "status": "RESERVED",
+        "checkInDate": "2024-05-13",
+        "checkInTime": "09:00",
+        "checkOutDate": "2024-05-14",
+        "checkOutTime": "14:00",
+        "numberOfGuest": 2
+    },
+    "code": 200,
+    "error": false
+}
+```

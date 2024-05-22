@@ -1,8 +1,11 @@
 <?php
+
 namespace App\Repositories\Transaction;
 
-use App\Models\Transaction\{Transaction,
-                            Payment};
+use App\Models\Transaction\{
+    Transaction,
+    Payment
+};
 
 use Carbon\Carbon;
 
@@ -27,7 +30,7 @@ class ShowTransactionRepository extends BaseRepository
 
         return $pay->transaction;
 
-        if($guest->middle_name){
+        if ($guest->middle_name) {
             return $this->success("Transaction Info", [
                 "bookingHistory" => [
                     "room" => [
@@ -55,7 +58,7 @@ class ShowTransactionRepository extends BaseRepository
                     ]
                 ]
             ]);
-        } else{
+        } else {
             return $this->success("Transaction Info", [
                 "bookingHistory" => [
                     "room" => [

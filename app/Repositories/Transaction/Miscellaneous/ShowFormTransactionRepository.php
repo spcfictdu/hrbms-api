@@ -24,7 +24,7 @@ class ShowFormTransactionRepository extends BaseRepository
         $guests = Guest::all();
         $day = Str::lower(Carbon::now()->format('l'));
 
-        if($room){
+        if ($room) {
             return $this->success("Transaction Form existing info.", [
                 "bookingSummary" => [
                     "roomName" => $roomType->name,
@@ -34,7 +34,7 @@ class ShowFormTransactionRepository extends BaseRepository
             ]);
         }
         // try{
-            
+
         // } catch (\Exception $e) {
         //     return $this->error("Error: " . $e->getMessage(), 500, [], false);
         // }
