@@ -40,6 +40,7 @@ class ShowTransactionRepository extends BaseRepository
 
                     ],
                     "transaction" => [
+                        "referenceNumber" => $transaction->reference_number,
                         "status" => $transaction->status,
                         "checkInDate" => $transaction->check_in_date,
                         "checkInTime" => $transaction->check_in_time,
@@ -59,6 +60,7 @@ class ShowTransactionRepository extends BaseRepository
                 ]
             ]);
         } else {
+            return $transaction->reference_number;
             return $this->success("Transaction Info", [
                 "bookingHistory" => [
                     "room" => [
