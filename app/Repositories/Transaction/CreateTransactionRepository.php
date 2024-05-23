@@ -32,7 +32,7 @@ class CreateTransactionRepository extends BaseRepository
                 "id_type" => $request->guest['id']['type'],
                 "id_number" => $request->guest['id']['number']
             ]);
-
+            
             $transaction = Transaction::create([
                 "reference_number" => $this->transactionReferenceNumber(),
                 "room_id" => $room->id,

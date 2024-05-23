@@ -22,6 +22,9 @@ class ShowFormTransactionRepository extends BaseRepository
         $roomType = $room->roomType;
         $rate = $roomType->rates->first();
         $guests = Guest::all();
+        $filteredGuests = $guests->map(function($guest) {
+            return $guest->makeHidden(['id_type', 'id_number']);
+        });
         $day = Str::lower(Carbon::now()->format('l'));
 
         if ($room) {
@@ -30,7 +33,8 @@ class ShowFormTransactionRepository extends BaseRepository
                     "roomName" => $roomType->name,
                     "capacity" => $roomType->capacity,
                     "roomTotal" => $rate->$day
-                ]
+                ],
+                "guests" => $filteredGuests
             ]);
         }
         // try{

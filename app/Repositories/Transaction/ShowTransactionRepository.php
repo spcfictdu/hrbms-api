@@ -29,8 +29,6 @@ class ShowTransactionRepository extends BaseRepository
         if ($payment) {
             $pay = Payment::where('id', $payment->id)->first();
         }
-        // return $pay;
-
 
         if ($guest->middle_name) {
             return $this->success("Transaction Info", [
