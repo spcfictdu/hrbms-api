@@ -10,6 +10,7 @@ class RoomEnumRepository extends BaseRepository
     public function execute($request)
     {
         $filterRoomType = $request->input('roomType');
+        $filterRoomNumber = $request->input('roomNumber');
 
         $roomsQuery = Room::query();
 
@@ -18,6 +19,11 @@ class RoomEnumRepository extends BaseRepository
             $roomsQuery->whereHas('roomType', function ($query) use ($filterRoomType) {
                 $query->where('name', $filterRoomType);
             });
+        }
+
+        // Apply room number filter
+        if ($filterRoomNumber) {
+            $roomsQuery->where('room_number', $filterRoomNumber);
         }
 
         // $roomNumbers = $roomsQuery->pluck('room_number');
@@ -53,7 +59,7 @@ class RoomEnumRepository extends BaseRepository
                 'roomTypeCapacity' => $room->roomType->capacity ?? 'N/A',
                 'roomTotal' => $rate ? $rate[$dayOfWeek] : 0,
                 'extraPersonTotal' => $extraPersonRate,
-                'total' => $rate ? $rate[$dayOfWeek] + $extraPersonRate : 0,
+                // 'total' => $rate ? $rate[$dayOfWeek] + $extraPersonRate : 0,
                 // 'totalReceived' => $room->transactions?->payment,
                 // 'test' => $room->transaction,
             ];
