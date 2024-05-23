@@ -52,7 +52,7 @@ class RoomType extends Model
         return $this->hasMany(RoomTypeImage::class, 'room_type_id');
     }
 
-    protected function rates()
+    public function rates()
     {
         return $this->hasMany(RoomTypeRate::class, 'room_type_id');
     }

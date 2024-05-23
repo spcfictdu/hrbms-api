@@ -6,7 +6,7 @@ use App\Http\Requests\ResponseRequest;
 
 class CreateTransactionRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -25,7 +25,7 @@ class CreateTransactionRequest extends ResponseRequest
     {
         return [
             'guest.firstName' => ['required', 'string'],
-            'guest.middleName' => ['string'],
+            'guest.middleName' => ['nullable', 'string'],
             'guest.lastName' => ['required', 'string'],
             'guest.address.province' => ['required', 'string'],
             'guest.address.city' => ['required', 'string'],

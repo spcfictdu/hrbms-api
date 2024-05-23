@@ -1,4 +1,4 @@
-### Room Type Enum
+### Room Number Enum
 
 This endpoint is used for dropdowns in the frontend to display the room numbers.
 

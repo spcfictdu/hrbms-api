@@ -26,9 +26,11 @@ class ShowTransactionRepository extends BaseRepository
         $payment = $transaction->payment;
         $day = Str::lower($transaction->created_at->format('l'));
 
-        $pay = Payment::where('id', $payment->id)->first();
+        if ($payment) {
+            $pay = Payment::where('id', $payment->id)->first();
+        }
+        // return $pay;
 
-        return $pay->transaction;
 
         if ($guest->middle_name) {
             return $this->success("Transaction Info", [
@@ -47,10 +49,10 @@ class ShowTransactionRepository extends BaseRepository
                         "checkOutTime" => $transaction->check_out_time,
                     ],
                     "transactionHistory" => [
-                        "checkInDate" => $transactionHistory->check_in_date ?? null,
-                        "checkInTime" => $transactionHistory->check_in_time ?? null,
-                        "checkOutDate" => $transactionHistory->check_out_date ?? null,
-                        "checkOutTime" => $transactionHistory->check_out_time ?? null,
+                        "checkInDate" => $transactionHistory?->check_in_date,
+                        "checkInTime" => $transactionHistory?->check_in_time,
+                        "checkOutDate" => $transactionHistory?->check_out_date,
+                        "checkOutTime" => $transactionHistory?->check_out_time,
                     ],
                     "guestName" => "{$guest->last_name}, {$guest->first_name} {$guest->middle_name}",
                     "priceSummary" => [
@@ -75,10 +77,10 @@ class ShowTransactionRepository extends BaseRepository
                         "checkOutTime" => $transaction->check_out_time,
                     ],
                     "transactionHistory" => [
-                        "checkInDate" => $transactionHistory->check_in_date,
-                        "checkInTime" => $transactionHistory->check_in_time,
-                        "checkOutDate" => $transactionHistory->check_out_date,
-                        "checkOutTime" => $transactionHistory->check_out_time,
+                        "checkInDate" => $transactionHistory?->check_in_date,
+                        "checkInTime" => $transactionHistory?->check_in_time,
+                        "checkOutDate" => $transactionHistory?->check_out_date,
+                        "checkOutTime" => $transactionHistory?->check_out_time,
                     ],
                     "guestName" => "{$guest->last_name}, {$guest->first_name}",
                     "priceSummary" => [

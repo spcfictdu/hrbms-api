@@ -115,6 +115,7 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'enum'
 ], function ($route) {
+    $route->get('/room', [EnumController::class, 'roomEnum']);
     $route->get('/room-type', [EnumController::class, 'roomTypeEnum']);
     $route->get('/room-number', [EnumController::class, 'roomNumberEnum']);
 });
