@@ -146,4 +146,5 @@ Route::group([
 ], function ($route) {
     $route->post('/revenue', [ReportGenerationController::class, 'revenueReport']);
     $route->post('/payment', [ReportGenerationController::class, 'paymentReport']);
+    $route->post('/check',   [ReportGenerationController::class, 'checkInOutReport']);
 });

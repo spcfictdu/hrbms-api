@@ -43,32 +43,18 @@ class GeneratePaymentReportRepository extends BaseRepository
 
             $guest = $payment->transaction->guest;
 
-            if($guest->middle_name){
                 array_push($response, [
                     "date" => $date,
                     "time" => $time,
                     "email" => $guest->email,
                     "transactionNumber" => $payment->transaction->reference_number,
-                    "fullName" => "{$guest->last_name}, {$guest->first_name} {$guest->middle_name}",
+                    "fullName" => $guest->middle_name ? "{$guest->last_name}, {$guest->first_name} {$guest->middle_name}" : "{$guest->last_name}, {$guest->first_name}",
                     "paymentType" => $payment->payment_type,
                     "total" => $payment->amount_received
                 ]);
 
-            } else {
-                array_push($response, [
-                    "date" => $date,
-                    "time" => $time,
-                    "email" => $guest->email,
-                    "transactionNumber" => $payment->transaction->reference_number,
-                    "fullName" => "{$guest->last_name}, {$guest->first_name}",
-                    "paymentType" => $payment->payment_type,
-                    "total" => $payment->amount_received
-                ]);
-            }
         }
 
         return $this->success("Payment report list.", $response);
-
-
     }
 }

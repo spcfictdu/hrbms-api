@@ -7,25 +7,29 @@ use App\Http\Controllers\Controller;
 // * REQUEST
 use App\Http\Requests\ReportGeneration\{
     GenerateRevenueReportRequest,
-    GeneratePaymentReportRequest
+    GeneratePaymentReportRequest,
+    GenerateCheckInOutReportRequest
 };
 
 // * REPOSITORY
 use App\Repositories\ReportGeneration\{
     GenerateRevenueReportRepository,
-    GeneratePaymentReportRepository
+    GeneratePaymentReportRepository,
+    GenerateCheckInOutReportRepository
 };
 
 class ReportGenerationController extends Controller
 {
-    protected $revenueReport, $paymentReport;
+    protected $revenueReport, $paymentReport, $checkInOutReport;
 
     public function __construct(
         GenerateRevenueReportRepository $revenueReport,
-        GeneratePaymentReportRepository $paymentReport
+        GeneratePaymentReportRepository $paymentReport,
+        GenerateCheckInOutReportRepository $checkInOutReport
     ) {
         $this->revenueReport = $revenueReport;
         $this->paymentReport = $paymentReport;
+        $this->checkInOutReport = $checkInOutReport;
     }
 
     protected function revenueReport(GenerateRevenueReportRequest $request)
@@ -36,5 +40,10 @@ class ReportGenerationController extends Controller
     protected function paymentReport(GeneratePaymentReportRequest $request)
     {
         return $this->paymentReport->execute($request);
+    }
+
+    protected function checkInOutReport(GenerateCheckInOutReportRequest $request)
+    {
+        return $this->checkInOutReport->execute($request);
     }
 }
