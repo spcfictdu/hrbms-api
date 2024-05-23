@@ -30,6 +30,8 @@ ALL
 
 -   roomType: STRING (optional) - The room type to filter the room numbers
     -   Example: {{base_url}}/api/enum/room-number?roomType=DELUXE
+-   roomNumber: INT (optional) - The room number to filter the room numbers
+    -   Example: {{base_url}}/api/enum/room-number?roomNumber=101
 
 #### Response Example (Success)
 

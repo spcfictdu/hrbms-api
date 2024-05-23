@@ -6,7 +6,7 @@ use App\Http\Requests\ResponseRequest;
 
 class RoomEnumRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -24,7 +24,8 @@ class RoomEnumRequest extends ResponseRequest
     public function rules()
     {
         return [
-            //
+            'roomType' => 'nullable|string',
+            'roomNumber' => 'nullable|integer',
         ];
     }
 }
