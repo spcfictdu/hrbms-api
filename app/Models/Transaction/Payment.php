@@ -12,12 +12,14 @@ class Payment extends Model
     protected $table = "payments";
 
     protected $fillable = [
+        "transaction_id",
         "payment_type",
         "amount_received"
     ];
 
     protected $hidden = [
         "id",
+        "transaction_id",
         "created_at",
         "updated_at"
     ];

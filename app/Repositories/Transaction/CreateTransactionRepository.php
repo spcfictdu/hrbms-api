@@ -19,8 +19,7 @@ class CreateTransactionRepository extends BaseRepository
         $room = Room::where('reference_number', $request->room['referenceNumber'])->first();
 
         if($room){
-            
-
+        
             $guest = Guest::create([
                 'first_name' => $request->guest['firstName'],
                 "middle_name" => $request->guest['middleName'],
@@ -32,21 +31,23 @@ class CreateTransactionRepository extends BaseRepository
                 "id_type" => $request->guest['id']['type'],
                 "id_number" => $request->guest['id']['number']
             ]);
+            if($guest->id){
+                $transaction = Transaction::create([
+                    "reference_number" => $this->transactionReferenceNumber(),
+                    "room_id" => $room->id,
+                    "status" => $request->status,
+                    // "payment_id" => $payment->id ?? null,
+                    "check_in_date" => $request->checkIn['date'],
+                    "check_in_time" => $request->checkIn['time'],
+                    "check_out_date" => $request->checkOut['date'],
+                    "check_out_time" => $request->checkOut['time'],
+                    // "number_of_guest" => $request->guest['numberOfGuest'],
+                    "guest_id" => $guest->id
+                ]);
+            }
             
-            $transaction = Transaction::create([
-                "reference_number" => $this->transactionReferenceNumber(),
-                "room_id" => $room->id,
-                "status" => $request->status,
-                // "payment_id" => $payment->id ?? null,
-                "check_in_date" => $request->checkIn['date'],
-                "check_in_time" => $request->checkIn['time'],
-                "check_out_date" => $request->checkOut['date'],
-                "check_out_time" => $request->checkOut['time'],
-                // "number_of_guest" => $request->guest['numberOfGuest'],
-                "guest_id" => $guest->id
-            ]);
-
-            if(isset($request->payment)){
+            // return $transaction->id;
+            if(isset($request->payment) && isset($transaction->id)){
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,
                     "payment_type" => $request->payment['paymentType'],
