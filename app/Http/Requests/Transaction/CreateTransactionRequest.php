@@ -25,7 +25,7 @@ class CreateTransactionRequest extends ResponseRequest
     {
         return [
             'guest.firstName' => ['required', 'string'],
-            'guest.middleName' => ['required', 'string'],
+            'guest.middleName' => ['string'],
             'guest.lastName' => ['required', 'string'],
             'guest.address.province' => ['required', 'string'],
             'guest.address.city' => ['required', 'string'],
@@ -33,7 +33,7 @@ class CreateTransactionRequest extends ResponseRequest
             'guest.contact.email' => ['required', 'string'],
             'guest.id.type' => ['required'],
             'guest.id.number' => ['required'],
-            'guest.numberOfGuest' => ['required', 'integer'],
+            // 'guest.numberOfGuest' => ['required', 'integer'],
             'checkIn.date' => ['required', 'date'],
             'checkIn.time' => ['date_format:H:i'],
             'checkOut.date' => ['required', 'date'],
