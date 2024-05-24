@@ -54,7 +54,6 @@ class Transaction extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class, 'transaction_id');
-
     }
 
     protected function transactionHistory()
@@ -65,5 +64,16 @@ class Transaction extends Model
     protected function guest()
     {
         return $this->belongsTo(Guest::class, 'guest_id');
+    }
+
+    public function getFullCheckInAttribute()
+    {
+        // 2024-05-24T06:34:09.000000Z
+        return $this->check_in_date . 'T' . $this->check_in_time;
+    }
+
+    public function getFullCheckOutAttribute()
+    {
+        return $this->check_out_date . 'T' . $this->check_out_time;
     }
 }
