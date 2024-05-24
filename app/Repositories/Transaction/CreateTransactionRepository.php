@@ -18,9 +18,10 @@ class CreateTransactionRepository extends BaseRepository
     {
         $room = Room::where('reference_number', $request->room['referenceNumber'])->first();
 
-        if($room){
-        
+        if ($room) {
+
             $guest = Guest::create([
+                'reference_number' => $this->guestReferenceNumber(),
                 'first_name' => $request->guest['firstName'],
                 "middle_name" => $request->guest['middleName'],
                 "last_name" => $request->guest['lastName'],
@@ -31,7 +32,7 @@ class CreateTransactionRepository extends BaseRepository
                 "id_type" => $request->guest['id']['type'],
                 "id_number" => $request->guest['id']['number']
             ]);
-            if($guest->id){
+            if ($guest->id) {
                 $transaction = Transaction::create([
                     "reference_number" => $this->transactionReferenceNumber(),
                     "room_id" => $room->id,
@@ -45,33 +46,32 @@ class CreateTransactionRepository extends BaseRepository
                     "guest_id" => $guest->id
                 ]);
             }
-            
+
             // return $transaction->id;
-            if(isset($request->payment) && isset($transaction->id)){
+            if (isset($request->payment) && isset($transaction->id)) {
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,
                     "payment_type" => $request->payment['paymentType'],
                     "amount_received" => $request->payment['amountReceived']
                 ]);
             }
-        } else{
+        } else {
             return $this->error('Something went wrong!');
         }
-    
-        
-    if(isset($payment)){
-        return $this->success("Room type created successfully.", Arr::collapse([
-            $this->getCamelCase($guest->toArray()),
-            $this->getCamelCase($transaction->toArray()),
-            $this->getCamelCase($payment->toArray())
-            
-        ]));
-    } else{
-        return $this->success("Room type created successfully.", Arr::collapse([
-            $this->getCamelCase($guest->toArray()),
-            $this->getCamelCase($transaction->toArray())
-        ]));
-    }
-        
+
+
+        if (isset($payment)) {
+            return $this->success("Room type created successfully.", Arr::collapse([
+                $this->getCamelCase($guest->toArray()),
+                $this->getCamelCase($transaction->toArray()),
+                $this->getCamelCase($payment->toArray())
+
+            ]));
+        } else {
+            return $this->success("Room type created successfully.", Arr::collapse([
+                $this->getCamelCase($guest->toArray()),
+                $this->getCamelCase($transaction->toArray())
+            ]));
+        }
     }
 }

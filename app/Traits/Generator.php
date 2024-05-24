@@ -9,6 +9,7 @@ use App\Models\{
     Room\Room,
     Transaction\Transaction
 };
+use App\Models\Guest\Guest;
 
 trait Generator
 {
@@ -17,7 +18,6 @@ trait Generator
         do {
 
             $referenceNumber = bin2hex(random_bytes(4));
-
         } while (RoomType::where("reference_number", $referenceNumber)->first());
 
         return $referenceNumber;
@@ -28,7 +28,6 @@ trait Generator
         do {
 
             $referenceNumber = bin2hex(random_bytes(3));
-
         } while (Amenity::where("reference_number", $referenceNumber)->first());
 
         return $referenceNumber;
@@ -39,7 +38,6 @@ trait Generator
         do {
 
             $referenceNumber = bin2hex(random_bytes(4));
-
         } while (RoomTypeRate::where("reference_number", $referenceNumber)->first());
 
         return $referenceNumber;
@@ -50,7 +48,6 @@ trait Generator
         do {
 
             $referenceNumber = bin2hex(random_bytes(4));
-
         } while (Room::where("reference_number", $referenceNumber)->first());
 
         return $referenceNumber;
@@ -61,8 +58,17 @@ trait Generator
         do {
 
             $referenceNumber = bin2hex(random_bytes(4));
-
         } while (Transaction::where("reference_number", $referenceNumber)->first());
+
+        return $referenceNumber;
+    }
+
+    protected function guestReferenceNumber()
+    {
+        do {
+
+            $referenceNumber = bin2hex(random_bytes(4));
+        } while (Guest::where("reference_number", $referenceNumber)->first());
 
         return $referenceNumber;
     }

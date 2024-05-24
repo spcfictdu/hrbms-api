@@ -47,6 +47,7 @@ class IndexGuestRepository extends BaseRepository
         $guests = $guestQuery->get()->transform(function ($guest) {
             return [
                 'id' => $guest->id,
+                'referenceNumber' => $guest->reference_number,
                 'fullName' => $guest->full_name,
                 'email' => $guest->email,
                 'phone' => $guest->phone_number,

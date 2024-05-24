@@ -30,65 +30,33 @@ class ShowTransactionRepository extends BaseRepository
             $pay = Payment::where('id', $payment->id)->first();
         }
 
-        if ($guest->middle_name) {
-            return $this->success("Transaction Info", [
-                "bookingHistory" => [
-                    "room" => [
-                        "number" => $room->room_number,
-                        "name" => $roomType->name,
-                        "capacity" => $roomType->capacity,
+        return $this->success("Transaction Info", [
+            "bookingHistory" => [
+                "room" => [
+                    "number" => $room->room_number,
+                    "name" => $roomType->name,
+                    "capacity" => $roomType->capacity,
 
-                    ],
-                    "transaction" => [
-                        "referenceNumber" => $transaction->reference_number,
-                        "status" => $transaction->status,
-                        "checkInDate" => $transaction->check_in_date,
-                        "checkInTime" => $transaction->check_in_time,
-                        "checkOutDate" => $transaction->check_out_date,
-                        "checkOutTime" => $transaction->check_out_time,
-                    ],
-                    "transactionHistory" => [
-                        "checkInDate" => $transactionHistory?->check_in_date,
-                        "checkInTime" => $transactionHistory?->check_in_time,
-                        "checkOutDate" => $transactionHistory?->check_out_date,
-                        "checkOutTime" => $transactionHistory?->check_out_time,
-                    ],
-                    "guestName" => "{$guest->last_name}, {$guest->first_name} {$guest->middle_name}",
-                    "priceSummary" => [
-                        "roomTotal" => $roomTypeRate->$day,
-                    ]
+                ],
+                "transaction" => [
+                    "referenceNumber" => $transaction->reference_number,
+                    "status" => $transaction->status,
+                    "checkInDate" => $transaction->check_in_date,
+                    "checkInTime" => $transaction->check_in_time,
+                    "checkOutDate" => $transaction->check_out_date,
+                    "checkOutTime" => $transaction->check_out_time,
+                ],
+                "transactionHistory" => [
+                    "checkInDate" => $transactionHistory?->check_in_date,
+                    "checkInTime" => $transactionHistory?->check_in_time,
+                    "checkOutDate" => $transactionHistory?->check_out_date,
+                    "checkOutTime" => $transactionHistory?->check_out_time,
+                ],
+                "guestName" => $guest->full_name,
+                "priceSummary" => [
+                    "roomTotal" => $roomTypeRate->$day,
                 ]
-            ]);
-        } else {
-            return $transaction->reference_number;
-            return $this->success("Transaction Info", [
-                "bookingHistory" => [
-                    "room" => [
-                        "number" => $room->room_number,
-                        "name" => $roomType->name,
-                        "capacity" => $roomType->capacity,
-
-                    ],
-                    "transaction" => [
-                        "referenceNumber" => $transaction->reference_number,
-                        "status" => $transaction->status,
-                        "checkInDate" => $transaction->check_in_date,
-                        "checkInTime" => $transaction->check_in_time,
-                        "checkOutDate" => $transaction->check_out_date,
-                        "checkOutTime" => $transaction->check_out_time,
-                    ],
-                    "transactionHistory" => [
-                        "checkInDate" => $transactionHistory?->check_in_date,
-                        "checkInTime" => $transactionHistory?->check_in_time,
-                        "checkOutDate" => $transactionHistory?->check_out_date,
-                        "checkOutTime" => $transactionHistory?->check_out_time,
-                    ],
-                    "guestName" => "{$guest->last_name}, {$guest->first_name}",
-                    "priceSummary" => [
-                        "roomTotal" => $roomTypeRate->$day,
-                    ]
-                ]
-            ]);
-        }
+            ]
+        ]);
     }
 }

@@ -4,12 +4,16 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Faker\Factory as Faker;
 use App\Models\Room\{
     RoomType,
     RoomTypeAmenity,
-    RoomTypeRate
+    RoomTypeRate,
+    RoomTypeImage
 };
 use App\Traits\Generator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class RoomTypeSeeder extends Seeder
 {
@@ -21,6 +25,8 @@ class RoomTypeSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = Faker::create();
+
         $roomTypes = [
             [
                 'id' => 1,
@@ -124,9 +130,14 @@ class RoomTypeSeeder extends Seeder
             ],
         ];
 
+        $directories = Storage::directories('public');
+        foreach ($directories as $directory) {
+            Storage::deleteDirectory($directory);
+        }
+
         foreach ($roomTypes as $roomType) {
-            RoomType::insert([
-                'id' => $roomType['id'],
+            $roomTypeCreation = RoomType::create([
+                // 'id' => $roomType['id'],
                 'reference_number' => $this->roomTypeReferenceNumber(),
                 'name' => $roomType['name'],
                 'description' => $roomType['description'],
@@ -143,7 +154,7 @@ class RoomTypeSeeder extends Seeder
                     'amenity_id' => $amenity,
                 ]);
             }
-            
+
             RoomTypeRate::create([
                 'reference_number' => $this->ratesReferenceNumber(),
                 'room_type_id' => $roomType['id'],
@@ -156,6 +167,32 @@ class RoomTypeSeeder extends Seeder
                 'saturday' => $roomType['rates']['saturday'],
                 'sunday' => $roomType['rates']['sunday']
             ]);
+
+            // Delete existing images
+            // $existingImage = RoomTypeImage::where('room_type_id', $roomType['id'])->first();
+            // if ($existingImage) {
+            //     Storage::delete('public/' . $existingImage->filename);
+            //     $existingImage->delete();
+            // }
+
+            // Delete existing images
+            // RoomTypeImage::where('room_type_id', $roomType['id'])->delete();
+            // if (Storage::exists("public/" . $roomTypeCreation->reference_number)) {
+            //     Storage::deleteDirectory("public/" . $roomTypeCreation->reference_number);
+            // }
+
+            // Storage::makeDirectory(storage_path("app/public/hello"));
+            Storage::makeDirectory("public/" . $roomTypeCreation->reference_number);
+
+            // Generate 4 new images
+            for ($i = 0; $i < 4; $i++) {
+                $imagePath = $faker->image(("storage\\app\\public\\" . $roomTypeCreation->reference_number), 640, 480, 'animals', false); // Generate image and get local path
+
+                RoomTypeImage::create([
+                    'room_type_id' => $roomType['id'],
+                    'filename' => "{$imagePath}",
+                ]);
+            }
         }
     }
 }

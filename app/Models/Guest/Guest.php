@@ -14,6 +14,7 @@ class Guest extends Model
     protected $table = 'guests';
 
     protected $fillable = [
+        'reference_number',
         'first_name',
         'middle_name',
         'last_name',
@@ -43,10 +44,13 @@ class Guest extends Model
 
     public function getFullNameAttribute()
     {
-        $fullName = "{$this->last_name}, {$this->first_name} {$this->middle_name} ";
-        if ($this->suffix) {
-            $fullName .= $this->suffix;
+        $fullName = "{$this->last_name}, {$this->first_name}";
+        if ($this->middle_name) {
+            $fullName .= " {$this->middle_name}";
         }
+        // if ($this->suffix) {
+        //     $fullName .= " {$this->suffix}";
+        // }
         return $fullName;
     }
 }

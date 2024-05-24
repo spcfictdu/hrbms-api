@@ -306,6 +306,7 @@ class TransactionSeeder extends Seeder
             $idPaymentTypeIndex = array_rand($transaction['payment']['payment_type']);
 
             Guest::insert([
+                'reference_number' => $this->guestReferenceNumber(),
                 'first_name' => $transaction['first_name'],
                 'middle_name' => $transaction['middle_name'],
                 'last_name' => $transaction['last_name'],

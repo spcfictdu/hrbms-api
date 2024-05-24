@@ -5,7 +5,7 @@ This endpoint is used to get the list of all guests.
 #### URL
 
 ```
-{{base_url}}/api/guests
+{{base_url}}/api/guest
 ```
 
 #### Method
@@ -42,29 +42,27 @@ FRONT DESK
     "message": "Successfully retrieved guests",
     "results": [
         {
+            "id": 1,
+            "referenceNumber": "64065b9b",
+            "fullName": "LITTEL, ANSEL LIND",
+            "email": "mpurdy@yahoo.com",
+            "phone": "2691752667"
+        },
+        {
             "id": 2,
-            "fullName": "FAHEY, LIBBY WITTING ",
-            "email": "zprice@west.info",
-            "phone": "4153120367"
+            "referenceNumber": "5dd2c2a5",
+            "fullName": "LARKIN, FRANKIE PFANNERSTILL",
+            "email": "kuhlman.jimmy@haley.info",
+            "phone": "5458958787"
         },
         {
             "id": 3,
-            "fullName": "KERTZMANN, ELBERT GREENFELDER ",
-            "email": "kathryn89@mccullough.info",
-            "phone": "3757448793"
+            "referenceNumber": "b0d7395f",
+            "fullName": "MARQUARDT, LELIA BEATTY",
+            "email": "otto69@gmail.com",
+            "phone": "9470218251"
         },
-        {
-            "id": 4,
-            "fullName": "MORISSETTE, DAHLIA THIEL ",
-            "email": "brakus.orlando@yahoo.com",
-            "phone": "3984082821"
-        },
-        {
-            "id": 5,
-            "fullName": "STEUBER, INES LAKIN ",
-            "email": "pascale66@effertz.com",
-            "phone": "9989655340"
-        }
+        ...
     ],
     "code": 200,
     "error": false
