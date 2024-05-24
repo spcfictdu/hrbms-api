@@ -42,7 +42,7 @@ class RoomController extends Controller
 
     protected function index(IndexRoomRequest $request)
     {
-        return $this->index->execute();
+        return $this->index->execute($request);
     }
 
     protected function create(CreateRoomRequest $request)
