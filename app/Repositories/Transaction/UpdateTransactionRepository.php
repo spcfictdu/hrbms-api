@@ -50,11 +50,15 @@ class UpdateTransactionRepository extends BaseRepository
                         ]);
                     }
                 } else{
-                    TransactionHistory::create([
+                    $transactionHistory = TransactionHistory::create([
                         "check_in_date" => $request->checkInDate ?? null,
                         "check_in_time" => $request->checkInTime ?? null,
                         "check_out_date" => $request->checkOutDate ?? null,
                         "check_out_time" => $request->checkOutTime ?? null
+                    ]);
+
+                    $transaction->update([
+                        "transaction_history_id" => $transactionHistory->id
                     ]);
 
                     if($request->checkInDate && $request->checkInTime){

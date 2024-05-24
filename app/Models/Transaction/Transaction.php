@@ -27,6 +27,7 @@ class Transaction extends Model
         'check_out_time',
         'number_of_guest',
         'guest_id',
+        'transaction_history_id',
         'created_at',
         'updated_at'
     ];
@@ -35,6 +36,7 @@ class Transaction extends Model
         'id',
         'room_id',
         'guest_id',
+        'transaction_history_id',
         'created_at',
         'updated_at'
     ];
