@@ -32,21 +32,42 @@ class UpdateTransactionRepository extends BaseRepository
             } elseif(!isset($request->status)){
                 $transactionHistory = TransactionHistory::where('id', $transaction->transaction_history_id)->first();
 
+                // return $transactionHistory;
+
                 if($transactionHistory){
-                    $transactionHistory->update([
-                        "check_in_date" => $request->checkInDate ?? null,
-                        "check_in_time" => $request->checkInTime ?? null,
-                        "check_out_date" => $request->checkOutDate ?? null,
-                        "check_out_time" => $request->checkime ?? null
-                    ]);
+
+                    if($request->checkInDate && $request->checkInTime){
+                        $transactionHistory->update([
+                            "check_in_date" => $request->checkInDate ?? null,
+                            "check_in_time" => $request->checkInTime ?? null,
+                        ]);
+                    } elseif($request->checkOutDate && $request->checkOutTime){
+
+                        $transactionHistory->update([
+                            "check_in_date" => $request->checkOutDate ?? null,
+                            "check_in_time" => $request->checkOutTime ?? null,
+                        ]);
+                    }
+                    
 
                     if($request->checkInDate && $request->checkInTime){
                         $transaction->update([
                             "status" => "CHECKED-IN"
                         ]);
+
+                        $room = $transaction->room;
+                        // return $room;
+                        $room->update([
+                            "status" => "OCCUPIED"
+                        ]);
                     } elseif($request->checkOutDate && $request->checkOutTime){
                         $transaction->update([
                             "status" => "CHECKED-OUT"
+                        ]);
+
+                        $room = $transaction->room;
+                        $room->update([
+                            "status" => "DIRTY"
                         ]);
                     }
                 } else{
@@ -65,9 +86,21 @@ class UpdateTransactionRepository extends BaseRepository
                         $transaction->update([
                             "status" => "CHECKED-IN"
                         ]);
+
+                        $room = $transaction->room;
+                        // return $room;
+                        $room->update([
+                            "status" => "OCCUPIED"
+                        ]);
                     } elseif($request->checkOutDate && $request->checkOutTime){
                         $transaction->update([
                             "status" => "CHECKED-OUT"
+                        ]);
+
+                        $room = $transaction->room;
+                        // return $room;
+                        $room->update([
+                            "status" => "DIRTY"
                         ]);
                     }
                 }
