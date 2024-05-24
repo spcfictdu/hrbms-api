@@ -39,6 +39,16 @@ class UpdateTransactionRepository extends BaseRepository
                         "check_out_date" => $request->checkOutDate ?? null,
                         "check_out_time" => $request->checkime ?? null
                     ]);
+
+                    if($request->checkInDate && $request->checkInTime){
+                        $transaction->update([
+                            "status" => "CHECKED-IN"
+                        ]);
+                    } elseif($request->checkOutDate && $request->checkOutTime){
+                        $transaction->update([
+                            "status" => "CHECKED-OUT"
+                        ]);
+                    }
                 } else{
                     TransactionHistory::create([
                         "check_in_date" => $request->checkInDate ?? null,
@@ -46,6 +56,16 @@ class UpdateTransactionRepository extends BaseRepository
                         "check_out_date" => $request->checkOutDate ?? null,
                         "check_out_time" => $request->checkOutTime ?? null
                     ]);
+
+                    if($request->checkInDate && $request->checkInTime){
+                        $transaction->update([
+                            "status" => "CHECKED-IN"
+                        ]);
+                    } elseif($request->checkOutDate && $request->checkOutTime){
+                        $transaction->update([
+                            "status" => "CHECKED-OUT"
+                        ]);
+                    }
                 }
             } else{
                 return $this->error('Something went wrong.');
