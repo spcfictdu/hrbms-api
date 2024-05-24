@@ -1,0 +1,31 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class RoomTypeRateSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        for ($roomTypeId = 1; $roomTypeId <= 5; $roomTypeId++) {
+            $data = [
+                'reference_number' => 'RT-000' . $roomTypeId,
+                'room_type_id' => $roomTypeId,
+                'type' => 'SPECIAL',
+                'monday' => 1000,
+                'tuesday' => 1000,
+                'wednesday' => 1000,
+                'thursday' => 1000,
+                'friday' => 1000,
+                'saturday' => 1000,
+                'sunday' => 1000,
+            ];
+
+            \App\Models\Room\RoomTypeRate::create($data);
+        }
+    }
+}

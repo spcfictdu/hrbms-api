@@ -46,7 +46,7 @@ class IndexRoomRepository extends BaseRepository
         }
 
         // Paginate results
-        $rooms = $roomsQuery->paginate($perPage, ['*'], 'page', $page);
+        $rooms = $roomsQuery->paginate($perPage);
 
         // Format the response
         $roomsData = $rooms->map(function ($room) {
