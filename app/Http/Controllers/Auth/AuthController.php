@@ -44,6 +44,6 @@ class AuthController extends Controller
 
     protected function logout(LogoutRequest $request)
     {
-        return $this->logout->execute();
+        return $this->logout->execute($request);
     }
 }

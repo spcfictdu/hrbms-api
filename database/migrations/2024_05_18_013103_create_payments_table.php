@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('transaction_id');
+            $table->unsignedBigInteger('transaction_id')->nullable();
             $table->foreign('transaction_id')->references('id')->on('transactions');
             $table->enum('payment_type', ['CASH', 'GCASH']);
             $table->mediumInteger('amount_received');

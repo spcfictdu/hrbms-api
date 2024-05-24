@@ -20,11 +20,17 @@ class LoginRepository extends BaseRepository
 
             $user = User::find($this->user()->id);
 
-            $token = $this->generateToken($user);
+            // $token = $this->generateToken($user);
 
-            $user->update([
-                'token' => $token
-            ]);
+            $token = $user->createToken(
+                $request->username,
+                ['*'],
+                now()->addWeek()
+            )->plainTextToken;
+
+            // $user->update([
+            //     'token' => $token
+            // ]);
         } else {
 
             return $this->error("Incorrect login credentials", 401);
@@ -34,9 +40,9 @@ class LoginRepository extends BaseRepository
             'username' => $user->username,
             'firstName' => $user->first_name,
             'lastName' => $user->last_name,
-            'token' => $user->token,
+            // 'token' => $user->token,
+            'token' => $token,
             'role' => $user->getRoleNames()->first()
         ]);
-
     }
 }
