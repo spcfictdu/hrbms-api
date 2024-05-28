@@ -110,6 +110,16 @@ Route::group([
     $route->put('/update',                                                      [TransactionController::class, 'update']);
 });
 
+Route::group([
+    // 'middleware' => 'auth:sanctum', // public
+    'prefix' => 'guest-transaction'
+], function ($route) {
+    $route->get('/', [TransactionController::class, 'guestTransactionIndex']);
+    $route->get('/{referenceNumber}', [TransactionController::class, 'guestTransactionShow']);
+    $route->post('/create', [TransactionController::class, 'guestTransactionCreate']);
+    // $route->put('/update', [TransactionController::class, 'guestTransactionUpdate']);
+});
+
 // To check availability of rooms
 Route::group([
     'middleware' => 'auth:sanctum',

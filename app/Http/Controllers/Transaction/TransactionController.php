@@ -7,32 +7,37 @@ use Illuminate\Http\Request;
 
 // * REQUEST
 use App\Http\Requests\Transaction\{
-                                // Booking\IndexBookingRequest,
-                                // Booking\ShowBookingRequest,
-                                // Booking\EditBookingRequest,
-                                // Booking\UpdateBookingRequest,
-                                   IndexTransactionRequest,
-                                   CreateTransactionRequest,
-                                   ShowTransactionRequest,
-                                   UpdateTransactionRequest};
-
+    // Booking\IndexBookingRequest,
+    // Booking\ShowBookingRequest,
+    // Booking\EditBookingRequest,
+    // Booking\UpdateBookingRequest,
+    IndexTransactionRequest,
+    CreateTransactionRequest,
+    ShowTransactionRequest,
+    ShowGuestTransactionRequest,
+    UpdateTransactionRequest
+};
+use App\Models\Guest\Guest;
 // * REPOSITORY
 use App\Repositories\Transaction\{
-                                // Booking\IndexBookingRepository,
-                                // Booking\ShowBookingRepository,
-                                // Booking\EditBookingRepository,
-                                // Booking\UpdateBookingRepository,
-                                  IndexTransactionRepository,
-                                  CreateTransactionRepository,
-                                  ShowTransactionRepository,
-                                  UpdateTransactionRepository,
-                                  Miscellaneous\DeleteReservationRepository,
-                                  Miscellaneous\ShowFormTransactionRepository};
+    // Booking\IndexBookingRepository,
+    // Booking\ShowBookingRepository,
+    // Booking\EditBookingRepository,
+    // Booking\UpdateBookingRepository,
+    IndexTransactionRepository,
+    CreateTransactionRepository,
+    ShowTransactionRepository,
+    Guest\ShowGuestTransactionRepository,
+    Guest\CreateGuestTransactionRepository,
+    UpdateTransactionRepository,
+    Miscellaneous\DeleteReservationRepository,
+    Miscellaneous\ShowFormTransactionRepository
+};
 
 class TransactionController extends Controller
 {
     // $bookEdit, $bookIndex, $bookShow, $bookUpdate
-    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction;
+    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction, $guestTransactionShow, $guestTransactionCreate;
 
     public function __construct(
         // IndexBookingRepository $bookIndex,
@@ -41,23 +46,27 @@ class TransactionController extends Controller
         // UpdateBookingRepository $bookUpdate,
         IndexTransactionRepository $index,
         CreateTransactionRepository $create,
+        CreateGuestTransactionRepository $guestTransactionCreate,
         ShowTransactionRepository $show,
+        ShowGuestTransactionRepository $guestTransactionShow,
         UpdateTransactionRepository $update,
         DeleteReservationRepository $deleteReservation,
         ShowFormTransactionRepository $showFormTransaction
-    ){
+    ) {
         // $this->bookIndex = $bookIndex;
         // $this->bookShow = $bookShow;
         // $this->bookEdit = $bookEdit;
         // $this->bookUpdate = $bookUpdate;
         $this->index = $index;
         $this->create = $create;
+        $this->guestTransactionCreate = $guestTransactionCreate;
         $this->show = $show;
+        $this->guestTransactionShow = $guestTransactionShow;
         $this->update = $update;
         $this->deleteReservation = $deleteReservation;
         $this->showFormTransaction = $showFormTransaction;
     }
-    
+
     // protected function bookIndex(IndexBookingRequest $request)
     // {
     //     return $this->bookIndex->execute();
@@ -78,6 +87,21 @@ class TransactionController extends Controller
     //     return $this->bookUpdate->execute($request);
     // }
 
+    public function guestTransactionIndex()
+    {
+        return $this->index->execute();
+    }
+
+    public function guestTransactionShow($referenceNumber)
+    {
+        return $this->guestTransactionShow->execute($referenceNumber);
+    }
+
+    public function guestTransactionCreate()
+    {
+        return $this->guestTransactionCreate->execute();
+    }
+
     protected function index(IndexTransactionRequest $request)
     {
         return $this->index->execute();
@@ -93,15 +117,18 @@ class TransactionController extends Controller
         return $this->show->execute($referenceNumber);
     }
 
-    protected function update(UpdateTransactionRequest $request){
+    protected function update(UpdateTransactionRequest $request)
+    {
         return $this->update->execute($request);
     }
 
-    protected function deleteReservation($status, $referenceNumber){
+    protected function deleteReservation($status, $referenceNumber)
+    {
         return $this->deleteReservation->execute($status, $referenceNumber);
     }
 
-    protected function showFormTransaction($referenceNumber){
+    protected function showFormTransaction($referenceNumber)
+    {
         return $this->showFormTransaction->execute($referenceNumber);
     }
 }
