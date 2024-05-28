@@ -108,21 +108,15 @@ Route::group([
     $route->delete('/reservation/delete/{status}/{referenceNumber}',            [TransactionController::class, 'deleteReservation']);
 
     // TRANSACTION
-    $route->get('/',                                                            [TransactionController::class, 'index']);
-    $route->get('/show/{referenceNumber}',                                      [TransactionController::class, 'show']);
-    $route->post('/create',                                                     [TransactionController::class, 'create']);
+
     $route->put('/update',                                                      [TransactionController::class, 'update']);
 });
 
-Route::group([
-    // 'middleware' => 'auth:sanctum', // public
-    'prefix' => 'guest-transaction'
-], function ($route) {
-    $route->get('/', [TransactionController::class, 'guestTransactionIndex']);
-    $route->get('/{referenceNumber}', [TransactionController::class, 'guestTransactionShow']);
-    $route->post('/create', [TransactionController::class, 'guestTransactionCreate']);
-    // $route->put('/update', [TransactionController::class, 'guestTransactionUpdate']);
-});
+// PUBLIC
+Route::get('/', [TransactionController::class, 'guestIndex']);
+Route::get('/',                                                            [TransactionController::class, 'index']);
+Route::get('/show/{referenceNumber}',                                      [TransactionController::class, 'show']);
+Route::post('/create',                                                     [TransactionController::class, 'create']);
 
 Route::get('/availability-calendar', [AvailabilityCalendarController::class, 'index']);
 
@@ -146,6 +140,7 @@ Route::group([
     $route->get('/room', [EnumController::class, 'roomEnum']);
     $route->get('/room-type', [EnumController::class, 'roomTypeEnum']);
     $route->get('/room-number', [EnumController::class, 'roomNumberEnum']);
+    $route->get('/guest', [EnumController::class, 'guestEnum']);
 });
 
 Route::group([
