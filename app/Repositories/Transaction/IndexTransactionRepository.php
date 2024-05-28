@@ -56,7 +56,9 @@ class IndexTransactionRepository extends BaseRepository
             $transactionQuery->where('check_out_date', 'like', '%' . $checkOutDateFilter . '%');
         }
 
-        $transactions = $transactionQuery->paginate($perPage)->map(function ($transaction) {
+        $transactions = $transactionQuery->paginate($perPage);
+
+        $transformedTransactions = $transactions->map(function ($transaction) {
             return [
                 "fullName" => $transaction->guest->full_name,
                 "status" => $transaction->status,
@@ -70,6 +72,14 @@ class IndexTransactionRepository extends BaseRepository
             ];
         });
 
-        return $this->success("List of all transactions.", $transactions);
+        return $this->success("List of all transactions.", [
+            'data' => $transformedTransactions,
+            'current_page' => $transactions->currentPage(),
+            'from' => $transactions->firstItem(),
+            'last_page' => $transactions->lastPage(),
+            'per_page' => $transactions->perPage(),
+            'to' => $transactions->lastItem(),
+            'total' => $transactions->total(),
+        ]);
     }
 }

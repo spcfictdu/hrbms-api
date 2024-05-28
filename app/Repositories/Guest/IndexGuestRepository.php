@@ -16,6 +16,10 @@ class IndexGuestRepository extends BaseRepository
         $emailFilter = $request->input('email');
         $phoneNumberFilter = $request->input('phoneNumber');
 
+        // Pagination
+        $perPage = $request->input('perPage', 10);
+        $page = $request->input('page', 1);
+
 
         // Query
         $guestQuery = Guest::query();
@@ -44,7 +48,9 @@ class IndexGuestRepository extends BaseRepository
 
         // return $guestQuery->get();
 
-        $guests = $guestQuery->get()->transform(function ($guest) {
+        $guests = $guestQuery->paginate($perPage);
+
+        $transformedGuests = $guests->transform(function ($guest) {
             return [
                 'id' => $guest->id,
                 'referenceNumber' => $guest->reference_number,
@@ -54,7 +60,14 @@ class IndexGuestRepository extends BaseRepository
             ];
         });
 
-        // return $guests;
-        return $this->success("Successfully retrieved guests", $guests);
+        return $this->success("Successfully retrieved guests", [
+            'data' => $transformedGuests,
+            'current_page' => $guests->currentPage(),
+            'from' => $guests->firstItem(),
+            'last_page' => $guests->lastPage(),
+            'per_page' => $guests->perPage(),
+            'to' => $guests->lastItem(),
+            'total' => $guests->total(),
+        ]);
     }
 }
