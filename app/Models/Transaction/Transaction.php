@@ -61,7 +61,7 @@ class Transaction extends Model
         return $this->belongsTo(TransactionHistory::class, 'transaction_history_id');
     }
 
-    protected function guest()
+    public function guest()
     {
         return $this->belongsTo(Guest::class, 'guest_id');
     }

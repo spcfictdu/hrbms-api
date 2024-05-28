@@ -27,6 +27,22 @@ ADMIN
 FRONT DESK
 ```
 
+#### Query Parameters
+
+#### Pagination
+
+-   `page` - The page number of the transactions list. Default is 1.
+-   `perPage` - The number of transactions to display per page. Default is 10.
+
+#### Filters
+
+-   `firstName` - The first name of the guest.
+-   `middleName` - The middle name of the guest.
+-   `lastName` - The last name of the guest.
+-   `referenceNumber` - The reference number of the transaction.
+-   `checkInDate` - The check-in date of the transaction.
+-   `checkOutDate` - The check-out date of the transaction.
+
 #### Response Example (Success)
 
 ```json

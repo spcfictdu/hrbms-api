@@ -27,6 +27,7 @@ use App\Repositories\Transaction\{
     IndexTransactionRepository,
     CreateTransactionRepository,
     ShowTransactionRepository,
+    Guest\IndexGuestRepository,
     Guest\ShowGuestTransactionRepository,
     Guest\CreateGuestTransactionRepository,
     UpdateTransactionRepository,
@@ -37,7 +38,7 @@ use App\Repositories\Transaction\{
 class TransactionController extends Controller
 {
     // $bookEdit, $bookIndex, $bookShow, $bookUpdate
-    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction, $guestTransactionShow, $guestTransactionCreate;
+    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction, $guestIndex, $guestTransactionShow, $guestTransactionCreate;
 
     public function __construct(
         // IndexBookingRepository $bookIndex,
@@ -45,6 +46,7 @@ class TransactionController extends Controller
         // EditBookingRepository $bookEdit,
         // UpdateBookingRepository $bookUpdate,
         IndexTransactionRepository $index,
+        IndexGuestRepository $guestIndex,
         CreateTransactionRepository $create,
         CreateGuestTransactionRepository $guestTransactionCreate,
         ShowTransactionRepository $show,
@@ -58,6 +60,7 @@ class TransactionController extends Controller
         // $this->bookEdit = $bookEdit;
         // $this->bookUpdate = $bookUpdate;
         $this->index = $index;
+        $this->guestIndex = $guestIndex;
         $this->create = $create;
         $this->guestTransactionCreate = $guestTransactionCreate;
         $this->show = $show;
@@ -87,9 +90,9 @@ class TransactionController extends Controller
     //     return $this->bookUpdate->execute($request);
     // }
 
-    public function guestTransactionIndex()
+    public function guestIndex()
     {
-        return $this->index->execute();
+        return $this->guestIndex->execute();
     }
 
     public function guestTransactionShow($referenceNumber)
@@ -97,14 +100,14 @@ class TransactionController extends Controller
         return $this->guestTransactionShow->execute($referenceNumber);
     }
 
-    public function guestTransactionCreate()
+    public function guestTransactionCreate(Request $request)
     {
-        return $this->guestTransactionCreate->execute();
+        return $this->guestTransactionCreate->execute($request);
     }
 
     protected function index(IndexTransactionRequest $request)
     {
-        return $this->index->execute();
+        return $this->index->execute($request);
     }
 
     protected function create(CreateTransactionRequest $request)

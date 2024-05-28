@@ -108,15 +108,22 @@ Route::group([
     $route->delete('/reservation/delete/{status}/{referenceNumber}',            [TransactionController::class, 'deleteReservation']);
 
     // TRANSACTION
+    Route::get(
+        '/',
+        [TransactionController::class, 'index']
+    );
+    // Route::get('/', [TransactionController::class, 'guestIndex']);
 
+    Route::get(
+        '/show/{referenceNumber}',
+        [TransactionController::class, 'show']
+    );
+    Route::post('/create',                                                     [TransactionController::class, 'create']);
     $route->put('/update',                                                      [TransactionController::class, 'update']);
 });
 
 // PUBLIC
-Route::get('/', [TransactionController::class, 'guestIndex']);
-Route::get('/',                                                            [TransactionController::class, 'index']);
-Route::get('/show/{referenceNumber}',                                      [TransactionController::class, 'show']);
-Route::post('/create',                                                     [TransactionController::class, 'create']);
+
 
 Route::get('/availability-calendar', [AvailabilityCalendarController::class, 'index']);
 
