@@ -68,27 +68,31 @@ Route::group([
     $route->delete('/delete/{referenceNumber}', [RoomTypeController::class, 'delete']);
 });
 
+Route::get('/room', [RoomController::class, 'index']);
+
 Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'room'
 ], function ($route) {
-    $route->get('/', [RoomController::class, 'index']);
     $route->post('/create', [RoomController::class, 'create']);
-    $route->get('/{referenceNumber}', [RoomController::class, 'show']);
     $route->put('/update/{referenceNumber}', [RoomController::class, 'update']);
     $route->delete('/delete/{referenceNumber}', [RoomController::class, 'delete']);
 });
+
+Route::get('/room/{referenceNumber}', [RoomController::class, 'show']);
+
+Route::get('/occupied-room', [OccupiedRoomController::class, 'index']);
 
 Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'occupied-room'
 ], function ($route) {
-    $route->get('/', [OccupiedRoomController::class, 'index']);
     $route->post('/create', [OccupiedRoomController::class, 'create']);
-    $route->get('/{referenceNumber}', [OccupiedRoomController::class, 'show']);
     $route->put('/update/{referenceNumber}', [OccupiedRoomController::class, 'update']);
     $route->delete('/delete/{referenceNumber}', [OccupiedRoomController::class, 'delete']);
 });
+
+Route::get('/occupied-room/{referenceNumber}', [OccupiedRoomController::class, 'show']);
 
 Route::group([
     'middleware' => 'auth:sanctum',
@@ -120,21 +124,23 @@ Route::group([
     // $route->put('/update', [TransactionController::class, 'guestTransactionUpdate']);
 });
 
+Route::get('/availability-calendar', [AvailabilityCalendarController::class, 'index']);
+
 // To check availability of rooms
 Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'availability-calendar'
 ], function ($route) {
-    $route->get('/', [AvailabilityCalendarController::class, 'index']);
     $route->post('/create', [AvailabilityCalendarController::class, 'create']);
-    $route->get('/{referenceNumber}', [AvailabilityCalendarController::class, 'show']);
     $route->put('/update/{referenceNumber}', [AvailabilityCalendarController::class, 'update']);
     $route->delete('/delete/{referenceNumber}', [AvailabilityCalendarController::class, 'delete']);
 });
 
+Route::get('/availability-calendar/{referenceNumber}', [AvailabilityCalendarController::class, 'show']);
+
 // For enums or dropdowns
 Route::group([
-    'middleware' => 'auth:sanctum',
+    // 'middleware' => 'auth:sanctum',
     'prefix' => 'enum'
 ], function ($route) {
     $route->get('/room', [EnumController::class, 'roomEnum']);
