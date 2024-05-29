@@ -75,7 +75,7 @@ class IndexAvailabilityCalendarRepository extends BaseRepository
         $transactions =  $transactions->map(function ($transaction) {
 
             if ($transaction->room?->status === "DIRTY") {
-                $transaction->status = "HOUSE KEEPING";
+                $transaction->status = "HOUSEKEEPING";
             } else {
             }
             $formattedCheckInDateTime = new DateTime($transaction->check_in_date . ' ' . $transaction->check_in_time);
@@ -94,6 +94,15 @@ class IndexAvailabilityCalendarRepository extends BaseRepository
                 // 'checkIn' => $formattedCheckInDateTime->format('F j, Y - g:i A'),
                 // 'checkOut' => $formattedCheckOutDateTime->format('F j, Y - g:i A'),
                 'status' => $transaction->status, // 'RESERVED', 'CONFIRMED', 'CHECKED-IN', 'CHECKED-OUT'
+                // 'transactionHistory' => $transaction->transactionHistory,
+                'transactionHistory' => [
+                    'checkIn' => $transaction->transactionHistory?->check_in_date
+                        ? $transaction->transactionHistory->check_in_date . 'T' . $transaction->transactionHistory->check_in_time
+                        : null,
+                    'checkOut' => $transaction->transactionHistory?->check_out_date
+                        ? $transaction->transactionHistory->check_out_date . 'T' . $transaction->transactionHistory->check_out_time
+                        : null,
+                ]
             ];
         });
 
