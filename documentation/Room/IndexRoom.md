@@ -17,14 +17,13 @@ GET
 #### Authentication Needed
 
 ```
-TRUE
+FALSE
 ```
 
 #### Permitted Roles
 
 ```
-ADMIN
-FRONT DESK
+NO ROLE NEEDED
 ```
 
 #### Parameters
@@ -34,9 +33,13 @@ FRONT DESK
 -   perPage : INTEGER (optional) - The number of items per page
 -   sortBy : STRING (optional) - The field to sort by
 -   sortOrder : STRING (optional) - The order of the sort
+-   checkInDate : STRING (optional) - The check in date the guest wants to book
+-   checkOutDate : STRING (optional) - The check out date the guest wants to book
+-   capacity : STRING (optional) - The capacity of the room
 
 -   Example:
     -   `{{base_url}}/api/room?page=1&perPage=10&sortBy=roomNumber&sortOrder=asc`
+    -   `{{base_url}}/api/room?checkInDate=2024-05-31&checkOutDate=2024-06-01&capacity=2`
 
 #### Response Example (Success)
 

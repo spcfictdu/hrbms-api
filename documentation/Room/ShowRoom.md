@@ -15,13 +15,12 @@ GET
 
 #### Authentication Needed
 ```
-TRUE
+FALSE
 ```
 
 #### Permitted Roles
 ```
-ADMIN
-FRONT DESK
+NO ROLE NEEDED
 ```
 
 #### Response Example (Success)

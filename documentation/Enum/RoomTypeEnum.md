@@ -17,13 +17,13 @@ GET
 #### Authentication Needed
 
 ```
-TRUE
+FALSE
 ```
 
 #### Permitted Roles
 
 ```
-ALL
+NO ROLE NEEDED
 ```
 
 #### Response Example (Success)
