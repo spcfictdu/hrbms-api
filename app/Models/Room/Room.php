@@ -32,7 +32,7 @@ class Room extends Model
         return $this->belongsTo(RoomType::class, 'room_type_id');
     }
 
-    protected function transactions()
+    public function transactions()
     {
         return $this->hasMany(Transaction::class, 'room_id');
     }
