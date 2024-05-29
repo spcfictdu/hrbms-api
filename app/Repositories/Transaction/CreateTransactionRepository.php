@@ -11,6 +11,9 @@ use App\Models\Transaction\Transaction,
 
 use Illuminate\Support\Arr;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookTransactionMail;
+use App\Mail\ReserveTransactionMail;
 
 class CreateTransactionRepository extends BaseRepository
 {
@@ -59,16 +62,21 @@ class CreateTransactionRepository extends BaseRepository
             return $this->error('Something went wrong!');
         }
 
-
         if (isset($payment)) {
-            return $this->success("Room type created successfully.", Arr::collapse([
+
+            Mail::to($guest->email)->send(new BookTransactionMail($transaction));
+
+            return $this->success("Book Transaction Created Successfully.", Arr::collapse([
                 $this->getCamelCase($guest->toArray()),
                 $this->getCamelCase($transaction->toArray()),
                 $this->getCamelCase($payment->toArray())
 
             ]));
         } else {
-            return $this->success("Room type created successfully.", Arr::collapse([
+
+            Mail::to($guest->email)->send(new ReserveTransactionMail($transaction));
+
+            return $this->success("Reservation Transaction Created Successfully.", Arr::collapse([
                 $this->getCamelCase($guest->toArray()),
                 $this->getCamelCase($transaction->toArray())
             ]));
