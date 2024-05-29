@@ -74,12 +74,14 @@ class IndexTransactionRepository extends BaseRepository
 
         return $this->success("List of all transactions.", [
             'data' => $transformedTransactions,
-            'current_page' => $transactions->currentPage(),
-            'from' => $transactions->firstItem(),
-            'last_page' => $transactions->lastPage(),
-            'per_page' => $transactions->perPage(),
-            'to' => $transactions->lastItem(),
-            'total' => $transactions->total(),
+            'pagination' => [
+                'total' => $transactions->total(),
+                'perPage' => $transactions->perPage(),
+                'currentPage' => $transactions->currentPage(),
+                'lastPage' => $transactions->lastPage(),
+                'from' => $transactions->firstItem(),
+                'to' => $transactions->lastItem(),
+            ]
         ]);
     }
 }

@@ -70,9 +70,9 @@ class IndexRoomRepository extends BaseRepository
             'rooms' => $roomsData,
             'pagination' => [
                 'total' => $rooms->total(),
-                'per_page' => $rooms->perPage(),
-                'current_page' => $rooms->currentPage(),
-                'last_page' => $rooms->lastPage(),
+                'perPage' => $rooms->perPage(),
+                'currentPage' => $rooms->currentPage(),
+                'lastPage' => $rooms->lastPage(),
                 'from' => $rooms->firstItem(),
                 'to' => $rooms->lastItem()
             ],

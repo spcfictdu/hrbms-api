@@ -48,42 +48,52 @@ FRONT DESK
 ```json
 {
     "message": "List of all transactions.",
-    "results": [
-        {
-            "fullName": "MORAR, FAYE ",
-            "status": "CHECKED-IN",
-            "transactionRefNum": "a8d1826a",
-            "occupants": "2",
-            "checkInDate": "2024-05-22",
-            "checkOutDate": "2024-05-23",
-            "booked": "2024-05-22",
-            "room": 101,
-            "total": 3000
-        },
-        {
-            "fullName": "OBERBRUNNER, WELLINGTON ",
-            "status": "CHECKED-OUT",
-            "transactionRefNum": "bb30f69b",
-            "occupants": "2",
-            "checkInDate": "2024-05-23",
-            "checkOutDate": "2024-05-24",
-            "booked": "2024-05-22",
-            "room": 201,
-            "total": 3000
-        },
-        {
-            "fullName": "STOLTENBERG, JULIEN ",
-            "status": "CONFIRMED",
-            "transactionRefNum": "14980997",
-            "occupants": "2",
-            "checkInDate": "2024-05-24",
-            "checkOutDate": "2024-05-25",
-            "booked": "2024-05-22",
-            "room": 301,
-            "total": 3000
-        },
-        ...
-    ],
+    "results": {
+        "data": [
+            {
+                "fullName": "LITTEL, ANSEL LIND",
+                "status": "CHECKED-OUT",
+                "transactionRefNum": "5226f069",
+                "occupants": "2",
+                "checkInDate": "2024-05-24",
+                "checkOutDate": "2024-05-25",
+                "booked": "2024-05-24",
+                "room": 101,
+                "total": 3000
+            },
+            {
+                "fullName": "LARKIN, FRANKIE PFANNERSTILL",
+                "status": "CONFIRMED",
+                "transactionRefNum": "3477f092",
+                "occupants": "2",
+                "checkInDate": "2024-05-25",
+                "checkOutDate": "2024-05-26",
+                "booked": "2024-05-24",
+                "room": 201,
+                "total": 3000
+            },
+            {
+                "fullName": "MARQUARDT, LELIA BEATTY",
+                "status": "CHECKED-IN",
+                "transactionRefNum": "3e4b9ea5",
+                "occupants": "2",
+                "checkInDate": "2024-05-26",
+                "checkOutDate": "2024-05-27",
+                "booked": "2024-05-24",
+                "room": 301,
+                "total": 3000
+            },
+            ...
+        ],
+        "pagination": {
+            "total": 8,
+            "perPage": 10,
+            "currentPage": 1,
+            "lastPage": 1,
+            "from": 1,
+            "to": 8,
+        }
+    },
     "code": 200,
     "error": false
 }

@@ -45,30 +45,40 @@ FRONT DESK
 ```json
 {
     "message": "Successfully retrieved guests",
-    "results": [
-        {
-            "id": 1,
-            "referenceNumber": "64065b9b",
-            "fullName": "LITTEL, ANSEL LIND",
-            "email": "mpurdy@yahoo.com",
-            "phone": "2691752667"
-        },
-        {
-            "id": 2,
-            "referenceNumber": "5dd2c2a5",
-            "fullName": "LARKIN, FRANKIE PFANNERSTILL",
-            "email": "kuhlman.jimmy@haley.info",
-            "phone": "5458958787"
-        },
-        {
-            "id": 3,
-            "referenceNumber": "b0d7395f",
-            "fullName": "MARQUARDT, LELIA BEATTY",
-            "email": "otto69@gmail.com",
-            "phone": "9470218251"
-        },
-        ...
-    ],
+    "results": {
+        "guests": [
+            {
+                "id": 1,
+                "referenceNumber": "64065b9b",
+                "fullName": "LITTEL, ANSEL LIND",
+                "email": "mpurdy@yahoo.com",
+                "phone": "2691752667"
+            },
+            {
+                "id": 2,
+                "referenceNumber": "5dd2c2a5",
+                "fullName": "LARKIN, FRANKIE PFANNERSTILL",
+                "email": "kuhlman.jimmy@haley.info",
+                "phone": "5458958787"
+            },
+            {
+                "id": 3,
+                "referenceNumber": "b0d7395f",
+                "fullName": "MARQUARDT, LELIA BEATTY",
+                "email": "otto69@gmail.com",
+                "phone": "9470218251"
+            },
+            ...
+        ],
+        "pagination": {
+            "total": 8,
+            "perPage": 10,
+            "currentPage": 1,
+            "lastPage": 1,
+            "from": 1,
+            "to": 8,
+        }
+    },
     "code": 200,
     "error": false
 }

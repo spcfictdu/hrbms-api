@@ -67,9 +67,9 @@ FRONT DESK
         ],
         "pagination": {
             "total": 1,
-            "per_page": 10,
-            "current_page": 1,
-            "last_page": 1,
+            "perPage": 10,
+            "currentPage": 1,
+            "lastPage": 1,
             "from": 1,
             "to": 1
         }

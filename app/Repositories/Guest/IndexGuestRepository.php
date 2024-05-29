@@ -61,13 +61,23 @@ class IndexGuestRepository extends BaseRepository
         });
 
         return $this->success("Successfully retrieved guests", [
-            'data' => $transformedGuests,
-            'current_page' => $guests->currentPage(),
-            'from' => $guests->firstItem(),
-            'last_page' => $guests->lastPage(),
-            'per_page' => $guests->perPage(),
-            'to' => $guests->lastItem(),
-            'total' => $guests->total(),
+            'guests' => $transformedGuests,
+            'pagination' => [
+                'total' => $guests->total(),
+                'perPage' => $guests->perPage(),
+                'currentPage' => $guests->currentPage(),
+                'lastPage' => $guests->lastPage(),
+                'from' => $guests->firstItem(),
+                'to' => $guests->lastItem(),
+            ]
+            // 'pagination' => [
+            //     'total' => $rooms->total(),
+            //     'perPage' => $rooms->perPage(),
+            //     'currentPage' => $rooms->currentPage(),
+            //     'lastPage' => $rooms->lastPage(),
+            //     'from' => $rooms->firstItem(),
+            //     'to' => $rooms->lastItem()
+            // ],
         ]);
     }
 }
