@@ -67,7 +67,7 @@ class CreateTransactionRepository extends BaseRepository
 
         if (isset($payment)) {
 
-            // Mail::to($guest->email)->send(new BookTransactionMail($transaction));
+            Mail::to($guest->email)->send(new BookTransactionMail($transaction));
 
             return $this->success("Book Transaction Created Successfully.", Arr::collapse([
                 $this->getCamelCase($guest->toArray()),
@@ -77,7 +77,7 @@ class CreateTransactionRepository extends BaseRepository
             ]));
         } else {
 
-            // Mail::to($guest->email)->send(new ReserveTransactionMail($transaction));
+            Mail::to($guest->email)->send(new ReserveTransactionMail($transaction));
 
             return $this->success("Reservation Transaction Created Successfully.", Arr::collapse([
                 $this->getCamelCase($guest->toArray()),

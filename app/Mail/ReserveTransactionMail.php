@@ -40,7 +40,7 @@ class ReserveTransactionMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.reserve_transaction',
+            view: 'emails.reserve_confirmation',
             with: ['transaction' => $this->transaction],
         );
     }
