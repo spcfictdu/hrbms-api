@@ -44,7 +44,8 @@
                                         <h4 style="margin: 0;">Check-out</h4>
                                     </div>
                                     <div style="padding: 1rem;">
-                                        <h3 style="margin: 0 0 18px 0;">10 Nov 2023</h3>
+                                        <h3 style="margin: 0;">10 Nov 2023</h3>
+                                        <div style="color: #6c757d;"><small>To 11:00 AM</small></div>
                                     </div>
                                 </div>
                             </td>
