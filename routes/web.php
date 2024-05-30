@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Transaction\Transaction;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect('https://hotel.osafphmabalacatcity.com/');
+});
+
+Route::get('/email', function () {
+    $transaction = Transaction::first();
+    return view("emails/reserve_transaction", compact('transaction'));
+});
+Route::get('/vanilla', function () {
+    $transaction = Transaction::first();
+    return view("emails/reserve_confirmation", compact('transaction'));
 });
