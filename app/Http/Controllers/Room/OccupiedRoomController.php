@@ -46,9 +46,9 @@ class OccupiedRoomController extends Controller
     }
 
 
-    protected function update(UpdateOccupiedRoomRequest $request, $id)
+    protected function update(UpdateOccupiedRoomRequest $request, $referenceNumber)
     {
-        return $this->update->execute($request, $id);
+        return $this->update->execute($request, $referenceNumber);
     }
 
 

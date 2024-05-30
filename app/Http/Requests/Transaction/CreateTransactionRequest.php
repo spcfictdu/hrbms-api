@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Transaction;
 
 use App\Http\Requests\ResponseRequest;
+use App\Rules\RoomAvailability;
 
 class CreateTransactionRequest extends ResponseRequest
 {
