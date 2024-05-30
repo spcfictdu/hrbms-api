@@ -15,7 +15,7 @@
                     <h2 style="margin: 16px 0 16px 0;">Reserve Confirmation</h2>
                 </div>
                 <div style="font-size: 0.9rem; margin: 0 0 16px 0;">
-                    <p>Thank you, your reservation at (HRBMS) has been confirmed.</p>
+                    <p style="margin-top: 0;">Thank you, your reservation at (HRBMS) has been confirmed.</p>
                     <p>Thank you for choosing to stay with us and we are delighted to welcome you.</p>
                     <p>Please have read through your reservation details and let us know if you need anything changed or
                         added to make your stay more comfortable and enjoyable.</p>
@@ -59,7 +59,7 @@
                         <div style="padding: 1rem; border-bottom: 1px solid rgba(0, 0, 0, 0.175);">
                             <h4 style="margin: 0 0 0 0;">Hotel Room and Booking Management System</h4>
                             <small>
-                                <a href="mail:hrbms.spcf@gmail.com"
+                                <a href="mailto:hrbms.spcf@gmail.com"
                                     style="text-decoration: none;">hrbms.spcf@gmail.com</a>
                             </small>
 
