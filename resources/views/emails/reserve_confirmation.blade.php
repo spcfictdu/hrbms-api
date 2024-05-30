@@ -32,8 +32,13 @@
                                         <h4 style="margin: 0;">Check-in</h4>
                                     </div>
                                     <div style="padding: 1rem;">
-                                        <h3 style="margin: 0;">09 Nov 2023</h3>
-                                        <div style="color: #6c757d;"><small>From 02:00 PM</small></div>
+                                        @php
+                                            use Carbon\Carbon;
+                                            $checkInDate = Carbon::parse($transaction->check_in_date)->format('d M Y');
+                                            $checkInTime = Carbon::parse($transaction->check_in_time)->format('h:i A');
+                                        @endphp
+                                        <h3 style="margin: 0;">{{ $checkInDate }}</h3>
+                                        <div style="color: #6c757d;"><small>From {{ $checkInTime }}</small></div>
                                     </div>
                                 </div>
                             </td>
@@ -44,8 +49,12 @@
                                         <h4 style="margin: 0;">Check-out</h4>
                                     </div>
                                     <div style="padding: 1rem;">
-                                        <h3 style="margin: 0;">10 Nov 2023</h3>
-                                        <div style="color: #6c757d;"><small>To 11:00 AM</small></div>
+                                        @php
+                                            $checkOutDate = Carbon::parse($transaction->check_out_date)->format('d M Y');
+                                            $checkOutTime = Carbon::parse($transaction->check_out_time)->format('h:i A');
+                                        @endphp
+                                        <h3 style="margin: 0;">{{ $checkOutDate }}</h3>
+                                        <div style="color: #6c757d;"><small>To {{ $checkOutTime }}</small></div>
                                     </div>
                                 </div>
                             </td>
@@ -79,8 +88,39 @@
                         <div style="padding: 1rem; border-bottom: 1px solid rgba(0, 0, 0, 0.175);">
                             <h4 style="margin: 0 0 0 0;">Guest Details</h4>
                             <small>
-                                <div>J*** D**</div>
-                                <div>j***.d**@e****.c**</div>
+                                @php
+                                   // Mask guest details
+                                    $maskedFirstName = substr($transaction->guest->first_name, 0, 1) . str_repeat('*', strlen($transaction->guest->first_name) - 1);
+                                    $maskedMiddleName = $transaction->guest->middle_name ? substr($transaction->guest->middle_name, 0, 1) . str_repeat('*', strlen($transaction->guest->middle_name) - 1) : null;
+                                    $maskedLastName = substr($transaction->guest->last_name, 0, 1) . str_repeat('*', strlen($transaction->guest->last_name) - 1);
+
+                                    // Extract local and domain parts of the email address
+                                    $atPosition = strpos($transaction->guest->email, '@');
+
+                                    // Check if the '@' symbol is found
+                                    if ($atPosition !== false) {
+                                        // Extract local and domain parts of the email address
+                                        $localPart = substr($transaction->guest->email, 0, $atPosition);
+                                        $domainPart = substr($transaction->guest->email, $atPosition);
+
+                                        // Mask the local part
+                                        $maskedLocalPart = substr($localPart, 0, 1) . str_repeat('*', strlen($localPart) - 1);
+
+                                        // Combine masked local part with the domain part to form the masked email
+                                        $maskedEmail = $maskedLocalPart . $domainPart;
+                                    } else {
+                                        // If '@' symbol is not found, use the entire email address as local part
+                                        $maskedEmail = $transaction->guest->email;
+                                    }
+                                @endphp
+                                <div>
+                                    {{ $maskedFirstName }}
+                                    @if ($maskedMiddleName)
+                                        {{ $maskedMiddleName }}
+                                    @endif
+                                    {{ $maskedLastName }}
+                                </div>
+                                <div>{{ $maskedEmail }}</div>
                             </small>
                         </div>
                         <div style="padding: 1rem;">
@@ -103,18 +143,23 @@
                             <div style="margin-top: 4px;">
                                 <small>
                                     <table style="width: 100%">
+                                        @php
+                                            $rate = $transaction->room->roomType->rates->first();
+                                            $day = Str::lower(Carbon::now()->format('l'));
+                                            $total = $rate->$day + 600;
+                                        @endphp
                                         <tr>
                                             <td>Room</td>
-                                            <td style="text-align: end">₱1000</td>
+                                            <td style="text-align: end">₱{{ $rate->$day }}</td>
                                         </tr>
                                         <tr>
                                             <td>Extra Guest Total * (Extra Guest
                                                 Price)</td>
-                                            <td style="text-align: end">₱600</td>
+                                            <td style="text-align: end">(Not yet implemented) ₱600</td>
                                         </tr>
                                         <tr>
                                             <td>Total</td>
-                                            <td style="text-align: end">₱1600</td>
+                                            <td style="text-align: end">{{ $total }}</td>
                                         </tr>
                                     </table>
                                 </small>
@@ -126,18 +171,21 @@
                             <div style="margin-top: 4px;">
                                 <small>
                                     <table style="width: 100%">
+                                        @php
+                                            $payment = $transaction->payment->amount_received ?? 0;
+                                        @endphp
                                         <tr>
                                             <td>Total Received</td>
-                                            <td style="text-align: end">₱1000</td>
+                                            <td style="text-align: end">₱{{ $payment }}</td>
                                         </tr>
                                         <tr>
                                             <td>Extra Guest Total * (Extra Guest
                                                 Price)</td>
-                                            <td style="text-align: end">₱600</td>
+                                            <td style="text-align: end">(Not yet implemented) ₱600</td>
                                         </tr>
                                         <tr>
                                             <td>Total Outstanding Balance</td>
-                                            <td style="text-align: end">₱600</td>
+                                            <td style="text-align: end">₱0</td>
                                         </tr>
                                     </table>
                                 </small>
