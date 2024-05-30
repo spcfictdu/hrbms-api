@@ -181,16 +181,20 @@ class RoomTypeSeeder extends Seeder
             //     Storage::deleteDirectory("public/" . $roomTypeCreation->reference_number);
             // }
 
-            // Storage::makeDirectory(storage_path("app/public/hello"));
-            Storage::makeDirectory("public/" . $roomTypeCreation->reference_number);
+            $folderName = $roomTypeCreation->reference_number;
+            $folder = Storage::makeDirectory("public/" . $folderName);
 
             // Generate 4 new images
-            for ($i = 0; $i < 4; $i++) {
-                $imagePath = $faker->image(("storage\\app\\public\\" . $roomTypeCreation->reference_number), 640, 480, 'animals', false); // Generate image and get local path
+            for (
+                $i = 0;
+                $i < 4;
+                $i++
+            ) {
+                $imageUrl = "storage/{$folderName}/RoomPic.png";
 
                 RoomTypeImage::create([
                     'room_type_id' => $roomType['id'],
-                    'filename' => "{$imagePath}",
+                    'filename' => $imageUrl,
                 ]);
             }
         }

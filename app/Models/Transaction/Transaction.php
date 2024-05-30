@@ -36,7 +36,7 @@ class Transaction extends Model
         'id',
         'room_id',
         'guest_id',
-        'transaction_history_id',
+        // 'transaction_history_id',
         'created_at',
         'updated_at'
     ];
@@ -56,7 +56,7 @@ class Transaction extends Model
         return $this->hasOne(Payment::class, 'transaction_id');
     }
 
-    protected function transactionHistory()
+    public function transactionHistory()
     {
         return $this->belongsTo(TransactionHistory::class, 'transaction_history_id');
     }
