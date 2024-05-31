@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Room\OccupiedRoom;
+namespace App\Http\Requests\Room\RoomStatus;
 
 use App\Http\Requests\ResponseRequest;
 
-class UpdateOccupiedRoomRequest extends ResponseRequest
+class IndexRoomStatusRequest extends ResponseRequest
 {
-    /**
+     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -24,7 +24,7 @@ class UpdateOccupiedRoomRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'status' => 'nullable|string|in:OCCUPIED,DIRTY,READY FOR OCCUPANCY,UNALLOCATED'
+            //
         ];
     }
 }

@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Repositories\Room\OccupiedRoom;
+namespace App\Repositories\Room\RoomStatus;
 
 use App\Models\Room\Room;
 use App\Models\Room\RoomType;
-use Carbon\Carbon;
 use App\Repositories\BaseRepository;
 
-class IndexOccupiedRoomRepository extends BaseRepository
+class IndexRoomStatusRepository extends BaseRepository
 {
     public function execute()
     {
@@ -63,9 +62,19 @@ class IndexOccupiedRoomRepository extends BaseRepository
                 }
             });
 
-        return [
+        // return [
+        //     'roomStatusCount' => $roomStatusCount,
+        //     'rooms' => $rooms,
+        // ];
+
+        // return response()->json([
+        //     'roomStatusCount' => $roomStatusCount,
+        //     'rooms' => $rooms,
+        // ]);
+
+        return $this->success('success', [
             'roomStatusCount' => $roomStatusCount,
             'rooms' => $rooms,
-        ];
+        ]);
     }
 }

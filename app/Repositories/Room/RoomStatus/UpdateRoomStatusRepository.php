@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories\Room\OccupiedRoom;
+namespace App\Repositories\Room\RoomStatus;
 
 use App\Models\Room\Room;
 use App\Repositories\BaseRepository;
 
-class UpdateOccupiedRoomRepository extends BaseRepository
+class UpdateRoomStatusRepository extends BaseRepository
 {
     public function execute($request, $referenceNumber)
     {

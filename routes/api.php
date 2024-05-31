@@ -8,6 +8,7 @@ use App\Http\Controllers\{
     Room\RoomController,
     Room\RoomTypeRateController,
     Room\OccupiedRoomController,
+    Room\RoomStatusController,
     Transaction\TransactionController,
     AvailabilityCalendar\AvailabilityCalendarController,
     Amenity\AmenityController,
@@ -81,18 +82,16 @@ Route::group([
 
 Route::get('/room/{referenceNumber}', [RoomController::class, 'show']);
 
-Route::get('/occupied-room', [OccupiedRoomController::class, 'index']);
 
 Route::group([
     'middleware' => 'auth:sanctum',
-    'prefix' => 'occupied-room'
+    'prefix' => 'room-status'
 ], function ($route) {
-    $route->post('/create', [OccupiedRoomController::class, 'create']);
+    $route->get('/', [RoomStatusController::class, 'index']);
+    $route->get('/{referenceNumber}', [OccupiedRoomController::class, 'show']);
     $route->put('/update/{referenceNumber}', [OccupiedRoomController::class, 'update']);
-    $route->delete('/delete/{referenceNumber}', [OccupiedRoomController::class, 'delete']);
 });
 
-Route::get('/occupied-room/{referenceNumber}', [OccupiedRoomController::class, 'show']);
 
 Route::group([
     'middleware' => 'auth:sanctum',

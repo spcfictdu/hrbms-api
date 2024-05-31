@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories\Room\OccupiedRoom;
+namespace App\Repositories\Room\RoomStatus;
 
 use App\Repositories\BaseRepository;
 
-class ShowOccupiedRoomRepository extends BaseRepository
+class ShowRoomStatusRepository extends BaseRepository
 {
     public function execute($id)
     {

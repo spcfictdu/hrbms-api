@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Room\OccupiedRoom;
+namespace App\Http\Requests\Room\RoomStatus;
 
 use App\Http\Requests\ResponseRequest;
 
-class IndexOccupiedRoomRequest extends ResponseRequest
+class CreateRoomStatusRequest extends ResponseRequest
 {
      /**
      * Determine if the user is authorized to make this request.

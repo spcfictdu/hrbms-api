@@ -19,6 +19,8 @@ class IndexGuestRepository extends BaseRepository
         // Pagination
         $perPage = $request->input('perPage', 10);
         $page = $request->input('page', 1);
+        $sortBy = $request->input('sortBy', 'id');
+        $sortOrder = $request->input('sortOrder', 'asc');
 
 
         // Query
@@ -47,6 +49,7 @@ class IndexGuestRepository extends BaseRepository
 
 
         // return $guestQuery->get();
+        $guestQuery->orderBy($sortBy, $sortOrder);
 
         $guests = $guestQuery->paginate($perPage);
 

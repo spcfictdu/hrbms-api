@@ -34,6 +34,8 @@ class RoomEnumRepository extends BaseRepository
             // Default to regular rate
             $rate = collect($room->roomType->rates)->firstWhere('type', 'REGULAR');
 
+            // return $rate;
+
             // Check if there's a special rate within the date range
             $specialRate = collect($room->roomType->rates)->first(function ($rate) use ($today) {
                 return $rate['type'] === 'SPECIAL' &&
@@ -57,7 +59,9 @@ class RoomEnumRepository extends BaseRepository
                 'roomFloor' => $room->room_floor,
                 'roomType' => $room->roomType->name ?? 'N/A',
                 'roomTypeCapacity' => $room->roomType->capacity ?? 'N/A',
+                // 'rateType' => $rate['type'] ?? 'N/A',
                 'roomTotal' => $rate ? $rate[$dayOfWeek] : 0,
+                // 'roomTotal' => $rate ? $rate : [],
                 'extraPersonTotal' => $extraPersonRate,
                 // 'total' => $rate ? $rate[$dayOfWeek] + $extraPersonRate : 0,
                 // 'totalReceived' => $room->transactions?->payment,

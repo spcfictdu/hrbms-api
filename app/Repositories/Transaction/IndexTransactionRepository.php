@@ -20,6 +20,8 @@ class IndexTransactionRepository extends BaseRepository
         // Pagination
         $page = $request->input('page', 1);
         $perPage = $request->input('perPage', 10);
+        $sortBy = $request->input('sortBy', 'id');
+        $sortOrder = $request->input('sortOrder', 'asc');
 
 
         // Query
@@ -55,6 +57,8 @@ class IndexTransactionRepository extends BaseRepository
         if ($checkOutDateFilter) {
             $transactionQuery->where('check_out_date', 'like', '%' . $checkOutDateFilter . '%');
         }
+
+        $transactionQuery->orderBy($sortBy, $sortOrder);
 
         $transactions = $transactionQuery->paginate($perPage);
 
