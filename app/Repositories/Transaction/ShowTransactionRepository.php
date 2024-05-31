@@ -26,9 +26,9 @@ class ShowTransactionRepository extends BaseRepository
         $payment = $transaction->payment;
         $day = Str::lower($transaction->created_at->format('l'));
 
-        if ($payment) {
-            $pay = Payment::where('id', $payment->id)->first();
-        }
+        // if ($payment) {
+        //     $pay = Payment::where('id', $payment->id)->first();
+        // }
 
         return $this->success("Transaction Info", [
             "bookingHistory" => [
@@ -36,7 +36,6 @@ class ShowTransactionRepository extends BaseRepository
                     "number" => $room->room_number,
                     "name" => $roomType->name,
                     "capacity" => $roomType->capacity,
-
                 ],
                 "transaction" => [
                     "referenceNumber" => $transaction->reference_number,
@@ -55,6 +54,10 @@ class ShowTransactionRepository extends BaseRepository
                 "guestName" => $guest->full_name,
                 "priceSummary" => [
                     "roomTotal" => $roomTypeRate->$day,
+                ],
+                "paymentSummary" => [
+                    "paymentType" => $payment->payment_type,
+                    "amountReceived" => $payment->amount_received
                 ]
             ]
         ]);

@@ -10,9 +10,16 @@
         <div style="max-width: 600px; border: 1px solid rgba(0, 0, 0, 0.175); border-radius: 5px; margin: 0 auto;">
             <div style="padding: 1rem;">
                 <div class="header">
+                    @php
+                        if($transaction->status === "RESERVED"){
+                            $status = "Reserve";
+                        } elseif($transaction->status === "CONFIRMED"){
+                            $status = "Booking";
+                        }
+                    @endphp
                     <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                         alt="hotel-room" style="width: 100%; height: 250px; object-fit: cover;">
-                    <h2 style="margin: 16px 0 16px 0;">Reserve Confirmation</h2>
+                    <h2 style="margin: 16px 0 16px 0;">{{ $status }} Confirmation</h2>
                 </div>
                 <div style="font-size: 0.9rem; margin: 0 0 16px 0;">
                     <p style="margin-top: 0;">Thank you, your reservation at (HRBMS) has been confirmed.</p>
@@ -124,8 +131,11 @@
                             </small>
                         </div>
                         <div style="padding: 1rem;">
+                            @php
+                                $bookedOn = Carbon::parse($transaction->created_at)->format('d M Y');
+                            @endphp
                             <h4 style="margin: 0 0 0 0;">Booked on</h4>
-                            <p style="margin: 0 0 16px 0;"><small>09 Oct 2023</small></p>
+                            <p style="margin: 0 0 16px 0;"><small>{{ $bookedOn }}</small></p>
                             <h4 style="margin: 0 0 0 0;">Personal Request</h4>
                             <p style="margin: 0 0 0 0;"><small>Please leave a bottle of champagne on the bedside table.
                                     [This is a fake reservation for sample purposes only]</small></p>
