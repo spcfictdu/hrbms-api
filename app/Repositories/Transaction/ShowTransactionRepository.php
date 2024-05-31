@@ -56,8 +56,8 @@ class ShowTransactionRepository extends BaseRepository
                     "roomTotal" => $roomTypeRate->$day,
                 ],
                 "paymentSummary" => [
-                    "paymentType" => $payment->payment_type,
-                    "amountReceived" => $payment->amount_received
+                    "paymentType" => $payment->payment_type ?? null,
+                    "amountReceived" => $payment->amount_received ?? null
                 ]
             ]
         ]);
