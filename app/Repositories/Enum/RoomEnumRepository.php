@@ -4,6 +4,7 @@ namespace App\Repositories\Enum;
 
 use App\Models\Room\Room;
 use App\Repositories\BaseRepository;
+use DateTime;
 
 class RoomEnumRepository extends BaseRepository
 {
@@ -11,6 +12,7 @@ class RoomEnumRepository extends BaseRepository
     {
         $filterRoomType = $request->input('roomType');
         $filterRoomNumber = $request->input('roomNumber');
+        $filterDateRange = explode(',', $request->input('dateRange'));
 
         $roomsQuery = Room::query();
 
@@ -27,7 +29,7 @@ class RoomEnumRepository extends BaseRepository
         }
 
         // $roomNumbers = $roomsQuery->pluck('room_number');
-        $rooms = $roomsQuery->get()->transform(function ($room) {
+        $rooms = $roomsQuery->get()->transform(function ($room) use ($filterDateRange) {
             $dayOfWeek = strtolower(date('l'));
             $today = date('Y-m-d');
 
@@ -52,7 +54,6 @@ class RoomEnumRepository extends BaseRepository
 
             // Extra Person Calculation
             $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
-
             return [
                 'referenceNumber' => $room->reference_number,
                 'roomNumber' => $room->room_number,
@@ -61,8 +62,33 @@ class RoomEnumRepository extends BaseRepository
                 'roomTypeCapacity' => $room->roomType->capacity ?? 'N/A',
                 // 'rateType' => $rate['type'] ?? 'N/A',
                 'roomTotal' => $rate ? $rate[$dayOfWeek] : 0,
+                'roomTotalWithFilter' => array_sum(array_map(function ($date) use ($rate) {
+                    $dayOfWeek = strtolower((new DateTime($date))->format('l'));
+                    return $rate[$dayOfWeek] ?? 0;
+                }, $filterDateRange)),
+                // Just add all the rates from monday to sunday
+                'roomTotalFromMondayToSunday' => array_sum([
+                    $rate['monday'],
+                    $rate['tuesday'],
+                    $rate['wednesday'],
+                    $rate['thursday'],
+                    $rate['friday'],
+                    $rate['saturday'],
+                    $rate['sunday'],
+                ]),
+                'roomRateType' => $rate['type'] ?? 'N/A',
+                'roomRateArrayWithFilter' => array_map(function ($date) use ($rate) {
+                    $dayOfWeek = strtolower((new DateTime($date))->format('l'));
+                    return [
+                        'date' => $date,
+                        'dayOfWeek' => $dayOfWeek,
+                        'rate' => $rate[$dayOfWeek] ?? 'N/A',
+                    ];
+                }, $filterDateRange),
+
+                'roomRateArrayV2' => $rate->only(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),
                 // 'roomTotal' => $rate ? $rate : [],
-                'extraPersonTotal' => $extraPersonRate,
+                'extraPersonRate' => $extraPersonRate,
                 // 'total' => $rate ? $rate[$dayOfWeek] + $extraPersonRate : 0,
                 // 'totalReceived' => $room->transactions?->payment,
                 // 'test' => $room->transaction,
