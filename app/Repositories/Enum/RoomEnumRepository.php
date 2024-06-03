@@ -19,8 +19,8 @@ class RoomEnumRepository extends BaseRepository
 
         // Create a DatePeriod object
         $begin = new DateTime($filterDateRange[0]);
-        $end = new DateTime($filterDateRange[1]);
-        $end = $end->modify('+1 day'); // Add one day to include the end date in the period
+        $end = new DateTime($filterDateRange[1] ?? 2000 - 01 - 01);
+        // $end = $end->modify('+1 day'); // Add one day to include the end date in the period
         $interval = new DateInterval('P1D'); // Set interval to 1 day
         $dateRange = new DatePeriod($begin, $interval, $end);
 
