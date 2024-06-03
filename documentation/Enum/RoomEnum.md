@@ -34,8 +34,8 @@ NO ROLE NEEDED
     -   Example: {{base_url}}/api/enum/room-number?roomNumber=101
 -   dateRange: STRING (optional) - The date range to filter the room numbers
     -   Example: {{base_url}}/api/enum/room-number?dateRange=2024-05-23,2024-05-25
--   extraPerson: INT (optional) - The number of extra persons to filter the room numbers
-    -   Example: {{base_url}}/api/enum/room-number?extraPerson=1
+-   extraPersonCount: INT (optional) - The number of extra persons to filter the room numbers
+    -   Example: {{base_url}}/api/enum/room-number?extraPersonCount=1
 
 #### Response Example (Success)
 
