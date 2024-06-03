@@ -34,7 +34,7 @@ class ShowFormTransactionRepository extends BaseRepository
                     "capacity" => $roomType->capacity,
                     "roomTotal" => $rate->$day
                 ],
-                "guests" => $filteredGuests
+                "guests" => $filteredGuests,
             ]);
         }
         // try{

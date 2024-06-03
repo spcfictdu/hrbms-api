@@ -18,10 +18,10 @@ class ShowTransactionRepository extends BaseRepository
     {
         $transaction = Transaction::where('reference_number', $referenceNumber)->first();
 
-        $transactionHistory = $transaction->transactionHistory;
-        $room = $transaction->room;
-        $roomType = $room->roomType;
-        $roomTypeRate = $room->roomType->rates->first();
+        $transactionHistory = $transaction->transactionHistory ?? null;
+        $room = $transaction->room ?? null;
+        $roomType = $room->roomType ?? null;
+        $roomTypeRate = $roomType->rates->first();
         $guest = $transaction->guest;
         $payment = $transaction->payment;
         $day = Str::lower($transaction->created_at->format('l'));
@@ -29,6 +29,27 @@ class ShowTransactionRepository extends BaseRepository
         // if ($payment) {
         //     $pay = Payment::where('id', $payment->id)->first();
         // }
+        // Parse the check-in and check-out dates
+        $checkInDate = Carbon::createFromFormat('Y-m-d', $transaction->check_in_date);
+        $checkOutDate = Carbon::createFromFormat('Y-m-d', $transaction->check_out_date);
+
+        // Initialize the total cost
+        $totalCost = 0;
+        $diffInDays = $checkInDate->diffInDays($checkOutDate);
+
+        // Loop through each day between the check-in and check-out dates
+        for ($date = $checkInDate; $date->lte($checkOutDate); $date->addDay()) {
+            // Get the day of the week (lowercase to match the property name)
+            $dayOfWeek = strtolower($date->format('l')); // 'monday', 'tuesday', etc.
+
+            // Retrieve the price for the specific day from the RoomTypeRate model
+            $priceForDay = $roomTypeRate->$dayOfWeek;
+
+            // Add the price for the day to the total cost
+            $totalCost += $priceForDay;
+        }
+
+        // $total = $payment->
 
         return $this->success("Transaction Info", [
             "bookingHistory" => [
@@ -53,7 +74,8 @@ class ShowTransactionRepository extends BaseRepository
                 ],
                 "guestName" => $guest->full_name,
                 "priceSummary" => [
-                    "roomTotal" => $roomTypeRate->$day,
+                    "days" => $diffInDays,
+                    "roomTotal" => $totalCost,
                 ],
                 "paymentSummary" => [
                     "paymentType" => $payment->payment_type ?? null,
