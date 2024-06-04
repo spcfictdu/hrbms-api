@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             RoomSeeder::class,
             TransactionSeeder::class,
             AvailabilityCalendarSeeder::class,
-            RoomTypeRateSeeder::class,
+            // RoomTypeRateSeeder::class,
         ]);
     }
 }

@@ -26,18 +26,23 @@ class CreateTransactionRepository extends BaseRepository
             // if ($room->status === 'OCCUPIED') {
             //     return $this->error('Room is already occupied.');
             // }
-            $guest = Guest::create([
-                'reference_number' => $this->guestReferenceNumber(),
-                'first_name' => $request->guest['firstName'],
-                "middle_name" => $request->guest['middleName'],
-                "last_name" => $request->guest['lastName'],
-                "province" => $request->guest['address']['province'],
-                "city" => $request->guest['address']['city'],
-                "phone_number" => $request->guest['contact']['phoneNum'],
-                "email" => $request->guest['contact']['email'],
-                "id_type" => $request->guest['id']['type'],
-                "id_number" => $request->guest['id']['number']
-            ]);
+            $guest = Guest::where('first_name', $request->guest['firstName'])->where('last_name', $request->guest['lastName'])->first();
+            if(empty($guest)){
+
+                $guestCreate = Guest::create([
+                    'reference_number' => $this->guestReferenceNumber(),
+                    'first_name' => $request->guest['firstName'],
+                    "middle_name" => $request->guest['middleName'],
+                    "last_name" => $request->guest['lastName'],
+                    "province" => $request->guest['address']['province'],
+                    "city" => $request->guest['address']['city'],
+                    "phone_number" => $request->guest['contact']['phoneNum'],
+                    "email" => $request->guest['contact']['email'],
+                    "id_type" => $request->guest['id']['type'],
+                    "id_number" => $request->guest['id']['number']
+                ]);
+            }
+            
             if ($guest->id) {
                 $transaction = Transaction::create([
                     "reference_number" => $this->transactionReferenceNumber(),
@@ -72,7 +77,8 @@ class CreateTransactionRepository extends BaseRepository
             return $this->success("Book Transaction Created Successfully.", Arr::collapse([
                 $this->getCamelCase($guest->toArray()),
                 $this->getCamelCase($transaction->toArray()),
-                $this->getCamelCase($payment->toArray())
+                $this->getCamelCase($payment->toArray()),
+                "extraPerson" => $request->extraPerson ?? null
 
             ]));
         } else {
@@ -81,7 +87,8 @@ class CreateTransactionRepository extends BaseRepository
 
             return $this->success("Reservation Transaction Created Successfully.", Arr::collapse([
                 $this->getCamelCase($guest->toArray()),
-                $this->getCamelCase($transaction->toArray())
+                $this->getCamelCase($transaction->toArray()),
+                "extraPerson" => $request->extraPerson ?? null
             ]));
         }
     }

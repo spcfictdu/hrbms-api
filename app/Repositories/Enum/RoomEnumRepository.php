@@ -86,7 +86,7 @@ class RoomEnumRepository extends BaseRepository
                         'date' => $date,
                         'dayOfWeek' => $dayOfWeek,
                         'rate' => $rate[$dayOfWeek] ?? 'N/A',
-                        'extraPersonRate' => $extraPersonRate * ($extraPersonNumber ?? 1),
+                        'extraPersonRate' => $extraPersonRate * ($extraPersonCount ?? 0),
                     ];
                 }, $dates),
                 'roomTotal' => array_sum(array_map(function ($date) use ($rate) {
