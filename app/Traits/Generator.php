@@ -57,7 +57,7 @@ trait Generator
     {
         do {
 
-            $referenceNumber = bin2hex(random_bytes(4));
+            $referenceNumber = bin2hex(random_bytes(2)) . '-' . bin2hex(random_bytes(2)) . '-' . bin2hex(random_bytes(2));
         } while (Transaction::where("reference_number", $referenceNumber)->first());
 
         return $referenceNumber;
