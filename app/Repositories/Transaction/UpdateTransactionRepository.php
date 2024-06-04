@@ -22,6 +22,7 @@ class UpdateTransactionRepository extends BaseRepository
 
                 if ($request->status === "RESERVED") {
                     $payment = Payment::create([
+                        "transaction_id" => $transaction->id,
                         "payment_type" => $request->paymentType,
                         "amount_received" => $request->amountReceived
                     ]);
