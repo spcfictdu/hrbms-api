@@ -48,7 +48,7 @@ class CreateTransactionRepository extends BaseRepository
                     "check_in_time" => $request->checkIn['time'],
                     "check_out_date" => $request->checkOut['date'],
                     "check_out_time" => $request->checkOut['time'],
-                    // "number_of_guest" => $request->guest['numberOfGuest'],
+                    "number_of_guest" => $request->guest['extraPerson'],
                     "guest_id" => $guest->id
                 ]);
             }

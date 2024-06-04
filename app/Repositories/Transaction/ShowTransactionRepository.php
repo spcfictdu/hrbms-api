@@ -61,6 +61,7 @@ class ShowTransactionRepository extends BaseRepository
                 "transaction" => [
                     "referenceNumber" => $transaction->reference_number,
                     "status" => $transaction->status,
+                    "extraPerson" => $transaction->number_of_guest,
                     "checkInDate" => $transaction->check_in_date,
                     "checkInTime" => $transaction->check_in_time,
                     "checkOutDate" => $transaction->check_out_date,
