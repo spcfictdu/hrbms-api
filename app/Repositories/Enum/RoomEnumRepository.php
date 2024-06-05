@@ -94,7 +94,7 @@ class RoomEnumRepository extends BaseRepository
                     return $rate[$dayOfWeek] ?? 0;
                 }, $dates)),
                 'extraPersonCount' => $extraPersonCount,
-                'ExtraPersonTotal' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount) {
+                'extraPersonTotal' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
                     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
                     return $extraPersonRate * $extraPersonCount;
@@ -104,6 +104,7 @@ class RoomEnumRepository extends BaseRepository
                     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
                     return $rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount);
                 }, $dates)),
+                'extraPersonCapacity' => $room->roomType->extra_person_capacity ? range(0, $room->roomType->extra_person_capacity) : 0,
             ];
         });
 

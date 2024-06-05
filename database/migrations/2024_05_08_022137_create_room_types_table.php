@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('is_non_smoking');
             $table->boolean('balcony_or_terrace');
             $table->integer('capacity');
+            $table->integer('extra_person_capacity')->default(0);
         });
     }
 

@@ -26,7 +26,8 @@ class CreateRoomTypeRepository extends BaseRepository
             'property_size' => $request->propertySize,
             'is_non_smoking' => $request->isNonSmoking,
             'balcony_or_terrace' => $request->balconyOrTerrace,
-            'capacity' => $request->capacity
+            'capacity' => $request->capacity,
+            'extra_person_capacity' => $request->extraPersonCapacity ?? '0'
         ]);
 
         if ($request['images']) {

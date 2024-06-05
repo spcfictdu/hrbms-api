@@ -22,7 +22,7 @@ return new class extends Migration
             $table->time('check_in_time')->nullable();
             $table->date('check_out_date')->nullable();
             $table->time('check_out_time')->nullable();
-            $table->string('number_of_guest')->nullable();
+            $table->integer('number_of_guest')->nullable();
             $table->unsignedBigInteger('guest_id');
             $table->foreign('guest_id')->references('id')->on('guests')->onDelete('cascade');
             $table->unsignedBigInteger('transaction_history_id')->nullable();

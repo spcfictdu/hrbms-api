@@ -37,6 +37,7 @@ class RoomTypeSeeder extends Seeder
                 'is_non_smoking' => true,
                 'balcony_or_terrace' => false,
                 'capacity' => 2,
+                'extra_person_capacity' => 3,
                 'amenities' => [2, 24, 30, 9, 22, 12, 6],
                 'rates' => [
                     'monday' => 1340,
@@ -57,6 +58,7 @@ class RoomTypeSeeder extends Seeder
                 'is_non_smoking' => true,
                 'balcony_or_terrace' => false,
                 'capacity' => 2,
+                'extra_person_capacity' => 3,
                 'amenities' => [2, 3, 24, 30, 9, 22, 12, 6],
                 'rates' => [
                     'monday' => 1444,
@@ -77,6 +79,7 @@ class RoomTypeSeeder extends Seeder
                 'is_non_smoking' => true,
                 'balcony_or_terrace' => false,
                 'capacity' => 2,
+                'extra_person_capacity' => 3,
                 'amenities' => [2, 3, 24, 30, 9, 22, 12, 6, 18],
                 'rates' => [
                     'monday' => 1754,
@@ -97,6 +100,7 @@ class RoomTypeSeeder extends Seeder
                 'is_non_smoking' => true,
                 'balcony_or_terrace' => false,
                 'capacity' => 2,
+                'extra_person_capacity' => 3,
                 'amenities' => [2, 3, 24, 30, 9, 22, 12, 6, 18],
                 'rates' => [
                     'monday' => 1858,
@@ -117,6 +121,7 @@ class RoomTypeSeeder extends Seeder
                 'is_non_smoking' => true,
                 'balcony_or_terrace' => false,
                 'capacity' => 2,
+                'extra_person_capacity' => 3,
                 'amenities' => [2, 3, 24, 30, 9, 22, 12, 6, 18, 14],
                 'rates' => [
                     'monday' => 2173,
@@ -146,6 +151,7 @@ class RoomTypeSeeder extends Seeder
                 'is_non_smoking' => $roomType['is_non_smoking'],
                 'balcony_or_terrace' => $roomType['balcony_or_terrace'],
                 'capacity' => $roomType['capacity'],
+                'extra_person_capacity' => $roomType['extra_person_capacity'],
             ]);
 
             foreach ($roomType['amenities'] as $amenity) {
