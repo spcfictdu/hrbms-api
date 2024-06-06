@@ -91,6 +91,7 @@ class IndexRoomRepository extends BaseRepository
                 'status' => $room->status,
                 'roomType' => [
                     'name' => $room->roomType->name,
+                    'image' => $room->roomType->images->first() ? $room->roomType->images->first()->filename : null,
                     'capacity' => $room->roomType->capacity,
                     'description' => $room->roomType->description,
                     'amenities' => $room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
