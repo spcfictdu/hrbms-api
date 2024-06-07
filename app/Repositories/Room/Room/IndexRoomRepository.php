@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Room\Room;
 
+use App\Models\Amenity\Amenity;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Arr;
 use Carbon\Carbon;
@@ -21,9 +22,32 @@ class IndexRoomRepository extends BaseRepository
         $checkInDateFilter = $request->input('checkInDate');
         $checkOutDateFilter = $request->input('checkOutDate');
         $capacityFilter = $request->input('capacity');
+        $search = $request->input('search');
 
         // Initialize query
         $roomsQuery = Room::query();
+
+        // Apply search filter
+        if ($search) {
+            $roomsQuery->where(function ($query) use ($search) {
+                $query->where('room_number', 'like', '%' . $search . '%')
+                    ->orWhereHas('roomType', function ($query) use ($search) {
+                        $query->where('name', 'like', '%' . $search . '%')
+                            ->orWhere('capacity', 'like', '%' . $search . '%')
+                            ->orWhere('description', 'like', '%' . $search . '%')
+                            ->orWhereHas('amenities', function ($query) use ($search) {
+                                $query->whereHas('amenity', function ($query) use ($search) {
+                                    $query->where('name', 'like', '%' . $search . '%');
+                                });
+                            });
+                    });
+                // ->orWhereHas('roomType.amenities', function ($query) use ($search) {
+                //     $query->whereHas('amenity', function ($query) use ($search) {
+                //         $query->where('name', 'like', '%' . $search . '%');
+                //     });
+                // });
+            });
+        }
 
         // Apply sorting
         $roomsQuery->orderBy($sortBy, $sortOrder);

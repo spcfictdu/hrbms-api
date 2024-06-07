@@ -28,6 +28,7 @@ NO ROLE NEEDED
 
 #### Parameters
 
+-   search : STRING (optional) - The search query
 -   roomType : STRING (optional) - The type of the room
 -   page : INTEGER (optional) - The page number
 -   perPage : INTEGER (optional) - The number of items per page
