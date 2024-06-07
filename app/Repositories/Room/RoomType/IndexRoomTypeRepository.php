@@ -68,7 +68,7 @@ class IndexRoomTypeRepository extends BaseRepository
 
             $selectedRate = $specialRate ?? $regularRate;
 
-            // Now, dynamically access the price based on the day of the week
+            // Now, dynamically access the price based on the day of the week 
             $price = $selectedRate->$dayOfWeek;
 
             return [
@@ -82,6 +82,15 @@ class IndexRoomTypeRepository extends BaseRepository
             ];
         });
 
-        return $this->success("List of all room types.", $roomTypesData);
+        return $this->success("List of all room types.", ['roomTypes' => $roomTypesData,
+        'pagination' => [
+            'total' => $roomTypes->total(),
+            'perPage' => $roomTypes->perPage(),
+            'currentPage' => $roomTypes->currentPage(),
+            'lastPage' => $roomTypes->lastPage(),
+            'from' => $roomTypes->firstItem(),
+            'to' => $roomTypes->lastItem()
+        ]
+    ]);
     }
 }
