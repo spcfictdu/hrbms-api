@@ -24,7 +24,7 @@ class RoomTypeAmenity extends Model
 
     public $timestamps = false;
 
-    protected function amenity()
+    public function amenity()
     {
         return $this->belongsTo(Amenity::class, 'amenity_id');
     }

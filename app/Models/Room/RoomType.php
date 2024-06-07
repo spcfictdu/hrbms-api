@@ -42,12 +42,12 @@ class RoomType extends Model
         return $this->hasMany(Room::class, 'room_type_id');
     }
 
-    protected function amenities()
+    public function amenities()
     {
         return $this->hasMany(RoomTypeAmenity::class, 'room_type_id');
     }
 
-    protected function images()
+    public function images()
     {
         return $this->hasMany(RoomTypeImage::class, 'room_type_id');
     }
