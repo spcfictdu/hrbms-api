@@ -140,6 +140,8 @@ class RoomTypeSeeder extends Seeder
             Storage::deleteDirectory($directory);
         }
 
+        $originalImagePath = storage_path('app/public/RoomPic.png');
+
         foreach ($roomTypes as $roomType) {
             $roomTypeCreation = RoomType::create([
                 // 'id' => $roomType['id'],
@@ -174,35 +176,39 @@ class RoomTypeSeeder extends Seeder
                 'sunday' => $roomType['rates']['sunday']
             ]);
 
-            // Delete existing images
-            // $existingImage = RoomTypeImage::where('room_type_id', $roomType['id'])->first();
-            // if ($existingImage) {
-            //     Storage::delete('public/' . $existingImage->filename);
-            //     $existingImage->delete();
-            // }
-
-            // Delete existing images
-            // RoomTypeImage::where('room_type_id', $roomType['id'])->delete();
-            // if (Storage::exists("public/" . $roomTypeCreation->reference_number)) {
-            //     Storage::deleteDirectory("public/" . $roomTypeCreation->reference_number);
-            // }
 
             $folderName = $roomTypeCreation->reference_number;
-            $folder = Storage::makeDirectory("public/" . $folderName);
+            // $targetFolderPath = storage_path('app/public/' . $folderName);
+            // $folder = Storage::makeDirectory("public/" . $folderName);
 
-            // Generate 4 new images
-            for (
-                $i = 0;
-                $i < 4;
-                $i++
-            ) {
-                $imageUrl = "storage/{$folderName}/RoomPic.png";
+            $targetFolderPath = "public/{$folderName}";
+            Storage::makeDirectory($targetFolderPath);
+
+            // Copy the image to the created folder
+            $sourceImagePath = storage_path('app/public/RoomPic.png');
+            for ($i = 0; $i < 4; $i++) {
+                $targetImagePath = storage_path("app/{$targetFolderPath}/RoomPic_{$i}.png");
+                Storage::copy('public/RoomPic.png', "{$targetFolderPath}/RoomPic_{$i}.png");
 
                 RoomTypeImage::create([
-                    'room_type_id' => $roomType['id'],
-                    'filename' => $imageUrl,
+                    'room_type_id' => $roomTypeCreation->id,
+                    'filename' => "storage/{$folderName}/RoomPic_{$i}.png",
                 ]);
             }
+
+            // Generate 4 new images
+            // for (
+            //     $i = 0;
+            //     $i < 4;
+            //     $i++
+            // ) {
+            //     $imageUrl = "storage/{$folderName}/RoomPic.png";
+
+            //     RoomTypeImage::create([
+            //         'room_type_id' => $roomType['id'],
+            //         'filename' => $imageUrl,
+            //     ]);
+            // }
         }
     }
 }
