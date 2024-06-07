@@ -109,18 +109,44 @@ class IndexRoomRepository extends BaseRepository
 
         // Format the response
         $roomsData = $rooms->map(function ($room) {
+            // return $room->roomType->roomTypeRate;
+
+            // if ($room->roomType->roomTypeRate->type === 'SPECIAL') {
+            //     $startDate = $room->roomType->roomTypeRate->start_date;
+            //     $endDate = $room->roomType->roomTypeRate->end_date;
+            // } else {
+            //     $startDate = null;
+            //     $endDate = null;
+            // }
+
+            // $discount = $room->roomType->roomTypeRate->discount_name;
+            $dayOfWeek = strtolower(date('l'));
+            // Assuming $room->roomType->rates is a collection of rates
+            $specialRate = $room->roomType->rates->firstWhere('type', 'SPECIAL');
+            $regularRate = $room->roomType->rates->firstWhere('type', 'REGULAR');
+
+            // If there's a special rate available, use it; otherwise, use the regular rate
+            $selectedRate = $specialRate ?? $regularRate;
+
+            // Now, dynamically access the price based on the day of the week
+            $price = $selectedRate->$dayOfWeek;
             return [
                 'referenceNumber' => $room->reference_number,
                 'roomNumber' => $room->room_number,
                 'status' => $room->status,
                 'roomType' => [
                     'name' => $room->roomType->name,
+                    'price' => $price,
                     'image' => $room->roomType->images->first() ? $room->roomType->images->first()->filename : null,
                     'capacity' => $room->roomType->capacity,
                     'description' => $room->roomType->description,
                     'amenities' => $room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
                         return $amenity->name;
                     }),
+                    // 'startDate' => $room->roomType->roomTypeRate->start_date,
+                    // 'endDate' => $room->roomType->roomTypeRate->end_date,
+                    // 'discount' => $discount,
+
                 ]
             ];
         });

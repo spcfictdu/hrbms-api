@@ -2,62 +2,56 @@
 
 This endpoint retrieves the list of all room types.
 
-####  URL
+#### URL
 
 ```
 {{base_url}}/api/room-type/
 ```
 
 #### Method
+
 ```
 GET
 ```
 
 #### Authentication Needed
+
 ```
 TRUE
 ```
 
 #### Permitted Roles
+
 ```
 ADMIN
 ```
 
+#### Parameters
+
+-   search : STRING (optional) - The search query
+-   roomType : STRING (optional) - The type of the room
+-   page : INTEGER (optional) - The page number
+-   perPage : INTEGER (optional) - The number of items per page
+-   sortBy : STRING (optional) - The field to sort by
+-   sortOrder : STRING (optional) - The order of the sort
+-   checkInDate : STRING (optional) - The check in date the guest wants to book
+-   checkOutDate : STRING (optional) - The check out date the guest wants to book
+-   capacity : STRING (optional) - The capacity of the room
+
 #### Response Example (Success)
 
-``` json
+```json
 {
     "message": "List of all room types.",
     "results": [
         {
-            "referenceNumber": "5d09bb11",
-            "name": "JUNIOR STANDARD",
-            "description": "This single room has a tile/marble floor, cable TV and air conditioning.",
-            "capacity": 2
-        },
-        {
-            "referenceNumber": "322bae76",
+            "referenceNumber": "0192674d",
             "name": "STANDARD",
+            "price": 1000,
+            "image": "storage/0192674d/RoomPic_0.png",
             "description": "This modern room comes with a flat-screen cable TV, work space and mini-fridge. Free toiletries and a bidet are included in the private bathroom.",
-            "capacity": 2
-        },
-        {
-            "referenceNumber": "77eadf22",
-            "name": "JUNIOR SUITE",
-            "description": "This large Jr. Suite comes with a flat-screen cable TV, work space and mini-fridge. Free toiletries and a bidet are included in the private bathroom. Jr. Suite features a sofa seating area.",
-            "capacity": 2
-        },
-        {
-            "referenceNumber": "356a7691",
-            "name": "SUITE",
-            "description": "This spacious suite comes with a flat-screen cable TV, work space and mini-fridge. Free toiletries and a bidet are included in the private bathroom. Suite features a separate dining area and sofa seating area.",
-            "capacity": 2
-        },
-        {
-            "referenceNumber": "d5922c1b",
-            "name": "SUPERIOR",
-            "description": "This spacious suite comes with a flat-screen cable TV, work space and mini-fridge. Free toiletries and a bidet are included in the private bathroom. Suite features a separate dining area and sofa seating area.",
-            "capacity": 2
+            "capacity": 2,
+            "totalRooms": 4
         }
     ],
     "code": 200,

@@ -45,6 +45,11 @@ class RoomController extends Controller
         return $this->index->execute($request);
     }
 
+    // protected function indexImage(IndexRoomRequest $request)
+    // {
+    //     return $this->index->executeImage($request);
+    // }
+
     protected function create(CreateRoomRequest $request)
     {
         return $this->create->execute($request);
