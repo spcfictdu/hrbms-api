@@ -42,6 +42,15 @@ class UserSeeder extends Seeder
                 'email' => 'test@gmail.com',
                 'password' => Hash::make('password'),
                 'role' => 'ADMIN',
+            ],
+            [
+                'id' => 4,
+                'username' => 'admin',
+                'first_name' => 'JANE',
+                'last_name' => 'DOE',
+                'email' => 'a@gmail.com',
+                'password' => Hash::make('developer'),
+                'role' => 'ADMIN',
             ]
             // Add more users here with their respective roles
         ];

@@ -146,6 +146,7 @@ Route::group([
     $route->get('/room', [EnumController::class, 'roomEnum']);
     $route->get('/room-type', [EnumController::class, 'roomTypeEnum']);
     $route->get('/room-number', [EnumController::class, 'roomNumberEnum']);
+    $route->get('/room-type-amenity', [EnumController::class, 'roomTypeAmenityEnum']);
     $route->get('/guest', [EnumController::class, 'guestEnum']);
 });
 

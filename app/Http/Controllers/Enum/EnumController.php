@@ -4,25 +4,28 @@ namespace App\Http\Controllers\Enum;
 
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\Enum\{RoomTypeEnumRequest, RoomNumberEnumRequest, RoomEnumRequest};
+use App\Http\Requests\Enum\{RoomTypeEnumRequest, RoomNumberEnumRequest, RoomEnumRequest, RoomTypeAmenityEnumRequest};
 use App\Models\Guest\Guest;
-use App\Repositories\Enum\{RoomNumberEnumRepository, RoomTypeEnumRepository, RoomEnumRepository, GuestEnumRepository};
+use App\Repositories\Enum\{RoomNumberEnumRepository, RoomTypeEnumRepository, RoomEnumRepository, GuestEnumRepository, RoomTypeAmenityEnumRepository};
 
 class EnumController extends Controller
 {
-    protected $roomTypeEnum, $roomNumberEnum, $roomEnum, $guestEnum;
+    protected $roomTypeEnum, $roomNumberEnum, $roomEnum, $guestEnum, $roomTypeAmenityEnum;
 
     // * CONSTRUCTOR INJECTION
     public function __construct(
         RoomTypeEnumRepository $roomTypeEnum,
         RoomNumberEnumRepository $roomNumberEnum,
         RoomEnumRepository $roomEnum,
-        GuestEnumRepository $guestEnum
+        GuestEnumRepository $guestEnum,
+        RoomTypeAmenityEnumRepository $roomTypeAmenityEnum
+
     ) {
         $this->roomTypeEnum = $roomTypeEnum;
         $this->roomNumberEnum = $roomNumberEnum;
         $this->roomEnum = $roomEnum;
         $this->guestEnum = $guestEnum;
+        $this->roomTypeAmenityEnum = $roomTypeAmenityEnum;
     }
 
     public function roomTypeEnum(RoomTypeEnumRequest $request)
@@ -43,5 +46,10 @@ class EnumController extends Controller
     public function guestEnum()
     {
         return $this->guestEnum->execute();
+    }
+
+    public function roomTypeAmenityEnum(RoomTypeAmenityEnumRequest $request)
+    {
+        return $this->roomTypeAmenityEnum->execute($request);
     }
 }
