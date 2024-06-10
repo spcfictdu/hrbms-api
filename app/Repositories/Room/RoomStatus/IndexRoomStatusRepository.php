@@ -8,73 +8,62 @@ use App\Repositories\BaseRepository;
 
 class IndexRoomStatusRepository extends BaseRepository
 {
-    public function execute()
+    public function execute($request)
     {
-        // Get all room types
-        $roomTypes = RoomType::all();
+        // Query Parameters
+        $perPage = $request->input('perPage', 10);
+        $sortBy = $request->input('sortBy', 'room_number');
+        $sortOrder = $request->input('sortOrder', 'asc');
+        $roomTypeFilter = $request->input('roomType');
 
-        // Count rooms by status
-        $roomStatusCount = Room::selectRaw('status, COUNT(*) as count')
-            ->groupBy('status')
-            ->get()
-            ->pluck('count', 'status');
-
-        // Get all rooms with necessary relationships
-        $rooms = Room::with(['transactions' => function ($query) {
+        // Start the query
+        $roomsQuery = Room::with(['transactions' => function ($query) {
             $query->where('status', 'CHECKED-IN')->with('transactionHistory', 'guest');
-        }])
-            ->get()
-            ->map(function ($room) {
-                // For occupied rooms, include guest information
-                if ($room->status == 'OCCUPIED') {
-                    $occupants = $room->transactions->map(function ($transaction) {
-                        $transactionHistory = $transaction->transactionHistory;
-                        if ($transactionHistory) {
-                            // return [
-                            //     'guest_name' => $transaction->guest ? $transaction->guest->full_name : null,
-                            //     'check_in_date' => $transactionHistory->check_in_date,
-                            //     'check_out_date' => $transactionHistory->check_out_date,
-                            // ];
+        }]);
 
-                            return $transaction->guest ? $transaction->guest->full_name : null;
-                        }
-                    })->filter()->first();
-                    // })->filter()->all();
+        // Apply filter if roomType is provided
+        if ($roomTypeFilter) {
+            $roomTypeId = RoomType::where('name', $roomTypeFilter)->first()->id ?? null;
+            if ($roomTypeId) {
+                $roomsQuery = $roomsQuery->where('room_type_id', $roomTypeId);
+            }
+        }
 
-                    return [
-                        'roomId' => $room->id,
-                        'roomReferenceNumber' => $room->reference_number,
-                        'roomNumber' => $room->room_number,
-                        'roomType' => $room->roomType->name,
-                        'status' => $room->status,
-                        'guest' => $occupants,
-                    ];
-                } else {
-                    // For other statuses, just include the room status
-                    return [
-                        'roomId' => $room->id,
-                        'roomReferenceNumber' => $room->reference_number, // Changed 'roomReferenceNumber' => $room->reference_number from 'roomId' => $room->id
-                        'roomNumber' => $room->room_number,
-                        'roomType' => $room->roomType->name,
-                        'status' => $room->status,
-                        'guest' => null,
-                    ];
-                }
-            });
+        // Apply sorting
+        $roomsQuery->orderBy($sortBy, $sortOrder);
 
-        // return [
-        //     'roomStatusCount' => $roomStatusCount,
-        //     'rooms' => $rooms,
-        // ];
+        // Paginate the results
+        $paginatedRooms = $roomsQuery->paginate($perPage);
 
-        // return response()->json([
-        //     'roomStatusCount' => $roomStatusCount,
-        //     'rooms' => $rooms,
-        // ]);
+        // Transform the paginated collection
+        $transformedRooms = $paginatedRooms->map(function ($room) {
+            $occupants = $room->status == 'OCCUPIED' ? $room->transactions->map(function ($transaction) {
+                return $transaction->guest ? $transaction->guest->full_name : null;
+            })->filter()->first() : null;
+
+            return [
+                'roomId' => $room->id,
+                'roomReferenceNumber' => $room->reference_number,
+                'roomNumber' => $room->room_number,
+                'roomType' => $room->roomType->name,
+                'status' => $room->status,
+                'guest' => $occupants,
+            ];
+        });
+
+        // Set the transformed collection back on the paginator
+        $paginatedRooms->setCollection($transformedRooms);
 
         return $this->success('success', [
-            'roomStatusCount' => $roomStatusCount,
-            'rooms' => $rooms,
+            'rooms' => $paginatedRooms->items(),
+            'pagination' => [
+                'total' => $paginatedRooms->total(),
+                'perPage' => $paginatedRooms->perPage(),
+                'currentPage' => $paginatedRooms->currentPage(),
+                'lastPage' => $paginatedRooms->lastPage(),
+                'from' => $paginatedRooms->firstItem(),
+                'to' => $paginatedRooms->lastItem(),
+            ],
         ]);
     }
 }

@@ -28,6 +28,7 @@ ADMIN
 ``` json
 {
     "roomNumber": 601,
+    "roomFloor": 6,
     "roomType": "DELUXE"
 }
 ``` 
@@ -40,6 +41,7 @@ ADMIN
     "results": {
         "referenceNumber": "840b4991",
         "roomNumber": 601,
+        "roomFloor": 6,
         "roomType": "DELUXE",
         "status": "UNALLOCATED"
     },

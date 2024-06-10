@@ -90,7 +90,7 @@ class RoomSeeder extends Seeder
                 'room_number' => $room['room_number'],
                 'room_floor' => $room['room_floor'],
                 'room_type_id' => $room['room_type_id'],
-                'status' => 'READY FOR OCCUPANCY'
+                'status' => 'AVAILABLE'
             ]);
         }
     }

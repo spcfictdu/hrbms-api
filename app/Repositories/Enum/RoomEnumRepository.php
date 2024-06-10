@@ -78,6 +78,7 @@ class RoomEnumRepository extends BaseRepository
                 'roomTypeCapacity' => $room->roomType->capacity ?? 'N/A',
                 // 'rateType' => $rate['type'] ?? 'N/A',
                 // 'roomTotal' => $rate ? $rate[$dayOfWeek] : 0,
+                'duration' => count($dates),
                 'roomRateType' => $rate['type'] ?? 'N/A',
                 'roomRatesArray' => array_map(function ($date) use ($rate, $room, $extraPersonCount) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));

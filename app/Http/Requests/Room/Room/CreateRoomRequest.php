@@ -6,7 +6,7 @@ use App\Http\Requests\ResponseRequest;
 
 class CreateRoomRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -25,7 +25,8 @@ class CreateRoomRequest extends ResponseRequest
     {
         return [
             'roomNumber' => ['required', 'integer', 'unique:rooms,room_number'],
-            'roomType' => ['required', 'exists:room_types,name']
+            'roomType' => ['required', 'exists:room_types,name'],
+            'roomFloor' => ['required', 'integer', 'min:1'],
         ];
     }
 }

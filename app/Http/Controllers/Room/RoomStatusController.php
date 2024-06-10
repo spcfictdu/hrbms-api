@@ -30,7 +30,7 @@ class RoomStatusController extends Controller
 
     protected function index(IndexRoomStatusRequest $request)
     {
-        return $this->index->execute();
+        return $this->index->execute($request);
     }
 
 

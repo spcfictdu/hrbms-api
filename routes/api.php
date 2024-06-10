@@ -88,8 +88,8 @@ Route::group([
     'prefix' => 'room-status'
 ], function ($route) {
     $route->get('/', [RoomStatusController::class, 'index']);
-    $route->get('/{referenceNumber}', [OccupiedRoomController::class, 'show']);
-    $route->put('/update/{referenceNumber}', [OccupiedRoomController::class, 'update']);
+    $route->get('/{referenceNumber}', [RoomStatusController::class, 'show']);
+    $route->put('/update/{referenceNumber}', [RoomStatusController::class, 'update']);
 });
 
 
