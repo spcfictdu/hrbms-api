@@ -24,7 +24,7 @@ class UpdateRoomStatusRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'status' => 'nullable|string|in:OCCUPIED,DIRTY,READY FOR OCCUPANCY,UNALLOCATED'
+            'status' => 'nullable|string|in:OCCUPIED,UNCLEAN,READY FOR OCCUPANCY,UNALLOCATED'
         ];
     }
 }

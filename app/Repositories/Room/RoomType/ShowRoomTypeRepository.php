@@ -50,7 +50,7 @@ class ShowRoomTypeRepository extends BaseRepository
         $roomsQuery->orderBy($sortBy, $sortOrder);
 
         // Paginate the results
-        $paginatedRooms = $roomsQuery->paginate($perPage);
+        $paginatedRooms = $roomsQuery->with('transactions')->paginate($perPage);
 
         // Transform the paginated collection
         $transformedRooms = $paginatedRooms->map(function ($room) {
@@ -66,6 +66,14 @@ class ShowRoomTypeRepository extends BaseRepository
                 'roomType' => $room->roomType->name,
                 'status' => $room->status,
                 'guest' => $occupants,
+                'transactions' => $room->transactions->map(function ($transaction) {
+                    return [
+                        'referenceNumber' => $transaction->reference_number,
+                        'guest' => $transaction->guest ? $transaction->guest->full_name : null,
+                        'checkIn' => $transaction->transactionHistory ? $transaction->transactionHistory->check_in_date . 'T' . $transaction->transactionHistory->check_in_time : null,
+                        'checkOut' => $transaction->transactionHistory ? $transaction->transactionHistory->check_out_date . 'T' . $transaction->transactionHistory->check_out_time : null,
+                    ];
+                }),
             ];
         });
 

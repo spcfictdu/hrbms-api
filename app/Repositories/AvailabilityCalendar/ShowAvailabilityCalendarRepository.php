@@ -20,7 +20,7 @@ class ShowAvailabilityCalendarRepository extends BaseRepository
             'reference_number' => $transaction->reference_number,
             'room_type' => $transaction->room?->roomType->name,
             'room_number' => $transaction->room?->room_number,
-            'room_status' => $transaction->room?->status, // 'OCCUPIED', 'DIRTY', 'READY FOR OCCUPANCY', 'UNALLOCATED'
+            'room_status' => $transaction->room?->status, // 'OCCUPIED', 'UNCLEAN', 'READY FOR OCCUPANCY', 'UNALLOCATED'
             'guest' => $transaction->guest->first_name . ' ' . $transaction->guest->last_name,
             'check_in' => $transaction->check_in_date . 'T' . $transaction->check_in_time,
             'check_out' => $transaction->check_out_date . 'T' . $transaction->check_out_time,

@@ -30,7 +30,7 @@ NO ROLE NEEDED
 
 ```json
 {
-    "status": "AVAILABLE" // OCCUPIED, DIRTY, UNALLOCATED, AVAILABLE
+    "status": "AVAILABLE" // OCCUPIED, UNCLEAN, UNALLOCATED, AVAILABLE
 }
 ```
 
@@ -43,7 +43,7 @@ NO ROLE NEEDED
         "reference_number": "2227e3c3",
         "room_number": 101,
         "room_floor": 1,
-        "status": "DIRTY"
+        "status": "UNCLEAN"
     },
     "code": 200,
     "error": false

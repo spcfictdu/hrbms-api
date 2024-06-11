@@ -10,7 +10,7 @@ use DateTime;
 
 class IndexAvailabilityCalendarRepository extends BaseRepository
 {
-    // Room status - OCCUPIED, DIRTY, READY FOR OCCUPANCY, UNALLOCATED | could add HOUSE KEEPING, CHECK IN, CHECK OUT, RESERVED, CONFIRMED
+    // Room status - OCCUPIED, UNCLEAN, READY FOR OCCUPANCY, UNALLOCATED | could add HOUSE KEEPING, CHECK IN, CHECK OUT, RESERVED, CONFIRMED
     // Transaction status - Reserved, Booked
     // status can be - house keeping, check in, check out, reserved, confirmed
     public function execute($request)
@@ -74,8 +74,8 @@ class IndexAvailabilityCalendarRepository extends BaseRepository
         // Map the results to the desired format
         $transactions =  $transactions->map(function ($transaction) {
 
-            if ($transaction->room?->status === "DIRTY") {
-                $transaction->status = "HOUSEKEEPING";
+            if ($transaction->room?->status === "UNCLEAN") {
+                $transaction->status = "UNCLEAN";
             } else {
             }
             $formattedCheckInDateTime = new DateTime($transaction->check_in_date . ' ' . $transaction->check_in_time);
@@ -86,7 +86,7 @@ class IndexAvailabilityCalendarRepository extends BaseRepository
                 'referenceNumber' => $transaction->reference_number,
                 'roomType' => $transaction->room?->roomType->name,
                 'roomNumber' => $transaction->room?->room_number,
-                'roomStatus' => $transaction->room?->status, // 'OCCUPIED', 'DIRTY', 'READY FOR OCCUPANCY', 'UNALLOCATED'
+                'roomStatus' => $transaction->room?->status, // 'OCCUPIED', 'UNCLEAN', 'READY FOR OCCUPANCY', 'UNALLOCATED'
                 // 'guest' => $transaction->guest?->first_name . ' ' . $transaction->guest?->last_name,
                 'guest' => $transaction->guest?->full_name,
                 'checkIn' => $transaction->check_in_date . 'T' . $transaction->check_in_time,

@@ -87,7 +87,7 @@ class UpdateTransactionRepository extends BaseRepository
             $transaction->update(["status" => "CHECKED-OUT"]);
 
             $room = $transaction->room;
-            $room->update(["status" => "DIRTY"]);
+            $room->update(["status" => "UNCLEAN"]);
         }
     }
 }
