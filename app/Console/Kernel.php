@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\MakeModule;
+use App\Console\Commands\StorageFolderAccess;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -10,8 +11,9 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         MakeModule::class,
+        StorageFolderAccess::class,
     ];
-    
+
     /**
      * Define the application's command schedule.
      */

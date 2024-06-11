@@ -28,14 +28,21 @@ $ composer clear
 $ composer dump-autoload
 $ php artisan optimize:clear
 
-# Create the symbolic links configured for the application
-$ php artisan storage:link
-
 # Run the migrations
 $ php artisan migrate
 
+# Delete all files in the public storage directory
+# $ php artisan storage:clear-public
+
 # Drop all tables and re-run all migrations with seeders
 $ php artisan migrate:fresh --seed
+
+# Change the permissions of the storage and cache directories
+$ php artisan storage:folder-access
+
+# Create the symbolic links configured for the application
+$ php artisan storage:link
+
 
 # Start the server
 $ php artisan serve

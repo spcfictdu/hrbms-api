@@ -12,6 +12,7 @@ use App\Models\Room\{
     RoomTypeAmenity,
     RoomTypeRate
 };
+use Illuminate\Support\Facades\Artisan;
 
 class CreateRoomTypeRepository extends BaseRepository
 {
@@ -38,9 +39,11 @@ class CreateRoomTypeRepository extends BaseRepository
 
                 RoomTypeImage::create([
                     'room_type_id' => $roomType->id,
-                    'filename' => basename($imageFilePath)
+                    'filename' => 'storage/' . $roomType->reference_number . '/' . basename($imageFilePath)
                 ]);
             }
+
+            Artisan::call(`storage:folder-access {$roomType->reference_number}`);
         }
 
         if ($request['amenities']) {
