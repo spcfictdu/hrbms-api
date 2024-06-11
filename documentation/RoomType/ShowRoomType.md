@@ -6,33 +6,37 @@ This endpoint retrieves information about a specific room type using the provide
 
 ```
 {{base_url}}/api/room-type/{roomTypeReferenceNumber}
-```   
+```
 
 #### Method
+
 ```
 GET
 ```
 
 #### Authentication Needed
+
 ```
 TRUE
 ```
 
 #### Permitted Roles
+
 ```
 ADMIN
 ```
 
 #### Query Parameters
 
-- `perPage` - The number of results to show per page. Default is 10.
-- `page` - The page number to show. Default is 1.
-- `sortBy` - The column to sort by. Default is `name`.
-- `sortOrder` - The order to sort by. Default is `asc`.
+-   `search` - The search query to filter the results. Default is `null`.
+-   `perPage` - The number of results to show per page. Default is 10.
+-   `page` - The page number to show. Default is 1.
+-   `sortBy` - The column to sort by. Default is `name`.
+-   `sortOrder` - The order to sort by. Default is `asc`.
 
 #### Response Example (Success)
 
-``` json
+```json
 {
     "message": "Room type found.",
     "results": {

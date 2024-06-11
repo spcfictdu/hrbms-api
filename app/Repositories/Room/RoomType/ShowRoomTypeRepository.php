@@ -17,6 +17,7 @@ class ShowRoomTypeRepository extends BaseRepository
         $perPage = $request->input('perPage', 10);
         $sortBy = $request->input('sortBy', 'room_number');
         $sortOrder = $request->input('sortOrder', 'asc');
+        $search = $request->input('search', null);
 
         // Get the room type
         $roomType = RoomType::where('reference_number', $referenceNumber)->firstOrFail();
@@ -25,6 +26,25 @@ class ShowRoomTypeRepository extends BaseRepository
         $roomsQuery = Room::with(['transactions' => function ($query) {
             $query->where('status', 'CHECKED-IN')->with('transactionHistory', 'guest');
         }])->where('room_type_id', $roomType->id);
+
+        if ($search) {
+            $roomsQuery->where(function ($query) use ($search) {
+                $query->where('room_number', 'like', '%' . $search . '%')
+                    ->orWhere('status', 'like', '%' . $search . '%')
+                    ->orWhere('room_floor', 'like', '%' . $search . '%')
+                    ->orWhereHas('roomType', function ($query) use ($search) {
+                        $query->where('name', 'like', '%' . $search . '%')
+                            ->orWhere('capacity', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('transactions', function ($query) use ($search) {
+                        $query->whereHas('guest', function ($query) use ($search) {
+                            $query->where('first_name', 'like', '%' . $search . '%')
+                                ->orWhere('middle_name', 'like', '%' . $search . '%')
+                                ->orWhere('last_name', 'like', '%' . $search . '%');
+                        });
+                    });
+            });
+        }
 
         // Apply sorting
         $roomsQuery->orderBy($sortBy, $sortOrder);
