@@ -23,57 +23,96 @@ TRUE
 ADMIN
 ```
 
+#### Query Parameters
+
+- `perPage` - The number of results to show per page. Default is 10.
+- `page` - The page number to show. Default is 1.
+- `sortBy` - The column to sort by. Default is `name`.
+- `sortOrder` - The order to sort by. Default is `asc`.
+
 #### Response Example (Success)
 
 ``` json
 {
     "message": "Room type found.",
     "results": {
-        "referenceNumber": "0185739a",
-        "name": "DELUXE",
-        "description": "Offering more space, this modern room comes with a flat-screen cable TV, work space and mini-fridge. Free toiletries and a bidet are included in the private bathroom.",
+        "referenceNumber": "ee0cf0ea",
+        "name": "STANDARD",
+        "description": "This modern room comes with a flat-screen cable TV, work space and mini-fridge. Free toiletries and a bidet are included in the private bathroom.",
         "bedSize": "1 queen bed",
-        "propertySize": "21 m²/226 ft²",
+        "propertySize": "15 m²/161 ft²",
         "isNonSmoking": true,
         "balconyOrTerrace": false,
         "capacity": 2,
+        "extraPersonCapacity": 3,
         "images": [
-            "0185739a/GdM28bnt9bd0q9KcEw9qevfTvc5lyPYmRKIVQqPp.jpg",
-            "0185739a/Csk1OyxeW1s2d5gkay4uJxLPYmgTuC09CRli9nra.jpg",
-            "0185739a/HdM5SSvQqKl1wPlKNOsPim79jWeAzDduAtAeAY9O.jpg",
-            "0185739a/SxQOwZLk2Abj4M1XKogKF0oogoIu2OxgnQFdCUq0.jpg"
+            "ee0cf0ea/storage/ee0cf0ea/RoomPic_0.png",
+            "ee0cf0ea/storage/ee0cf0ea/RoomPic_1.png",
+            "ee0cf0ea/storage/ee0cf0ea/RoomPic_2.png",
+            "ee0cf0ea/storage/ee0cf0ea/RoomPic_3.png"
         ],
         "amenities": [
             "AIR CONDITIONING",
+            "BATHTUB",
+            "SATELLITE/CABLE TV",
+            "TELEPHONE",
             "FREE WI-FI",
-            "CLOTHES RACK"
+            "REFRIGERATOR",
+            "IN-ROOM SAFE",
+            "CLOSET"
         ],
         "rates": {
             "regular": {
-                "referenceNumber": "d149c3f8",
-                "monday": 1547,
-                "tuesday": 1547,
-                "wednesday": 1547,
-                "thursday": 1547,
-                "friday": 1547,
-                "saturday": 1647,
-                "sunday": 1647
+                "referenceNumber": "900388c8",
+                "monday": 1444,
+                "tuesday": 1444,
+                "wednesday": 1444,
+                "thursday": 1444,
+                "friday": 1444,
+                "saturday": 1544,
+                "sunday": 1544
             },
             "special": [
                 {
-                    "referenceNumber": "5558d1c8",
-                    "discountName": "May Discount",
-                    "startDate": "2024-05-01",
-                    "endDate": "2024-05-31",
-                    "monday": 1447,
-                    "tuesday": 1447,
-                    "wednesday": 1447,
-                    "thursday": 1447,
-                    "friday": 1447,
-                    "saturday": 1547,
-                    "sunday": 1547
+                    "referenceNumber": "RT-0002",
+                    "discountName": "DREAMSTAY DISCOUNT",
+                    "startDate": "2021-01-01",
+                    "endDate": "2021-12-31",
+                    "monday": 1000,
+                    "tuesday": 1000,
+                    "wednesday": 1000,
+                    "thursday": 1000,
+                    "friday": 1000,
+                    "saturday": 1000,
+                    "sunday": 1000
                 }
             ]
+        },
+        "rooms": [
+            {
+                "roomId": 2,
+                "roomReferenceNumber": "ef03c1e1",
+                "roomNumber": 102,
+                "roomType": "STANDARD",
+                "status": "AVAILABLE",
+                "guest": null
+            },
+            {
+                "roomId": 7,
+                "roomReferenceNumber": "74069624",
+                "roomNumber": 107,
+                "roomType": "STANDARD",
+                "status": "AVAILABLE",
+                "guest": null
+            }
+        ],
+        "pagination": {
+            "total": 4,
+            "perPage": 2,
+            "currentPage": 1,
+            "lastPage": 2,
+            "from": 1,
+            "to": 2
         }
     },
     "code": 200,

@@ -52,7 +52,7 @@ class RoomTypeController extends Controller
 
     protected function show(ShowRoomTypeRequest $request, $referenceNumber)
     {
-        return $this->show->execute($referenceNumber);
+        return $this->show->execute($request, $referenceNumber);
     }
 
     protected function update(UpdateRoomTypeRequest $request, $referenceNumber)
