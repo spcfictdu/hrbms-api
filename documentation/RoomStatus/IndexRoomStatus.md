@@ -33,6 +33,8 @@ NO ROLE NEEDED
 -   `sortBy` - The column to sort by. (Optional)
 -   `sortOrder` - The order to sort by. (Optional)
 -   `roomType` - The type of room to filter by. (Optional)
+-   `roomStatus` - The status of the room to filter by. (Optional)
+    -   `AVAILABLE`, `OCCUPIED`, `UNCLEAN`, `UNALLOCATED`
 
 #### Response Example (Success)
 
@@ -40,6 +42,12 @@ NO ROLE NEEDED
 {
     "message": "success",
     "results": {
+        "roomStatusCount": {
+            "AVAILABLE": 20,
+            "OCCUPIED": 0,
+            "UNCLEAN": 0,
+            "UNALLOCATED": 0
+        },
         "rooms": [
             {
                 "roomId": 1,

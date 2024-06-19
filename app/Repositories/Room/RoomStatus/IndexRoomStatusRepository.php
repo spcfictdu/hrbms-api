@@ -15,6 +15,33 @@ class IndexRoomStatusRepository extends BaseRepository
         $sortBy = $request->input('sortBy', 'room_number');
         $sortOrder = $request->input('sortOrder', 'asc');
         $roomTypeFilter = $request->input('roomType');
+        $roomStatusFilter = $request->input('roomStatus');
+
+        $allStatuses = [
+            'AVAILABLE' => 0,
+            'OCCUPIED' => 0,
+            'UNCLEAN' => 0,
+            'UNALLOCATED' => 0,
+            // Add any other statuses as needed
+        ];
+
+        // Count the room by status
+        // $roomStatusCount = Room::selectRaw('status, count(*) as count')
+        //     ->groupBy('status')
+        //     ->get()
+        //     ->mapWithKeys(function ($item) {
+        //         return [$item->status => $item->count];
+        //     });
+
+        $roomStatusCount = Room::selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->status => $item->count];
+            })
+            ->toArray(); // Convert Collection to array for easier merging
+
+        $roomStatusCount = array_merge($allStatuses, $roomStatusCount);
 
         // Start the query
         $roomsQuery = Room::with(['transactions' => function ($query) {
@@ -27,6 +54,11 @@ class IndexRoomStatusRepository extends BaseRepository
             if ($roomTypeId) {
                 $roomsQuery = $roomsQuery->where('room_type_id', $roomTypeId);
             }
+        }
+
+        // Apply filter if roomStatus is provided
+        if ($roomStatusFilter) {
+            $roomsQuery = $roomsQuery->where('status', $roomStatusFilter);
         }
 
         // Apply sorting
@@ -55,6 +87,7 @@ class IndexRoomStatusRepository extends BaseRepository
         $paginatedRooms->setCollection($transformedRooms);
 
         return $this->success('success', [
+            'roomStatusCount' => $roomStatusCount,
             'rooms' => $paginatedRooms->items(),
             'pagination' => [
                 'total' => $paginatedRooms->total(),

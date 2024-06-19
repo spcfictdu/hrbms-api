@@ -6,7 +6,7 @@ use App\Http\Requests\ResponseRequest;
 
 class IndexRoomStatusRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -24,7 +24,12 @@ class IndexRoomStatusRequest extends ResponseRequest
     public function rules()
     {
         return [
-            //
+            'page' => 'nullable|integer',
+            'perPage' => 'nullable|integer',
+            'sortBy' => 'nullable|string',
+            'sortOrder' => 'nullable|string',
+            'roomType' => 'nullable|string',
+            'roomStatus' => 'nullable|in:AVAILABLE,OCCUPIED,UNCLEAN,UNALLOCATED'
         ];
     }
 }
