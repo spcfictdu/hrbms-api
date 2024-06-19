@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Enum;
 
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\Enum\{RoomTypeEnumRequest, RoomNumberEnumRequest, RoomEnumRequest, RoomTypeAmenityEnumRequest};
+use App\Http\Requests\Enum\{RoomTypeEnumRequest, RoomNumberEnumRequest, RoomEnumRequest, RoomTypeAmenityEnumRequest, RoomTypeRateEnumRequest};
 use App\Models\Guest\Guest;
-use App\Repositories\Enum\{RoomNumberEnumRepository, RoomTypeEnumRepository, RoomEnumRepository, GuestEnumRepository, RoomTypeAmenityEnumRepository};
+use App\Repositories\Enum\{RoomNumberEnumRepository, RoomTypeEnumRepository, RoomEnumRepository, GuestEnumRepository, RoomTypeAmenityEnumRepository, RoomTypeRateEnumRepository};
 
 class EnumController extends Controller
 {
-    protected $roomTypeEnum, $roomNumberEnum, $roomEnum, $guestEnum, $roomTypeAmenityEnum;
+    protected $roomTypeEnum, $roomNumberEnum, $roomEnum, $guestEnum, $roomTypeAmenityEnum, $roomTypeRateEnum;
 
     // * CONSTRUCTOR INJECTION
     public function __construct(
@@ -18,7 +18,8 @@ class EnumController extends Controller
         RoomNumberEnumRepository $roomNumberEnum,
         RoomEnumRepository $roomEnum,
         GuestEnumRepository $guestEnum,
-        RoomTypeAmenityEnumRepository $roomTypeAmenityEnum
+        RoomTypeAmenityEnumRepository $roomTypeAmenityEnum,
+        RoomTypeRateEnumRepository $roomTypeRateEnum
 
     ) {
         $this->roomTypeEnum = $roomTypeEnum;
@@ -26,6 +27,7 @@ class EnumController extends Controller
         $this->roomEnum = $roomEnum;
         $this->guestEnum = $guestEnum;
         $this->roomTypeAmenityEnum = $roomTypeAmenityEnum;
+        $this->roomTypeRateEnum = $roomTypeRateEnum;
     }
 
     public function roomTypeEnum(RoomTypeEnumRequest $request)
@@ -51,5 +53,10 @@ class EnumController extends Controller
     public function roomTypeAmenityEnum(RoomTypeAmenityEnumRequest $request)
     {
         return $this->roomTypeAmenityEnum->execute($request);
+    }
+
+    public function roomTypeRateEnum(RoomTypeRateEnumRequest $request)
+    {
+        return $this->roomTypeRateEnum->execute($request);
     }
 }
