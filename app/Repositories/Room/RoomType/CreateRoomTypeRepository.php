@@ -43,7 +43,8 @@ class CreateRoomTypeRepository extends BaseRepository
                 ]);
             }
 
-            Artisan::call(`storage:folder-access {$roomType->reference_number}`);
+            // Artisan::call(`storage:folder-access {$roomType->reference_number}`);
+            Artisan::call("storage:folder-access " . $roomType->reference_number);
         }
 
         if ($request['amenities']) {
