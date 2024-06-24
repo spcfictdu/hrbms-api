@@ -65,7 +65,7 @@ Route::group([
     $route->get('/', [RoomTypeController::class, 'index']);
     $route->post('/create', [RoomTypeController::class, 'create']);
     $route->get('/{referenceNumber}', [RoomTypeController::class, 'show']);
-    $route->put('/update/{referenceNumber}', [RoomTypeController::class, 'update']);
+    $route->post('/update/{referenceNumber}', [RoomTypeController::class, 'update']);
     $route->delete('/delete/{referenceNumber}', [RoomTypeController::class, 'delete']);
 });
 

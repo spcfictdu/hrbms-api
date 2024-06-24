@@ -28,15 +28,15 @@ class UpdateRoomTypeRepository extends BaseRepository
             'capacity' => $request->capacity
         ]);
 
-        if ($request['images']['delete']) {
-
+        if (!empty($request['images']['delete'])) {
+            // return $roomType->images;
             foreach ($request['images']['delete'] as $image) {
 
                 $roomType->images->where('filename', $image)->first()->delete();
             }
         }
 
-        if ($request['images']['add']) {
+        if (!empty($request['images']['delete'])) {
 
             foreach ($request['images']['add'] as $image) {
 
@@ -50,36 +50,36 @@ class UpdateRoomTypeRepository extends BaseRepository
         }
 
         // Assuming $request['images']['update'] contains images to update with their new data
-        if ($request['images']['update']) {
-            foreach ($request['images']['update'] as $imageData) {
-                // Assuming $imageData contains 'filename' of the image to update and 'newImage' as the new image file
-                $existingImage = $roomType->images->where('filename', $imageData['filename'])->first();
-                if ($existingImage) {
-                    $newImageFilePath = $imageData['newImage']->store("public/" . $roomType->reference_number);
-                    $existingImage->update([
-                        'filename' => basename($newImageFilePath)
-                    ]);
-                }
-            }
-        }
+        // if ($request['images']['update']) {
+        //     foreach ($request['images']['update'] as $imageData) {
+        //         // Assuming $imageData contains 'filename' of the image to update and 'newImage' as the new image file
+        //         $existingImage = $roomType->images->where('filename', $imageData['filename'])->first();
+        //         if ($existingImage) {
+        //             $newImageFilePath = $imageData['newImage']->store("public/" . $roomType->reference_number);
+        //             $existingImage->update([
+        //                 'filename' => basename($newImageFilePath)
+        //             ]);
+        //         }
+        //     }
+        // }
 
-        if ($request['images']) {
+        // if ($request['images']) {
 
-            foreach ($request['images'] as $image) {
+        //     foreach ($request['images'] as $image) {
 
-                $imageFilePath = $image->store("public/" . $roomType->reference_number);
+        //         $imageFilePath = $image->store("public/" . $roomType->reference_number);
 
-                RoomTypeImage::create([
-                    'room_type_id' => $roomType->id,
-                    'filename' => 'storage/' . $roomType->reference_number . '/' . basename($imageFilePath)
-                ]);
-            }
+        //         RoomTypeImage::create([
+        //             'room_type_id' => $roomType->id,
+        //             'filename' => 'storage/' . $roomType->reference_number . '/' . basename($imageFilePath)
+        //         ]);
+        //     }
 
-            // Artisan::call(`storage:folder-access {$roomType->reference_number}`);
-            // Artisan::call("storage:folder-access " . $roomType->reference_number);
-        }
+        //     // Artisan::call(`storage:folder-access {$roomType->reference_number}`);
+        //     // Artisan::call("storage:folder-access " . $roomType->reference_number);
+        // }
 
-        if ($request['amenities']['delete']) {
+        if (!empty($request['amenities']['delete'])) {
 
             foreach ($request['amenities']['delete'] as $amenity) {
 
@@ -87,7 +87,7 @@ class UpdateRoomTypeRepository extends BaseRepository
             }
         }
 
-        if ($request['amenities']['add']) {
+        if (!empty($request['amenities']['add'])) {
 
             foreach ($request['amenities']['add'] as $amenity) {
 
