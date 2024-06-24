@@ -49,36 +49,6 @@ class UpdateRoomTypeRepository extends BaseRepository
             }
         }
 
-        // Assuming $request['images']['update'] contains images to update with their new data
-        if ($request['images']['update']) {
-            foreach ($request['images']['update'] as $imageData) {
-                // Assuming $imageData contains 'filename' of the image to update and 'newImage' as the new image file
-                $existingImage = $roomType->images->where('filename', $imageData['filename'])->first();
-                if ($existingImage) {
-                    $newImageFilePath = $imageData['newImage']->store("public/" . $roomType->reference_number);
-                    $existingImage->update([
-                        'filename' => basename($newImageFilePath)
-                    ]);
-                }
-            }
-        }
-
-        if ($request['images']) {
-
-            foreach ($request['images'] as $image) {
-
-                $imageFilePath = $image->store("public/" . $roomType->reference_number);
-
-                RoomTypeImage::create([
-                    'room_type_id' => $roomType->id,
-                    'filename' => 'storage/' . $roomType->reference_number . '/' . basename($imageFilePath)
-                ]);
-            }
-
-            // Artisan::call(`storage:folder-access {$roomType->reference_number}`);
-            // Artisan::call("storage:folder-access " . $roomType->reference_number);
-        }
-
         if ($request['amenities']['delete']) {
 
             foreach ($request['amenities']['delete'] as $amenity) {

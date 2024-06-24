@@ -31,8 +31,8 @@ class RoomType extends Model
     ];
 
     protected $casts = [
-        'is_non_smoking' => 'boolean',
-        'balcony_or_terrace' => 'boolean',
+        // 'is_non_smoking' => 'boolean',
+        // 'balcony_or_terrace' => 'boolean',
     ];
 
     public $timestamps = false;

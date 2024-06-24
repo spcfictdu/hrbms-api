@@ -77,6 +77,7 @@ class IndexRoomStatusRepository extends BaseRepository
                 'roomId' => $room->id,
                 'roomReferenceNumber' => $room->reference_number,
                 'roomNumber' => $room->room_number,
+                'roomFloor' => $room->room_floor,
                 'roomType' => $room->roomType->name,
                 'status' => $room->status,
                 'guest' => $occupants,
