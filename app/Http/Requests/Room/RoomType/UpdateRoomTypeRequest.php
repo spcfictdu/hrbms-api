@@ -10,7 +10,7 @@ use App\Models\Room\RoomType;
 
 class UpdateRoomTypeRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -38,11 +38,19 @@ class UpdateRoomTypeRequest extends ResponseRequest
             'balconyOrTerrace' => ['required', 'boolean'],
             'capacity' => ['required', 'integer'],
             'images' => ['nullable', 'array'],
-            'images.*.add' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:5000'],
-            'images.*.delete' => ['nullable', 'string'],
+
+            // Arrays
+            'images.add.*' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:5000'],
+            'images.delete.*' => ['nullable', 'string', 'exists:room_type_images,filename'],
+
+            // Images Update
+            'images.update.new.*' => ['nullable', 'mimes:jpg,png,jpeg', 'max:5000'],
+            'images.update.old.*' => ['nullable', 'string', 'exists:room_type_images,filename'],
+
             'amenities' => ['nullable', 'array'],
-            'amenities.*.add' => ['nullable', 'string', 'exists:amenities,name'],
-            'amenities.*.delete' => ['nullable', 'string', 'exists:amenities,name']
+            // Arrays
+            'amenities.add.*' => ['nullable', 'string', 'exists:amenities,name'],
+            'amenities.delete.*' => ['nullable', 'string', 'exists:amenities,name']
         ];
     }
 }

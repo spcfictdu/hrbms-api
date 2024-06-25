@@ -6,26 +6,29 @@ This endpoint is used to update a room type using the provided reference number 
 
 ```
 {{base_url}}/api/room-type/update/{roomTypeReferenceNumber}
-```   
+```
 
 #### Method
+
 ```
 PUT
 ```
 
 #### Authentication Needed
+
 ```
 TRUE
 ```
 
 #### Permitted Roles
+
 ```
 ADMIN
 ```
 
 #### Request Body
 
-``` json
+```json
 {
     "name": "DELUXE",
     "description": "Offering more space, this modern room comes with a flat-screen cable TV, work space and mini-fridge. Free toiletries and a bidet are included in the private bathroom.",
@@ -46,14 +49,20 @@ ADMIN
         "add": [{array of files}],
         "delete": [
             "VW43hivNMoM4eAWGMpfnjN1pw6ApxaYn4n4DAwGd.jpg"
+        ],
+        "update": [
+            {
+                "old": "VW43hivNMoM4eAWGMpfnjN1pw6ApxaYn4n4DAwGd.jpg",
+                "new": {file}
+            }
         ]
     }
 }
-``` 
+```
 
 #### Response Example (Success)
 
-``` json
+```json
 {
     "message": "Room type updated successfully.",
     "results": {
@@ -71,11 +80,7 @@ ADMIN
             "0185739a/HdM5SSvQqKl1wPlKNOsPim79jWeAzDduAtAeAY9O.jpg",
             "0185739a/SxQOwZLk2Abj4M1XKogKF0oogoIu2OxgnQFdCUq0.jpg"
         ],
-        "amenities": [
-            "AIR CONDITIONING",
-            "FREE WI-FI",
-            "CLOTHES RACK"
-        ],
+        "amenities": ["AIR CONDITIONING", "FREE WI-FI", "CLOTHES RACK"],
         "rates": {
             "regular": {
                 "referenceNumber": "d149c3f8",
