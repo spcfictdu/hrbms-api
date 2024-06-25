@@ -44,7 +44,7 @@ class UpdateRoomTypeRequest extends ResponseRequest
             'images.delete.*' => ['nullable', 'string', 'exists:room_type_images,filename'],
 
             // Images Update
-            'images.update.new.*' => ['nullable', 'mimes:jpg,png,jpeg', 'max:5000'],
+            'images.update.new.*' => ['nullable', 'mimes:jpg,png,jpeg', 'max:10000'],
             'images.update.old.*' => ['nullable', 'string', 'exists:room_type_images,filename'],
 
             'amenities' => ['nullable', 'array'],

@@ -13,7 +13,7 @@ class ShowRoomTypeRateRequest extends ResponseRequest
      */
     public function authorize()
     {
-        return $this->user()->hasRole('ADMIN');
+        return $this->user()->hasRole('ADMIN') || $this->user()->hasRole('FRONT DESK') || $this->user()->hasRole('GUEST');
     }
 
     /**

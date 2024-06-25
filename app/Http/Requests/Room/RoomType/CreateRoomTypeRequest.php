@@ -41,7 +41,7 @@ class CreateRoomTypeRequest extends ResponseRequest
             'balconyOrTerrace' => ['required', 'boolean'],
             'capacity' => ['required', 'integer'],
             'images' => ['required', 'array'],
-            'images.*' => ['required', 'image', 'mimes:jpg,png,jpeg', 'max:5000'],
+            'images.*' => ['required', 'image', 'mimes:jpg,png,jpeg', 'max:10000'],
             'amenities' => ['nullable', 'array'],
             'amenities.*' => ['nullable', 'string', 'exists:amenities,name'],
             'rates' => ['array'],

@@ -149,7 +149,7 @@ class UpdateRoomTypeRepository extends BaseRepository
             $this->getCamelCase($roomType->toArray()),
             [
                 'images' => $roomType->images->map(function ($image) use ($roomType) {
-                    return "{$roomType->reference_number}/{$image->filename}";
+                    return "{$image->filename}";
                 }),
                 'amenities' => $roomType->amenities->pluck('amenity')->map(function ($amenity) {
                     return $amenity->name;

@@ -6,39 +6,42 @@ This endpoint allows the user to register a new account.
 
 ```
 {{base_url}}/api/user/register
-```   
+```
 
 #### Method
+
 ```
 POST
 ```
 
 #### Authentication Needed
+
 ```
 TRUE
 ```
 
 #### Permitted Roles
+
 ```
 ADMIN
 ```
 
 #### Request Body
 
-``` json
+```json
 {
     "username": "frontdesk",
     "firstName": "JANE",
     "lastName": "DOE",
     "email": "sample@gmail.com",
     "password": "developer",
-    "role": "FRONT DESK"
+    "role": "FRONT DESK" // FRONT DESK, ADMIN, GUEST
 }
-``` 
+```
 
 #### Response Example (Success)
 
-``` json
+```json
 {
     "message": "User created successfully",
     "results": {

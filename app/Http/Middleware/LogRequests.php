@@ -27,6 +27,7 @@ class LogRequests
             'url' => $request->fullUrl(),
             'ip_address' => $request->ip(),
             'parameters' => $request->all(),
+            // 'body' => $request->getContent(),
         ]);
     }
 
