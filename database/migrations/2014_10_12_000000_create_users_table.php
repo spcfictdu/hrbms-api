@@ -17,8 +17,11 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
+            $table->string('mobile')->nullable()->unique();
             $table->string('password');
             $table->string('token')->nullable();
+            // Mobile
+
             $table->timestamps();
         });
     }
