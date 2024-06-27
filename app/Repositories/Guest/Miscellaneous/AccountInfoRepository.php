@@ -10,11 +10,12 @@ class AccountInfoRepository extends BaseRepository
 {
     public function execute()
     {
-        if($this->user()->getRoleNames()->first() == "GUEST"){
-//            $guest = Guest::where('user_id', $)
+        // return $this->user();
+        if ($this->user()->getRoleNames()->first() == "GUEST") {
+            //            $guest = Guest::where('user_id', $)
             return $this->user();
-        } else{
+        } else {
             return $this->error("Guest not found.");
-    }
+        }
     }
 }

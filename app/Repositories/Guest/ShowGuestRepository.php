@@ -31,7 +31,7 @@ class ShowGuestRepository extends BaseRepository
             'id' => $guest->id,
             'fullName' => $guest->full_name,
             'email' => $guest->email,
-            'phone' => $guest->phone,
+            'phone' => $guest->phone_number,
             'idNumber' => $guest->id_number,
             'province' => $guest->province,
             'city' => $guest->city,
