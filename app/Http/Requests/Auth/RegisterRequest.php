@@ -14,7 +14,8 @@ class RegisterRequest extends ResponseRequest
      */
     public function authorize()
     {
-        return $this->user()->hasRole('ADMIN');
+        // return $this->user()->hasRole('ADMIN');
+        return true;
     }
 
     /**
@@ -31,7 +32,7 @@ class RegisterRequest extends ResponseRequest
             'email' => ['required', 'email', 'unique:users,email'],
             'mobile' => 'nullable|string|unique:users,mobile|min:11|max:11|regex:/^09\d{9}$/',
             'password' => ['required', Password::min(8)],
-            'role' => ['required', 'string', 'in:ADMIN,FRONT DESK'],
+            'role' => ['required', 'string', 'in:ADMIN,FRONT DESK,GUEST'],
         ];
     }
 }
