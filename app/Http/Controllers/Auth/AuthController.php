@@ -8,28 +8,32 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\{
     LoginRequest,
     RegisterRequest,
-    LogoutRequest
+    LogoutRequest,
+    GuestLoginRequest
 };
 
 // * REPOSITORY
 use App\Repositories\Auth\{
     LoginRepository,
     RegisterRepository,
-    LogoutRepository
+    LogoutRepository,
+    GuestLoginRepository
 };
 
 class AuthController extends Controller
 {
-    protected $login, $register, $logout;
+    protected $login, $register, $logout, $guestLogin;
 
     public function __construct(
         LoginRepository $login,
         RegisterRepository $register,
-        LogoutRepository $logout
+        LogoutRepository $logout,
+        GuestLoginRepository $guestLogin
     ) {
         $this->login = $login;
         $this->register = $register;
         $this->logout = $logout;
+        $this->guestLogin = $guestLogin;
     }
 
     protected function login(LoginRequest $request)
@@ -45,5 +49,9 @@ class AuthController extends Controller
     protected function logout(LogoutRequest $request)
     {
         return $this->logout->execute($request);
+    }
+
+    protected function guestLogin(GuestLoginRequest $request){
+        return $this->guestLogin->execute($request);
     }
 }

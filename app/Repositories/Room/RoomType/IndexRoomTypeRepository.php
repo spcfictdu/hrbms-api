@@ -68,7 +68,7 @@ class IndexRoomTypeRepository extends BaseRepository
 
             $selectedRate = $specialRate ?? $regularRate;
 
-            // Now, dynamically access the price based on the day of the week 
+            // Now, dynamically access the price based on the day of the week
             $price = $selectedRate->$dayOfWeek;
 
             return [

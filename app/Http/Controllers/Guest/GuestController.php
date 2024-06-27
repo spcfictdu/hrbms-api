@@ -6,12 +6,16 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Requests\Guest\{IndexGuestRequest, CreateGuestRequest, ShowGuestRequest, UpdateGuestRequest, DeleteGuestRequest};
 
+use App\Http\Requests\Guest\Miscellaneous\AccountInfoRequest;
+
 use App\Repositories\Guest\{IndexGuestRepository, CreateGuestRepository, ShowGuestRepository, UpdateGuestRepository, DeleteGuestRepository};
+
+use App\Repositories\Guest\Miscellaneous\AccountInfoRepository;
 
 
 class GuestController extends Controller
 {
-    protected $index, $create, $show, $update, $delete;
+    protected $index, $create, $show, $update, $delete, $accountDetails;
 
     // * CONSTRUCTOR INJECTION
     public function __construct(
@@ -19,13 +23,15 @@ class GuestController extends Controller
         CreateGuestRepository  $create,
         ShowGuestRepository    $show,
         UpdateGuestRepository  $update,
-        DeleteGuestRepository  $delete
+        DeleteGuestRepository  $delete,
+        AccountInfoRepository  $accountDetails
     ) {
         $this->index   = $index;
         $this->create  = $create;
         $this->show    = $show;
         $this->update  = $update;
         $this->delete  = $delete;
+        $this->accountDetails = $accountDetails;
     }
 
     protected function index(IndexGuestRequest $request)
@@ -55,5 +61,9 @@ class GuestController extends Controller
     protected function delete(DeleteGuestRequest $request, $id)
     {
         return $this->delete->execute($id);
+    }
+
+    protected function accountDetails(){
+        return $this->accountDetails->execute();
     }
 }

@@ -14,7 +14,8 @@ class RegisterRequest extends ResponseRequest
      */
     public function authorize()
     {
-        return $this->user()->hasRole('ADMIN');
+//        return $this->user()->hasRole('ADMIN');
+        return true;
     }
 
     /**
@@ -25,12 +26,12 @@ class RegisterRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'username' => ['required', 'string', 'unique:users,username'],
+            'username' => ['string', 'unique:users,username'],
             'firstName' => ['required', 'string'],
             'lastName' => ['required', 'string'],
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', Password::min(8)],
-            'role' => ['required', 'string', 'in:ADMIN,FRONT DESK'],
+            'role' => ['required', 'string', 'in:ADMIN,FRONT DESK,GUEST'],
         ];
     }
 }

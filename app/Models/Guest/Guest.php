@@ -24,12 +24,14 @@ class Guest extends Model
         'email',
         'id_type',
         'id_number',
+        'user_id'
     ];
 
     protected $hidden = [
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_at',
+        'account_id'
     ];
 
     protected $appends = [

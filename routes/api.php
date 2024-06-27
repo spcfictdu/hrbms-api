@@ -35,11 +35,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group([
     'prefix' => 'user'
 ], function ($route) {
-    $route->post('/login', [AuthController::class, 'login']);
+    $route->post('/admin/login',  [AuthController::class, 'login']);
+    $route->post('/guest/login',  [AuthController::class, 'guestLogin']);
 });
 
 Route::group([
-    'middleware' => 'auth:sanctum',
+//    'middleware' => 'auth:sanctum',
     'prefix' => 'user'
 ], function ($route) {
     $route->post('/register', [AuthController::class, 'register']);
@@ -117,7 +118,7 @@ Route::group([
         '/show/{referenceNumber}',
         [TransactionController::class, 'show']
     );
-    Route::post('/create',                                                     [TransactionController::class, 'create']);
+    Route::post('/create',                                                  [TransactionController::class, 'create']);
     $route->put('/update',                                                      [TransactionController::class, 'update']);
 });
 
@@ -155,6 +156,19 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'guest'
 ], function ($route) {
+    $route->group([
+        'prefix' => 'hotel-room'
+    ], function ($route) {
+//        $route->get('/',                                    [GuestController::class, 'indexDashboard']);
+    });
+
+    $route->group([
+        'prefix' => 'account'
+    ], function ($route) {
+        $route->get('/',                                    [GuestController::class, 'accountDetails']);
+        $route->put('/change-password',                     [GuestController::class, 'changePassword']);
+    });
+
     $route->get('/', [GuestController::class, 'index']);
     $route->get('/{id}', [GuestController::class, 'show']);
     $route->delete('/delete/{id}', [GuestController::class, 'delete']);

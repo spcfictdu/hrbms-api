@@ -17,12 +17,14 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
-            $table->string('province');
-            $table->string('city');
+            $table->string('province')->nullable();
+            $table->string('city')->nullable();
             $table->string('phone_number');
             $table->string('email');
-            $table->string('id_type');
-            $table->string('id_number');
+            $table->string('id_type')->nullable();
+            $table->string('id_number')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
