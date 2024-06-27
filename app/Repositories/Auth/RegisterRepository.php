@@ -18,6 +18,7 @@ class RegisterRepository extends BaseRepository
             'last_name' => $request->lastName,
             'email' => $request->email,
             'password' => $request->password,
+            'mobile' => $request->mobile,
         ]);
 
         $newUser->assignRole($request->role);
