@@ -14,8 +14,8 @@ class RegisterRepository extends BaseRepository
     if($request->role === "ADMIN" || $request->role == "FRONT DESK"){
         $newUser = User::create([
             'username' => $request->username,
-            'first_name' => $request->firstName,
-            'last_name' => $request->lastName,
+            'first_name' => strtoupper($request->firstName),
+            'last_name' => strtoupper($request->lastName),
             'email' => $request->email,
             'password' => $request->password,
             'mobile' => $request->mobile,
@@ -33,17 +33,17 @@ class RegisterRepository extends BaseRepository
     } else {
 
         $newUser = User::create([
-            'first_name' => $request->firstName,
-            'last_name' => $request->lastName,
+            'first_name' => strtoupper($request->firstName),
+            'last_name' => strtoupper($request->lastName),
             'email' => $request->email,
             'password' => $request->password,
         ]);
         $newUser->assignRole($request->role);
         $guest = Guest::create([
             'reference_number' => $this->guestReferenceNumber(),
-            'first_name' => $request->firstName,
-            "middle_name" => $request->middleName ?? null,
-            "last_name" => $request->lastName,
+            'first_name' => strtoupper($request->firstName),
+            "middle_name" => strtoupper($request->middleName) ?? null,
+            "last_name" => strtoupper($request->lastName),
             "phone_number" => $request->mobileNumber,
             "email" => $request->email,
             "user_id" => $newUser->id

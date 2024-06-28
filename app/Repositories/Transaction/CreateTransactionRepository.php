@@ -26,38 +26,42 @@ class CreateTransactionRepository extends BaseRepository
             // if ($room->status === 'OCCUPIED') {
             //     return $this->error('Room is already occupied.');
             // }
-            $guest = Guest::create([
-                'reference_number' => $this->guestReferenceNumber(),
-                'first_name' => $request->guest['firstName'],
-                "middle_name" => $request->guest['middleName'],
-                "last_name" => $request->guest['lastName'],
-                "province" => $request->guest['address']['province'],
-                "city" => $request->guest['address']['city'],
-                "phone_number" => $request->guest['contact']['phoneNum'],
-                "email" => $request->guest['contact']['email'],
-                "id_type" => $request->guest['id']['type'],
-                "id_number" => $request->guest['id']['number']
-            ]);
-            if ($guest->id) {
+            $guest = null;
+            $checkGuest = Guest::where('user_id', $this->user()->id)->first();
+
+            if(!$checkGuest){
+                $guest = Guest::create([
+                    'reference_number' => $this->guestReferenceNumber(),
+                    'first_name' => strtoupper($request->guest['firstName']),
+                    "middle_name" => strtoupper($request->guest['middleName']) ?? null,
+                    "last_name" => strtoupper($request->guest['lastName']),
+                    "province" => strtoupper($request->guest['address']['province']),
+                    "city" => strtoupper($request->guest['address']['city']),
+                    "phone_number" => $request->guest['contact']['phoneNum'],
+                    "email" => $request->guest['contact']['email'],
+                    "id_type" => strtoupper($request->guest['id']['type']),
+                    "id_number" => $request->guest['id']['number']
+                ]);
+            }
+
                 $transaction = Transaction::create([
                     "reference_number" => $this->transactionReferenceNumber(),
                     "room_id" => $room->id,
-                    "status" => $request->status,
+                    "status" => strtoupper($request->status),
                     // "payment_id" => $payment->id ?? null,
                     "check_in_date" => $request->checkIn['date'],
                     "check_in_time" => $request->checkIn['time'],
                     "check_out_date" => $request->checkOut['date'],
                     "check_out_time" => $request->checkOut['time'],
                     "number_of_guest" => $request->guest['extraPerson'],
-                    "guest_id" => $guest->id
+                    "guest_id" => $checkGuest->id ?? $guest->id
                 ]);
-            }
 
             // return $transaction->id;
             if (isset($request->payment) && isset($transaction->id)) {
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,
-                    "payment_type" => $request->payment['paymentType'],
+                    "payment_type" => strtoupper($request->payment['paymentType']),
                     "amount_received" => $request->payment['amountReceived']
                 ]);
             }
@@ -69,20 +73,35 @@ class CreateTransactionRepository extends BaseRepository
 
             // Mail::to($guest->email)->send(new ReserveTransactionMail($transaction));
 
-            return $this->success("Book Transaction Created Successfully.", Arr::collapse([
-                $this->getCamelCase($guest->toArray()),
-                $this->getCamelCase($transaction->toArray()),
-                $this->getCamelCase($payment->toArray())
+            if($checkGuest){
+                return $this->success("Book Transaction Created Successfully.", Arr::collapse([
+                    $this->getCamelCase($checkGuest->toArray()),
+                    $this->getCamelCase($transaction->toArray()),
+                    $this->getCamelCase($payment->toArray())
+                ]));
+            } else{
+                return $this->success("Book Transaction Created Successfully.", Arr::collapse([
+                    $this->getCamelCase($guest->toArray()),
+                    $this->getCamelCase($transaction->toArray()),
+                    $this->getCamelCase($payment->toArray())
+                ]));
+            }
 
-            ]));
         } else {
 
             // Mail::to($guest->email)->send(new ReserveTransactionMail($transaction));
 
-            return $this->success("Reservation Transaction Created Successfully.", Arr::collapse([
-                $this->getCamelCase($guest->toArray()),
-                $this->getCamelCase($transaction->toArray())
-            ]));
+            if($checkGuest){
+                return $this->success("Reservation Transaction Created Successfully.", Arr::collapse([
+                    $this->getCamelCase($checkGuest->toArray()),
+                    $this->getCamelCase($transaction->toArray())
+                ]));
+            } else {
+                return $this->success("Reservation Transaction Created Successfully.", Arr::collapse([
+                    $this->getCamelCase($guest->toArray()),
+                    $this->getCamelCase($transaction->toArray())
+                ]));
+            }
         }
     }
 }

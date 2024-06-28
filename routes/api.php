@@ -168,6 +168,8 @@ Route::group([
         'prefix' => 'account'
     ], function ($route) {
         $route->get('/',                                    [GuestController::class, 'accountDetails']);
+        $route->get('/edit-details',                        [GuestController::class, 'editDetails']);
+        $route->put('/update-details',                      [GuestController::class, 'updateDetails']);
         $route->put('/change-password',                     [GuestController::class, 'changePassword']);
     });
 

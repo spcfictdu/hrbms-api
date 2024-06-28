@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Guest\Miscellaneous;
 
+use App\Models\Transaction\Transaction;
 use App\Repositories\BaseRepository;
 
 use App\Models\Guest\Guest;
@@ -12,8 +13,62 @@ class AccountInfoRepository extends BaseRepository
     {
         // return $this->user();
         if ($this->user()->getRoleNames()->first() == "GUEST") {
-            //            $guest = Guest::where('user_id', $)
-            return $this->user();
+            $guest = Guest::where('user_id', $this->user()->id)->first();
+
+            $bookings = Transaction::where('guest_id', $guest->id)->where('status', 'CONFIRMED')->get()->map(function ($booking){
+                return [
+                    'roomName' => $booking->room->roomType->name,
+                    'checkInDate' => $booking->check_in_date,
+                    'checkOutDate' => $booking->check_out_date,
+                    'amountReceived' => $booking->payment->amount_received,
+                    'roomDescription' => $booking->room->roomType->description,
+                    'amenities' => $booking->room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
+                        return $amenity->name;
+                    })
+                ];
+            });
+
+            $reservations = Transaction::where('guest_id', $guest->id)->where('status', 'RESERVED')->get()->map(function ($reservation){
+                return [
+                    'roomName' => $reservation->room->roomType->name,
+                    'checkInDate' => $reservation->check_in_date,
+                    'checkOutDate' => $reservation->check_out_date,
+                    'amountReceived' => $reservation->payment->amount_received,
+                    'roomDescription' => $reservation->room->roomType->description,
+                    'amenities' => $reservation->room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
+                        return $amenity->name;
+                    })
+                ];
+            });
+
+            $histories = Transaction::where('guest_id', $guest->id)->where('status', 'CHECKED-OUT')->get()->map(function ($history){
+                return [
+                    'roomName' => $history->room->roomType->name,
+                    'checkInDate' => $history->check_in_date,
+                    'checkOutDate' => $history->check_out_date,
+                    'amountReceived' => $history->payment->amount_received,
+                    'roomDescription' => $history->room->roomType->description,
+                    'amenities' => $history->room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
+                        return $amenity->name;
+                    })
+                ];
+            });
+
+            return [
+                "accountInfo" => [
+                    'fullName' => $guest->full_name,
+                    'address' => [
+                        'province' => $guest->province,
+                        'city' => $guest->city
+                    ],
+                    'email' => $guest->email,
+                    'phone' => $guest->phone_number
+                ],
+                'bookings' => $bookings,
+                'reservation' => $reservations,
+                'histories' => $histories
+
+            ];
         } else {
             return $this->error("Guest not found.");
         }
