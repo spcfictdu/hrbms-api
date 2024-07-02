@@ -13,31 +13,41 @@ use App\Http\Requests\Room\Room\{
     DeleteRoomRequest
 };
 
+use App\Http\Requests\Room\Room\Miscellaneous\{FilterHotelRoomsRequest, ShowHotelRoomRequest};
+
 // * REPOSITORY
 use App\Repositories\Room\Room\{
     IndexRoomRepository,
     CreateRoomRepository,
     ShowRoomRepository,
     UpdateRoomRepository,
-    DeleteRoomRepository
+    DeleteRoomRepository,
 };
+
+use App\Repositories\Room\Room\Miscellaneous\{IndexHotelRoomsRepository, FilterHotelRoomsRepository, ShowHotelRoomsRepository};
 
 class RoomController extends Controller
 {
-    protected $index, $create, $show, $update, $delete;
+    protected $index, $create, $show, $update, $delete, $hotelRoom, $searchHotelRoom, $roomInfo;
 
     public function __construct(
         IndexRoomRepository $index,
         CreateRoomRepository $create,
         ShowRoomRepository $show,
         UpdateRoomRepository $update,
-        DeleteRoomRepository $delete
+        DeleteRoomRepository $delete,
+        IndexHotelRoomsRepository $hotelRoom,
+        FilterHotelRoomsRepository $searchHotelRoom,
+        ShowHotelRoomsRepository $roomInfo
     ) {
         $this->index = $index;
         $this->create = $create;
         $this->show = $show;
         $this->update = $update;
         $this->delete = $delete;
+        $this->hotelRoom = $hotelRoom;
+        $this->searchHotelRoom = $searchHotelRoom;
+        $this->roomInfo = $roomInfo;
     }
 
     protected function index(IndexRoomRequest $request)
@@ -68,5 +78,17 @@ class RoomController extends Controller
     protected function delete(DeleteRoomRequest $request, $referenceNumber)
     {
         return $this->delete->execute($referenceNumber);
+    }
+
+    protected function hotelRoom() {
+        return $this->hotelRoom->execute();
+    }
+
+    protected function searchHotelRoom(FilterHotelRoomsRequest $request){
+        return $this->searchHotelRoom->execute($request);
+    }
+
+    protected function roomInfo(ShowHotelRoomRequest $request){
+        return $this->roomInfo->execute($request);
     }
 }

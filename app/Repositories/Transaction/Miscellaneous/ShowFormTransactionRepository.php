@@ -27,7 +27,17 @@ class ShowFormTransactionRepository extends BaseRepository
         });
         $day = Str::lower(Carbon::now()->format('l'));
 
-        if ($room) {
+        if($room && $this->user()){
+            $guest = Guest::where('user_id', $this->user()->id)->first();
+            return $this->success("Transaction Form existing info.", [
+                "bookingSummary" => [
+                    "roomName" => $roomType->name,
+                    "capacity" => $roomType->capacity,
+                    "roomTotal" => $rate->$day
+                ],
+                "guests" => $guest,
+            ]);
+        } else {
             return $this->success("Transaction Form existing info.", [
                 "bookingSummary" => [
                     "roomName" => $roomType->name,
@@ -37,6 +47,7 @@ class ShowFormTransactionRepository extends BaseRepository
                 "guests" => $filteredGuests,
             ]);
         }
+
         // try{
 
         // } catch (\Exception $e) {

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Room\Room\Miscellaneous;
 
 use App\Http\Requests\ResponseRequest;
 
-class LogoutRequest extends ResponseRequest
+class FilterHotelRoomsRequest extends ResponseRequest
 {
      /**
      * Determine if the user is authorized to make this request.

@@ -40,7 +40,7 @@ Route::group([
 });
 
 Route::group([
-//    'middleware' => 'auth:sanctum',
+    'middleware' => 'auth:sanctum',
     'prefix' => 'user'
 ], function ($route) {
     $route->get('/logout', [AuthController::class, 'logout']);
@@ -83,6 +83,16 @@ Route::group([
     $route->delete('/delete/{referenceNumber}', [RoomController::class, 'delete']);
 });
 
+
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'hotel-room'
+], function ($route) {
+    $route->get('/', [RoomController::class, 'hotelRoom']);
+    $route->get('/search', [RoomController::class, 'searchHotelRoom']);
+    $route->post('/room-info', [RoomController::class, 'roomInfo']);
+});
+
 Route::get('/room/{referenceNumber}', [RoomController::class, 'show']);
 
 
@@ -110,10 +120,7 @@ Route::group([
     $route->delete('/reservation/delete/{status}/{referenceNumber}',            [TransactionController::class, 'deleteReservation']);
 
     // TRANSACTION
-    Route::get(
-        '/',
-        [TransactionController::class, 'index']
-    );
+    Route::get('/',                                                         [TransactionController::class, 'index']);
     // Route::get('/', [TransactionController::class, 'guestIndex']);
 
     Route::get(
