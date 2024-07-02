@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Enum;
 
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\Enum\{RoomTypeEnumRequest, RoomNumberEnumRequest, RoomEnumRequest, RoomTypeAmenityEnumRequest, RoomTypeRateEnumRequest};
+use App\Http\Requests\Enum\{RoomTypeEnumRequest, RoomNumberEnumRequest, RoomEnumRequest, RoomTypeAmenityEnumRequest, RoomTypeRateEnumRequest, GuestAvailableRoomNumbersEnumRequest};
 use App\Models\Guest\Guest;
 use App\Repositories\Enum\{RoomNumberEnumRepository, RoomTypeEnumRepository, RoomEnumRepository, GuestEnumRepository, RoomTypeAmenityEnumRepository, RoomTypeRateEnumRepository};
+use Illuminate\Http\Request;
 
 class EnumController extends Controller
 {
@@ -58,5 +59,10 @@ class EnumController extends Controller
     public function roomTypeRateEnum(RoomTypeRateEnumRequest $request)
     {
         return $this->roomTypeRateEnum->execute($request);
+    }
+
+    public function guestAvailableRoomNumbersEnum(GuestAvailableRoomNumbersEnumRequest $request)
+    {
+        return $this->guestEnum->availableRoomNumbers($request);
     }
 }

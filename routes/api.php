@@ -159,6 +159,7 @@ Route::group([
     $route->get('/room-type-amenity', [EnumController::class, 'roomTypeAmenityEnum']);
     $route->get('/room-type-rate', [EnumController::class, 'roomTypeRateEnum']);
     $route->get('/guest', [EnumController::class, 'guestEnum']);
+    $route->get('/guest/available-room-numbers', [EnumController::class, 'guestAvailableRoomNumbersEnum']);
 });
 
 Route::group([
@@ -168,7 +169,7 @@ Route::group([
     $route->group([
         'prefix' => 'hotel-room'
     ], function ($route) {
-//        $route->get('/',                                    [GuestController::class, 'indexDashboard']);
+        //        $route->get('/',                                    [GuestController::class, 'indexDashboard']);
     });
 
     $route->group([
