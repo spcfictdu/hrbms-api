@@ -76,6 +76,7 @@ class FilterHotelRoomsRepository extends BaseRepository
         // Format response
         foreach ($roomTypes as $roomType) {
             $response['data'][] = [
+                'referenceNumber' => $roomType->reference_number,
                 'image' => $roomType->images->first()->filename ?? null,
                 'name' => $roomType->name,
                 'rate' => $roomType->rates->first()->{$dayName} ?? 0,

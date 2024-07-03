@@ -6,7 +6,7 @@ use App\Http\Requests\ResponseRequest;
 
 class ShowHotelRoomRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -24,7 +24,7 @@ class ShowHotelRoomRequest extends ResponseRequest
     public function rules()
     {
         return [
-            //
+            'roomName' => ['required', 'string']
         ];
     }
 }

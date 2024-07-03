@@ -21,7 +21,7 @@ class ShowHotelRoomsRepository extends BaseRepository
         $roomTypeImages = RoomTypeImage::where('room_type_id', $roomType->id)->get();
         $roomTypeRates = RoomTypeRate::where('room_type_id', $roomType->id)->get();
 
-        return [
+        $RoomTypeData =  [
             "roomImages" => $roomTypeImages,
             "roomName" => $roomType->name,
             "rate" => $roomType->rate,
@@ -32,5 +32,7 @@ class ShowHotelRoomsRepository extends BaseRepository
             }),
             "weeklyRate" => $roomTypeRates
         ];
+
+        return $this->success('Room data retrieved successfully', $RoomTypeData);
     }
 }
