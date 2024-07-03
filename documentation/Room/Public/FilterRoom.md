@@ -26,6 +26,17 @@ FALSE
 NO ROLE NEEDED
 ```
 
+#### Query Parameters
+
+- checkInDate : STRING (optional) - The check in date the guest wants to book
+- checkOutDate : STRING (optional) - The check out date the guest wants to book
+- capacity : STRING (optional) - The capacity of the room
+- roomType : STRING (optional) - The type of the room
+- page : INTEGER (optional) - The page number
+- perPage : INTEGER (optional) - The number of items per page
+- sortBy : STRING (optional) - The field to sort by
+- sortOrder : STRING (optional) - The order of the sort
+
 #### Response Example (Success)
 
 ```json
