@@ -9,10 +9,10 @@ class IndexGuestRepository extends BaseRepository
 {
     public function execute($request)
     {
+        $referenceNumberFilter = $request->input('referenceNumber');
         $firstNameFilter = $request->input('firstName');
         $middleNameFilter = $request->input('middleName');
         $lastNameFilter = $request->input('lastName');
-        // $lastNameFilter = $request->input('lastName');
         $fullNameFilter = $request->input('fullName');
         $emailFilter = $request->input('email');
         $phoneNumberFilter = $request->input('phoneNumber');
@@ -26,6 +26,10 @@ class IndexGuestRepository extends BaseRepository
 
         // Query
         $guestQuery = Guest::query();
+
+        if ($referenceNumberFilter) {
+            $guestQuery->where('reference_number', 'like', '%' . $referenceNumberFilter . '%');
+        }
 
 
         if ($firstNameFilter) {

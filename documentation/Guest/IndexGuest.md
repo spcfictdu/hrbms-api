@@ -34,6 +34,7 @@ FRONT DESK
 -   page : INTEGER (optional) - The page number to retrieve. Default is 1.
 -   perPage : INTEGER (optional) - The number of items to retrieve per page. Default is 10.
 
+-   referenceNumber : STRING (optional) - The reference number of the guest
 -   firstName : STRING (optional) - The first name of the guest
 -   middleName : STRING (optional) - The middle name of the guest
 -   lastName : STRING (optional) - The last name of the guest
