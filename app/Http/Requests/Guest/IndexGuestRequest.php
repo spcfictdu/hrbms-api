@@ -27,6 +27,7 @@ class IndexGuestRequest extends ResponseRequest
             'firstName' => 'string|nullable',
             'middleName' => 'string|nullable',
             'lastName' => 'string|nullable',
+            'fullName' => 'string|nullable',
             'email' => 'email|nullable',
             'phoneNumber' => 'string|nullable|min:1|max:11'
         ];

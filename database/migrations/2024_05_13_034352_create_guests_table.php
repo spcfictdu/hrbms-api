@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
+            $table->string('full_name')->virtualAs("CONCAT(last_name, ', ', first_name, ' ', middle_name)");
             $table->string('province')->nullable();
             $table->string('city')->nullable();
             $table->string('phone_number');

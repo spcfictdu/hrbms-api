@@ -13,6 +13,7 @@ class IndexGuestRepository extends BaseRepository
         $middleNameFilter = $request->input('middleName');
         $lastNameFilter = $request->input('lastName');
         // $lastNameFilter = $request->input('lastName');
+        $fullNameFilter = $request->input('fullName');
         $emailFilter = $request->input('email');
         $phoneNumberFilter = $request->input('phoneNumber');
 
@@ -37,6 +38,10 @@ class IndexGuestRepository extends BaseRepository
 
         if ($lastNameFilter) {
             $guestQuery->where('last_name', 'like', '%' . $lastNameFilter . '%');
+        }
+
+        if ($fullNameFilter) {
+            $guestQuery->where('full_name', 'like', '%' . $fullNameFilter . '%');
         }
 
         if ($emailFilter) {
