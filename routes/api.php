@@ -84,8 +84,9 @@ Route::group([
 });
 
 
+// Public guest hotel room
 Route::group([
-    'middleware' => 'auth:sanctum',
+    // 'middleware' => 'auth:sanctum',
     'prefix' => 'hotel-room'
 ], function ($route) {
     $route->get('/', [RoomController::class, 'hotelRoom']);
