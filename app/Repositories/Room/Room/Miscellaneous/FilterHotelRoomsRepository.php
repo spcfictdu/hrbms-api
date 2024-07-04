@@ -82,7 +82,7 @@ class FilterHotelRoomsRepository extends BaseRepository
                 'rate' => $roomType->rates->first()->{$dayName} ?? 0,
                 'capacity' => $roomType->capacity,
                 'description' => $roomType->description,
-                'roomsAvailable' => $roomType->rooms()->count(),
+                'roomsAvailable' => $roomType->rooms()->whereNot('status', 'OCCUPIED')->count(),
             ];
         }
 
