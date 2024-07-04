@@ -46,9 +46,9 @@ class ShowHotelRoomsRepository extends BaseRepository
 
         $RoomTypeData =  [
             "roomReferenceNumber" => $roomAvailable->reference_number,
-            "images" => $roomTypeImages,
+            "images" => $roomTypeImages->pluck('filename'),
             "name" => $roomType->name,
-            "rate" =>
+            "price" =>
             $roomType->rates->first()->{$dayName} ?? 0,
             // "rate" => $roomType->rate,
             "capacity" => $roomType->capacity,
@@ -56,7 +56,7 @@ class ShowHotelRoomsRepository extends BaseRepository
             "amenities" => $roomType->amenities->pluck('amenity')->map(function ($amenity) {
                 return $amenity->name;
             }),
-            'weeklyRates' => $this->getRoomTypeRates($roomType),
+            'rates' => $this->getRoomTypeRates($roomType),
         ];
 
         return $this->success('Room data retrieved successfully', $RoomTypeData);

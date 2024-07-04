@@ -36,21 +36,13 @@ NO ROLE NEEDED
     "results": {
         "roomReferenceNumber": "35c74d39",
         "images": [
-            {
-                "filename": "storage/1bb0667e/RoomPic_0.png"
-            },
-            {
-                "filename": "storage/1bb0667e/RoomPic_1.png"
-            },
-            {
-                "filename": "storage/1bb0667e/RoomPic_2.png"
-            },
-            {
-                "filename": "storage/1bb0667e/RoomPic_3.png"
-            }
+            "storage/1bb0667e/RoomPic_0.png",
+            "storage/1bb0667e/RoomPic_1.png",
+            "storage/1bb0667e/RoomPic_2.png",
+            "storage/1bb0667e/RoomPic_3.png"
         ],
         "name": "JUNIOR STANDARD",
-        "rate": 1340,
+        "price": 1340,
         "capacity": 2,
         "description": "This single room has a tile/marble floor, cable TV and air conditioning.",
         "amenities": [
@@ -62,7 +54,7 @@ NO ROLE NEEDED
             "IN-ROOM SAFE",
             "CLOSET"
         ],
-        "weeklyRates": {
+        "rates": {
             "regular": {
                 "referenceNumber": "41e6a0bf",
                 "monday": 1340,
