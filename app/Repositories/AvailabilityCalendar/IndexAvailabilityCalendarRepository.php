@@ -38,6 +38,10 @@ class IndexAvailabilityCalendarRepository extends BaseRepository
             });
         }
 
+        // Exclude transactions with soft-deleted guests
+        $transactionsQuery->whereHas('guest', function ($query) {
+            $query->whereNull('deleted_at'); // Ensure guest is not soft-deleted
+        });
 
 
         // Apply date range filter

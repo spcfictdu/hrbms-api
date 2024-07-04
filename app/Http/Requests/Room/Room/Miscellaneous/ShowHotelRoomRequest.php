@@ -24,7 +24,8 @@ class ShowHotelRoomRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'roomName' => ['required', 'string']
+
+            // 'roomName' => ['required', 'string']
         ];
     }
 }

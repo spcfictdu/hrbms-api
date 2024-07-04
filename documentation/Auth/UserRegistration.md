@@ -35,7 +35,7 @@ ADMIN
     "lastName": "DOE",
     "email": "sample@gmail.com",
     "password": "developer",
-    "mobile": "09123456789", // nullable
+    "mobileNumber": "09123456789", // nullable
     "role": "FRONT DESK" // FRONT DESK, ADMIN, GUEST
 }
 ```

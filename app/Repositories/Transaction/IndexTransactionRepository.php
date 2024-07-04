@@ -30,19 +30,22 @@ class IndexTransactionRepository extends BaseRepository
 
         if ($firstNameFilter) {
             $transactionQuery->whereHas('guest', function ($query) use ($firstNameFilter) {
-                $query->where('first_name', 'like', '%' . $firstNameFilter . '%');
+                $query->whereNull('deleted_at') // Exclude soft-deleted guests
+                    ->where('first_name', 'like', '%' . $firstNameFilter . '%');
             });
         }
 
         if ($middleNameFilter) {
             $transactionQuery->whereHas('guest', function ($query) use ($middleNameFilter) {
-                $query->where('middle_name', 'like', '%' . $middleNameFilter . '%');
+                $query->whereNull('deleted_at') // Exclude soft-deleted guests
+                    ->where('middle_name', 'like', '%' . $middleNameFilter . '%');
             });
         }
 
         if ($lastNameFilter) {
             $transactionQuery->whereHas('guest', function ($query) use ($lastNameFilter) {
-                $query->where('last_name', 'like', '%' . $lastNameFilter . '%');
+                $query->whereNull('deleted_at') // Exclude soft-deleted guests
+                    ->where('last_name', 'like', '%' . $lastNameFilter . '%');
             });
         }
 
@@ -62,9 +65,13 @@ class IndexTransactionRepository extends BaseRepository
 
         $transactions = $transactionQuery->paginate($perPage);
 
-        $transformedTransactions = $transactions->map(function ($transaction) {
+        $filteredTransactions = $transactions->filter(function ($transaction) {
+            return !is_null($transaction->guest);
+        });
+
+        $transformedTransactions = $filteredTransactions->map(function ($transaction) {
             return [
-                "fullName" => $transaction->guest?->full_name,
+                "fullName" => $transaction->guest->full_name,
                 "status" => $transaction->status,
                 "transactionRefNum" => $transaction->reference_number,
                 "occupants" => $transaction->number_of_guest,
@@ -72,12 +79,12 @@ class IndexTransactionRepository extends BaseRepository
                 "checkOutDate" => $transaction->check_out_date,
                 "booked" => $transaction->created_at->format('Y-m-d'),
                 "room" => $transaction->room->room_number,
-                "total" => 3000  //Temp price for now
+                "total" => $transaction->payment?->amount_received,
             ];
         });
 
         return $this->success("List of all transactions.", [
-            'data' => $transformedTransactions,
+            'data' => $transformedTransactions->values()->toArray(),
             'pagination' => [
                 'total' => $transactions->total(),
                 'perPage' => $transactions->perPage(),

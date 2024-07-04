@@ -91,7 +91,7 @@ Route::group([
 ], function ($route) {
     $route->get('/', [RoomController::class, 'hotelRoom']);
     $route->get('/search', [RoomController::class, 'searchHotelRoom']);
-    $route->get('/room-info', [RoomController::class, 'roomInfo']);
+    $route->get('/{referenceNumber}', [RoomController::class, 'roomInfo']);
 });
 
 Route::get('/room/{referenceNumber}', [RoomController::class, 'show']);

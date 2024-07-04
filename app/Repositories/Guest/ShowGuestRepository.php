@@ -44,7 +44,7 @@ class ShowGuestRepository extends BaseRepository
                     'checkOut' => $transaction->check_out_date,
                     'booked' => $transaction->created_at,
                     'room' => $transaction->room->room_number,
-                    'total' => $transaction->payment->amount_received,
+                    'total' => $transaction->payment?->amount_received,
                 ];
             }),
         ];
