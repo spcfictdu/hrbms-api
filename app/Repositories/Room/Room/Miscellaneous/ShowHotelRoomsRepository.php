@@ -6,9 +6,8 @@ namespace App\Repositories\Room\Room\Miscellaneous;
 
 use App\Repositories\BaseRepository;
 
-use App\Models\Room\RoomType,
-    App\Models\Room\RoomTypeImage,
-    App\Models\Room\RoomTypeRate;
+use App\Models\Room\{RoomType, RoomTypeImage, RoomTypeRate, Room};
+
 
 use App\Repositories\Enum\RoomTypeRateEnumRepository;
 use Carbon\Carbon;
@@ -20,8 +19,10 @@ class ShowHotelRoomsRepository extends BaseRepository
         $roomType = RoomType::where('name', $request->roomName)->first();
         $roomTypeImages = RoomTypeImage::where('room_type_id', $roomType->id)->get();
         $roomTypeRates = RoomTypeRate::where('room_type_id', $roomType->id)->get();
+        $roomAvailable = Room::where('room_type_id', $roomType->id)->where('status', "AVAILABLE")->first();
 
         $RoomTypeData =  [
+            "roomReferenceNumber" => $roomAvailable->reference_number,
             "roomImages" => $roomTypeImages,
             "roomName" => $roomType->name,
             "rate" => $roomType->rate,

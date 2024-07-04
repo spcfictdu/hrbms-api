@@ -54,7 +54,7 @@ class AccountInfoRepository extends BaseRepository
                 ];
             });
 
-            return [
+            return $this->success("Acoount Information and Previous Transaction Histories", [
                 "accountInfo" => [
                     'fullName' => $guest->full_name,
                     'address' => [
@@ -68,7 +68,7 @@ class AccountInfoRepository extends BaseRepository
                 'reservation' => $reservations,
                 'histories' => $histories
 
-            ];
+            ]);
         } else {
             return $this->error("Guest not found.");
         }

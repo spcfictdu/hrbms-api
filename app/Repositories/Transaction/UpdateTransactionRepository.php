@@ -31,6 +31,10 @@ class UpdateTransactionRepository extends BaseRepository
                         "status" => "CONFIRMED",
                         "payment_id" => $payment->id
                     ]);
+
+                    $transaction->room->update([
+                        "status" => strtoupper("OCCUPIED")
+                    ]);
                 } elseif (!isset($request->status)) {
                     if ($transactionHistory) {
                         if ($request->checkInDate && $request->checkInTime) {

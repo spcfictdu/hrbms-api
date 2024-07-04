@@ -42,6 +42,13 @@ class CreateTransactionRepository extends BaseRepository
                     "id_type" => strtoupper($request->guest['id']['type']),
                     "id_number" => $request->guest['id']['number']
                 ]);
+            } else {
+                $checkGuest->update([
+                    "province" => strtoupper($request->guest['address']['province']),
+                    "city" => strtoupper($request->guest['address']['city']),
+                    "id_type" => strtoupper($request->guest['id']['type']),
+                    "id_number" => $request->guest['id']['number']
+                ]);
             }
 
                 $transaction = Transaction::create([
@@ -63,6 +70,10 @@ class CreateTransactionRepository extends BaseRepository
                     "transaction_id" => $transaction->id,
                     "payment_type" => strtoupper($request->payment['paymentType']),
                     "amount_received" => $request->payment['amountReceived']
+                ]);
+
+                $room->update([
+                    "status" => strtoupper("OCCUPIED")
                 ]);
             }
         } else {
