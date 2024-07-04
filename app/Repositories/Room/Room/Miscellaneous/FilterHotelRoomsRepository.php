@@ -40,10 +40,24 @@ class FilterHotelRoomsRepository extends BaseRepository
             $roomTypesQuery->where('capacity', '>=', $capacityFilter);
         }
 
+        // ORIG
+        // Apply availability filter if check-in and check-out dates are provided
+//        if ($checkInDateFilter && $checkOutDateFilter) {
+//            $roomTypesQuery->whereDoesntHave('rooms', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
+//                $query->whereHas('transactions', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
+//                    $query->where(function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
+//                        $query->where('check_in_date', '<', $checkOutDateFilter)
+//                            ->where('check_out_date', '>', $checkInDateFilter);
+//                    });
+//                });
+//            });
+//        }
+
+        // MODIFIED
         // Apply availability filter if check-in and check-out dates are provided
         if ($checkInDateFilter && $checkOutDateFilter) {
-            $roomTypesQuery->whereDoesntHave('rooms', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
-                $query->whereHas('transactions', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
+            $roomTypesQuery->whereHas('rooms', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
+                $query->whereDoesntHave('transactions', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
                     $query->where(function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
                         $query->where('check_in_date', '<', $checkOutDateFilter)
                             ->where('check_out_date', '>', $checkInDateFilter);
@@ -51,6 +65,7 @@ class FilterHotelRoomsRepository extends BaseRepository
                 });
             });
         }
+
 
         // Apply room type filter
         if ($roomTypeFilter) {
@@ -82,7 +97,7 @@ class FilterHotelRoomsRepository extends BaseRepository
                 'rate' => $roomType->rates->first()->{$dayName} ?? 0,
                 'capacity' => $roomType->capacity,
                 'description' => $roomType->description,
-                'roomsAvailable' => $roomType->rooms()->whereNot('status', 'OCCUPIED')->count(),
+                'roomsAvailable' => $roomType->rooms()->whereNotIn('status', ['OCCUPIED', 'UNCLEAN'])->count(),
             ];
         }
 
