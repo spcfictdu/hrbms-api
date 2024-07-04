@@ -88,7 +88,7 @@ class RoomController extends Controller
         return $this->searchHotelRoom->execute($request);
     }
 
-    protected function roomInfo(ShowHotelRoomRequest $request){
-        return $this->roomInfo->execute($request);
+    protected function roomInfo(ShowHotelRoomRequest $request, $referenceNumber){
+        return $this->roomInfo->execute($request, $referenceNumber);
     }
 }
