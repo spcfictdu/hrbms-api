@@ -6,36 +6,39 @@ This endpoint is used to update a room using the provided reference number of th
 
 ```
 {{base_url}}/api/room/update/{roomReferenceNumber}
-```   
+```
 
 #### Method
+
 ```
 PUT
 ```
 
 #### Authentication Needed
+
 ```
 TRUE
 ```
 
 #### Permitted Roles
+
 ```
 ADMIN
 ```
 
 #### Request Body
 
-``` json
+```json
 {
     "roomNumber": 602,
-    "roomType": "DELUXE",
-    "status": "READY FOR OCCUPANCY"
+    "roomName": "Room 602",
+    "roomType": "DELUXE"
 }
-``` 
+```
 
 #### Response Example (Success)
 
-``` json
+```json
 {
     "message": "Room updated successfully.",
     "results": {
