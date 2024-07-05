@@ -14,7 +14,7 @@ class CreateTransactionRequest extends ResponseRequest
      */
     public function authorize()
     {
-        return $this->user()->hasRole('ADMIN') || $this->user()->hasRole('FRONT DESK') ||$this->user()->hasRole('GUEST');
+        return $this->user()->hasRole('ADMIN') || $this->user()->hasRole('FRONT DESK') || $this->user()->hasRole('GUEST');
     }
 
     /**
@@ -25,6 +25,9 @@ class CreateTransactionRequest extends ResponseRequest
     public function rules()
     {
         return [
+
+            'room.referenceNumber' => ['required', 'string', 'exists:rooms,reference_number',],
+
             'guest.firstName' => ['required', 'string'],
             'guest.middleName' => ['nullable', 'string'],
             'guest.lastName' => ['required', 'string'],

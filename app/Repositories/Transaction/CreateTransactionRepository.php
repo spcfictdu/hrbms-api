@@ -23,6 +23,10 @@ class CreateTransactionRepository extends BaseRepository
 
         if ($room) {
 
+            if ($room->status === 'OCCUPIED') {
+                return $this->error('Room is already occupied.');
+            }
+
             // if ($room->status === 'OCCUPIED') {
             //     return $this->error('Room is already occupied.');
             // }

@@ -10,7 +10,7 @@ use App\Models\Room\Room;
 
 class UpdateRoomRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -32,6 +32,7 @@ class UpdateRoomRequest extends ResponseRequest
 
         return [
             'roomNumber' => ['required', 'integer', Rule::unique('rooms', 'room_number')->ignore($room->id)],
+            'roomFloor' => ['required', 'integer'],
             'roomType' => ['required', 'exists:room_types,name']
         ];
     }

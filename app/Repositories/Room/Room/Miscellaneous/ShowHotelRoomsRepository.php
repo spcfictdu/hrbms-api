@@ -45,7 +45,7 @@ class ShowHotelRoomsRepository extends BaseRepository
 
 
         $RoomTypeData =  [
-            "roomReferenceNumber" => $roomAvailable->reference_number,
+            "referenceNumber" => $roomAvailable->reference_number,
             "images" => $roomTypeImages->pluck('filename'),
             "name" => $roomType->name,
             "price" =>

@@ -34,7 +34,7 @@ NO ROLE NEEDED
 {
     "message": "Room data retrieved successfully",
     "results": {
-        "roomReferenceNumber": "35c74d39",
+        "referenceNumber": "35c74d39",
         "images": [
             "storage/1bb0667e/RoomPic_0.png",
             "storage/1bb0667e/RoomPic_1.png",
