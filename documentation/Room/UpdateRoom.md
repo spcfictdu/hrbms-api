@@ -31,7 +31,7 @@ ADMIN
 ```json
 {
     "roomNumber": 602,
-    "roomName": "Room 602",
+    "roomFloor": 1,
     "roomType": "DELUXE"
 }
 ```
