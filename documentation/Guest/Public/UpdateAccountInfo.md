@@ -29,13 +29,15 @@ GUEST
 
 #### Request Body
 
-``` json
+```json
 {
     "firstName": "alexs",
     "middleName": "m",
     "lastName": "camaddo",
     "email": "alex1@gmail.com",
-    "phoneNumber":"09605607559"
+    "phoneNumber": "09605607559",
+    "province": "Cebu",
+    "city": "Cebu City"
 }
 ```
 

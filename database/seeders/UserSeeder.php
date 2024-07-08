@@ -79,16 +79,17 @@ class UserSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ]);
 
-            if($userData['role'] == 'GUEST') {
+            if ($userData['role'] == 'GUEST') {
                 Guest::create([
                     "reference_number" => $this->guestReferenceNumber(),
-                    "first_name" => strtoupper($faker->firstNameMale),
-                    "middle_name" => strtoupper($faker->firstName),
-                    "last_name" => strtoupper($faker->lastName),
+                    "first_name" => $userData['first_name'],
+                    "middle_name" => null,
+                    "last_name" => $userData['last_name'],
                     "province" => strtoupper($faker->state),
                     "city" => strtoupper($faker->city),
                     "phone_number" => $faker->phoneNumber,
-                    "email" => $faker->email,
+                    // "email" => $faker->email,
+                    "email" => "dev@gmail.com",
                     "id_type" => "PRC",
                     "id_number" => "123456789",
                     "user_id" => $user->id
