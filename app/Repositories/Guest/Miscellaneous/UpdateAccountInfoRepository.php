@@ -20,6 +20,8 @@ class UpdateAccountInfoRepository extends BaseRepository
                 "last_name" => $request->lastName,
                 "email" => $request->email,
                 "phone_number" => $request->phoneNumber,
+                "province" => $request->province,
+                "city" => $request->city,
             ]);
 
             User::where('id', $this->user()->id)->first()->update([
