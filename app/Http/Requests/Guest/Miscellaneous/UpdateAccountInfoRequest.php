@@ -27,7 +27,7 @@ class UpdateAccountInfoRequest extends ResponseRequest
             "firstName" => "required",
             "middleName" => "nullable",
             "lastName" => "required",
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email',
             'phoneNumber' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
             "province" => "nullable",
             "city" => "nullable",
