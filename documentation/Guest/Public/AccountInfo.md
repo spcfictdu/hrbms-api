@@ -37,6 +37,9 @@ GUEST
     "results": {
         "accountInfo": {
             "fullName": "CAMADDO, ALEX M",
+            "firstName": "ALEX",
+            "middleName": "M",
+            "lastName": "CAMADDO",
             "address": {
                 "province": null,
                 "city": null

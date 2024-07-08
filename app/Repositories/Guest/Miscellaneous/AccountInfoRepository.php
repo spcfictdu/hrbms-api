@@ -15,7 +15,7 @@ class AccountInfoRepository extends BaseRepository
         if ($this->user()->getRoleNames()->first() == "GUEST") {
             $guest = Guest::where('user_id', $this->user()->id)->first();
 
-            $bookings = Transaction::where('guest_id', $guest->id)->where('status', 'CONFIRMED')->get()->map(function ($booking){
+            $bookings = Transaction::where('guest_id', $guest->id)->where('status', 'CONFIRMED')->get()->map(function ($booking) {
                 return [
                     'roomName' => $booking->room->roomType->name,
                     'checkInDate' => $booking->check_in_date,
@@ -28,7 +28,7 @@ class AccountInfoRepository extends BaseRepository
                 ];
             });
 
-            $reservations = Transaction::where('guest_id', $guest->id)->where('status', 'RESERVED')->get()->map(function ($reservation){
+            $reservations = Transaction::where('guest_id', $guest->id)->where('status', 'RESERVED')->get()->map(function ($reservation) {
                 return [
                     'roomName' => $reservation->room->roomType->name,
                     'checkInDate' => $reservation->check_in_date,
@@ -41,7 +41,7 @@ class AccountInfoRepository extends BaseRepository
                 ];
             });
 
-            $histories = Transaction::where('guest_id', $guest->id)->where('status', 'CHECKED-OUT')->get()->map(function ($history){
+            $histories = Transaction::where('guest_id', $guest->id)->where('status', 'CHECKED-OUT')->get()->map(function ($history) {
                 return [
                     'roomName' => $history->room->roomType->name,
                     'checkInDate' => $history->check_in_date,
@@ -57,6 +57,9 @@ class AccountInfoRepository extends BaseRepository
             return $this->success("Acoount Information and Previous Transaction Histories", [
                 "accountInfo" => [
                     'fullName' => $guest->full_name,
+                    'firstName' => $guest->first_name,
+                    'middleName' => $guest->middle_name ?? null,
+                    'lastName' => $guest->last_name,
                     'address' => [
                         'province' => $guest->province,
                         'city' => $guest->city
