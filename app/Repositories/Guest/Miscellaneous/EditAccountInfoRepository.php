@@ -21,6 +21,8 @@ class EditAccountInfoRepository extends BaseRepository
                 "lastName" => $guest->last_name,
                 "email" => $guest->email,
                 "phoneNumber" => $guest->phone_number,
+                "city" => $guest->city,
+                "province" => $guest->province
             ]);
         } else {
             return $this->error("Guest not found.");
