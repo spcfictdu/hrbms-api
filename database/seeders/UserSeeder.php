@@ -4,9 +4,11 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
-use App\Models\User;
+use App\Models\User,
+    App\Models\Guest\Guest;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
+
+use Faker\Factory as Faker, Str, Carbon\Carbon;
 
 class UserSeeder extends Seeder
 {
@@ -15,6 +17,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = Faker::create();
         $users = [
             [
                 'id' => 1,
@@ -67,7 +70,7 @@ class UserSeeder extends Seeder
         foreach ($users as $userData) {
             $user = User::create([
                 'id' => $userData['id'],
-                'username' => $userData['username'],
+                'username' => $userData['username'] ?? null,
                 'first_name' => $userData['first_name'],
                 'last_name' => $userData['last_name'],
                 'email' => $userData['email'],
@@ -76,8 +79,34 @@ class UserSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ]);
 
+            if($userData['role'] == 'GUEST') {
+                Guest::create([
+                    "reference_number" => $this->guestReferenceNumber(),
+                    "first_name" => strtoupper($faker->firstNameMale),
+                    "middle_name" => strtoupper($faker->firstName),
+                    "last_name" => strtoupper($faker->lastName),
+                    "province" => strtoupper($faker->state),
+                    "city" => strtoupper($faker->city),
+                    "phone_number" => $faker->phoneNumber,
+                    "email" => $faker->email,
+                    "id_type" => "PRC",
+                    "id_number" => "123456789",
+                    "user_id" => $user->id
+                ]);
+            }
+
             $role = Role::findByName($userData['role']);
             $user->assignRole($role);
         }
+    }
+
+    protected function guestReferenceNumber()
+    {
+        do {
+
+            $referenceNumber = bin2hex(random_bytes(4));
+        } while (Guest::where("reference_number", $referenceNumber)->first());
+
+        return $referenceNumber;
     }
 }
