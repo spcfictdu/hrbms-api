@@ -37,7 +37,7 @@ class AccountInfoRepository extends BaseRepository
                     'roomName' => $reservation->room->roomType->name,
                     'checkInDate' => $reservation->check_in_date,
                     'checkOutDate' => $reservation->check_out_date,
-                    'amountReceived' => $reservation->payment->amount_received,
+                    'amountReceived' => $reservation->payment?->amount_received,
                     'roomDescription' => $reservation->room->roomType->description,
                     'amenities' => $reservation->room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
                         return $amenity->name;
