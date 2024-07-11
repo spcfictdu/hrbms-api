@@ -35,25 +35,42 @@ class GeneratePaymentReportRepository extends BaseRepository
             }
         }
 
-        $response = [];
+//        $response = [];
 
-        foreach($payments as $payment) {
+        $response = $payments->map(function ($payment) {
             $date = Carbon::parse($payment->created_at)->toDateString();
             $time = Carbon::parse($payment->created_at)->format('g:i A');
 
             $guest = $payment->transaction->guest;
 
-                array_push($response, [
-                    "date" => $date,
-                    "time" => $time,
-                    "email" => $guest->email,
-                    "transactionNumber" => $payment->transaction->reference_number,
-                    "fullName" => $guest->middle_name ? "{$guest->last_name}, {$guest->first_name} {$guest->middle_name}" : "{$guest->last_name}, {$guest->first_name}",
-                    "paymentType" => $payment->payment_type,
-                    "total" => $payment->amount_received
-                ]);
+            return [
+                "date" => $date,
+                "time" => $time,
+                "email" => $guest->email,
+                "transactionNumber" => $payment->transaction->reference_number,
+                "fullName" => $guest->middle_name ? "{$guest->last_name}, {$guest->first_name} {$guest->middle_name}" : "{$guest->last_name}, {$guest->first_name}",
+                "paymentType" => $payment->payment_type,
+                "total" => $payment->amount_received
+            ];
+        });
 
-        }
+//        foreach($payments as $payment) {
+//            $date = Carbon::parse($payment->created_at)->toDateString();
+//            $time = Carbon::parse($payment->created_at)->format('g:i A');
+//
+//            $guest = $payment->transaction->guest;
+//
+//                array_push($response, [
+//                    "date" => $date,
+//                    "time" => $time,
+//                    "email" => $guest->email,
+//                    "transactionNumber" => $payment->transaction->reference_number,
+//                    "fullName" => $guest->middle_name ? "{$guest->last_name}, {$guest->first_name} {$guest->middle_name}" : "{$guest->last_name}, {$guest->first_name}",
+//                    "paymentType" => $payment->payment_type,
+//                    "total" => $payment->amount_received
+//                ]);
+
+//        }
 
         return $this->success("Payment report list.", $response);
     }
