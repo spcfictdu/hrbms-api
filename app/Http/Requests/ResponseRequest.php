@@ -46,18 +46,18 @@ abstract class ResponseRequest extends FormRequest
      */
     protected function failedValidation(Validator $validator)
     {
+        $errors = [];
+        $allErrorMessages = collect($validator->errors()->all())->join(' ');
+        $firstErrorMessage = collect($validator->errors()->all())->first();
 
-        $errors     =   [];
-
-        foreach($validator->errors()->messages() as $key => $value)
-        {
-            $errors[$key]  = $value[0];
+        foreach ($validator->errors()->messages() as $key => $value) {
+            $errors[$key] = $value[0];
         }
 
         throw new HttpResponseException(response()->json(
             [
-                'message'   =>  "Something went wrong",
-                'results'   =>  $errors,
+                'message'   => $firstErrorMessage,  // Use the first error message
+                'results'   => $errors,
                 'code'      =>  422,
                 'errors'    =>  true,
             ],
