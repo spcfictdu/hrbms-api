@@ -33,10 +33,10 @@ class ShowHotelRoomsRepository extends BaseRepository
 
         // Check if there's a special rate within the date range
         $specialRate = collect($roomType->rates)->first(function ($rate) use ($today) {
-                return $rate['type'] === 'SPECIAL' &&
+            return $rate['type'] === 'SPECIAL' &&
                 (!$rate['start_date'] || $rate['start_date'] <= $today) &&
-                    (!$rate['end_date'] || $rate['end_date'] >= $today);
-            });
+                (!$rate['end_date'] || $rate['end_date'] >= $today);
+        });
 
         // If there's a special rate, use it
         if ($specialRate) {
@@ -45,7 +45,7 @@ class ShowHotelRoomsRepository extends BaseRepository
 
 
         $RoomTypeData =  [
-            "referenceNumber" => $roomAvailable->reference_number,
+            "referenceNumber" => $roomType->reference_number,
             "images" => $roomTypeImages->pluck('filename'),
             "name" => $roomType->name,
             "price" =>
