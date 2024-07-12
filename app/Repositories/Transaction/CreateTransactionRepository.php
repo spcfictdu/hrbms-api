@@ -48,6 +48,9 @@ class CreateTransactionRepository extends BaseRepository
                 ]);
             } else {
                 $checkGuest->update([
+                    "first_name" => strtoupper($request->guest['firstName']),
+                    "middle_name" => strtoupper($request->guest['middleName']) ?? null,
+                    "last_name" => strtoupper($request->guest['lastName']),
                     "province" => strtoupper($request->guest['address']['province']),
                     "city" => strtoupper($request->guest['address']['city']),
                     "id_type" => strtoupper($request->guest['id']['type']),
