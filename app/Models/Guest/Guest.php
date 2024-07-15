@@ -3,6 +3,7 @@
 namespace App\Models\Guest;
 
 use App\Models\Transaction\Transaction;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -41,6 +42,11 @@ class Guest extends Model
     protected function transaction()
     {
         return $this->hasMany(Transaction::class, 'guest_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function getFullNameAttribute()

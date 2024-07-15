@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Transaction;
 
 use App\Http\Requests\ResponseRequest;
-use App\Rules\RoomAvailability;
+use App\Rules\RoomAvailable;
 
 class CreateTransactionRequest extends ResponseRequest
 {
@@ -26,7 +26,7 @@ class CreateTransactionRequest extends ResponseRequest
     {
         return [
 
-            'room.referenceNumber' => ['required', 'string', 'exists:rooms,reference_number',],
+            'room.referenceNumber' => ['required', 'string', 'exists:rooms,reference_number', new RoomAvailable($this->checkIn['date'], $this->checkOut['date'])],
 
             'guest.firstName' => ['required', 'string'],
             'guest.middleName' => ['nullable', 'string'],
@@ -38,9 +38,9 @@ class CreateTransactionRequest extends ResponseRequest
             'guest.id.type' => ['required'],
             'guest.id.number' => ['required'],
             // 'guest.numberOfGuest' => ['required', 'integer'],
-            'checkIn.date' => ['required', 'date'],
+            'checkIn.date' => ['required', 'date', 'after_or_equal:today'],
             'checkIn.time' => ['date_format:H:i'],
-            'checkOut.date' => ['required', 'date'],
+            'checkOut.date' => ['required', 'date', 'after:checkIn.date'],
             'checkOut.time' => ['date_format:H:i']
         ];
     }
