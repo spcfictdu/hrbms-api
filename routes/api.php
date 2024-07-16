@@ -111,31 +111,23 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'transaction'
 ], function ($route) {
-    // $route->get('/booking',                                                  [TransactionController::class, 'bookIndex']);
-    // $route->get('/booking/{referenceNumber}',                                [TransactionController::class, 'bookShow']);
-    // $route->get('/booking/edit/{referenceNumber}',                           [TransactionController::class, 'bookEdit']);
-    // $route->put('/booking/update',                                           [TransactionController::class, 'bookUpdate']);
-
     // MISCELLANEOUS
     $route->get('/form/{referenceNumber}',                                      [TransactionController::class, 'showFormTransaction']);
     $route->delete('/reservation/delete/{status}/{referenceNumber}',            [TransactionController::class, 'deleteReservation']);
 
     // TRANSACTION
-    Route::get('/',                                                         [TransactionController::class, 'index']);
+    $route->get('/',                                                            [TransactionController::class, 'index']);
     // Route::get('/', [TransactionController::class, 'guestIndex']);
 
-    Route::get(
-        '/show/{referenceNumber}',
-        [TransactionController::class, 'show']
-    );
-    Route::post('/create',                                                  [TransactionController::class, 'create']);
+    $route->get('/show/{referenceNumber}',                                      [TransactionController::class, 'show']);
     $route->put('/update',                                                      [TransactionController::class, 'update']);
 });
 
+
+
 // PUBLIC
-
-
 Route::get('/availability-calendar', [AvailabilityCalendarController::class, 'index']);
+Route::post('/transaction/create',                                                      [TransactionController::class, 'create']);
 
 // To check availability of rooms
 Route::group([
