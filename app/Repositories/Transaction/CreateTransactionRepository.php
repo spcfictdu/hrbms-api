@@ -55,11 +55,15 @@ class CreateTransactionRepository extends BaseRepository
             //            }
 
             // For help desk
+
             $guestAccountId = $request->guest['accountId'] ?? null;
+            $userId = $this->user()->id ?? null;
             if ($guestAccountId) {
                 $guest = Guest::find($guestAccountId);
-            } else if ($this->user()->id) {
-                $guest = Guest::where('user_id', $this->user()->id)->first();
+            } else if ($userId) {
+                $guest = Guest::where('user_id', $userId)->first();
+            } else {
+                $guest = null;
             }
 
             if (!$guest) {
