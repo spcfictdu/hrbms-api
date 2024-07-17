@@ -32,6 +32,7 @@ ADMIN
 {
     "username": "frontdesk",
     "firstName": "JANE",
+    "middleName": "M", // nullable
     "lastName": "DOE",
     "email": "sample@gmail.com",
     "password": "developer",
@@ -48,6 +49,7 @@ ADMIN
     "results": {
         "username": "frontdesk",
         "firstName": "JANE",
+        "middleName": "M",
         "lastName": "DOE",
         "email": "sample@gmail.com",
         "role": "FRONT DESK"
