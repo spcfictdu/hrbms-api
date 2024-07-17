@@ -37,7 +37,7 @@ class UpdateRoomTypeRequest extends ResponseRequest
             'isNonSmoking' => ['required', 'boolean'],
             'balconyOrTerrace' => ['required', 'boolean'],
             'capacity' => ['required', 'integer'],
-            'images' => ['nullable', 'array'],
+            'images' => ['required', 'array', 'min:1', 'max:4'],
 
             // Arrays
             'images.add.*' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:5000'],

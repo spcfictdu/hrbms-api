@@ -22,9 +22,11 @@ class ShowGuestRepository extends BaseRepository
         }
 
         $filteredTransactions = $guest->transaction->filter(function ($transaction) use ($referenceFilter, $checkInDateFilter, $checkOutDateFilter) {
-            return (!$referenceFilter || $transaction->reference_number == $referenceFilter)
-                && (!$checkInDateFilter || $transaction->check_in_date == $checkInDateFilter)
-                && (!$checkOutDateFilter || $transaction->check_out_date == $checkOutDateFilter);
+            $referenceMatch = $referenceFilter ? stripos($transaction->reference_number, $referenceFilter) !== false : true;
+            $checkInDateMatch = $checkInDateFilter ? $transaction->check_in_date == $checkInDateFilter : true; // Assuming exact match is needed for dates
+            $checkOutDateMatch = $checkOutDateFilter ? $transaction->check_out_date == $checkOutDateFilter : true; // Assuming exact match is needed for dates
+
+            return $referenceMatch && $checkInDateMatch && $checkOutDateMatch;
         });
 
         $camelCaseGuest = [

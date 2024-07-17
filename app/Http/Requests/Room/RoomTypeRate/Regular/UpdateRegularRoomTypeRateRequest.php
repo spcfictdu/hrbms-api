@@ -25,13 +25,13 @@ class UpdateRegularRoomTypeRateRequest extends ResponseRequest
     {
         return [
             'rates' => ['array'],
-            'rates.monday' => ['required', 'numeric'],
-            'rates.tuesday' => ['required', 'numeric'],
-            'rates.wednesday' => ['required', 'numeric'],
-            'rates.thursday' => ['required', 'numeric'],
-            'rates.friday' => ['required', 'numeric'],
-            'rates.saturday' => ['required', 'numeric'],
-            'rates.sunday' => ['required', 'numeric'],
+            'rates.monday' => ['required', 'numeric', 'min:0'],
+            'rates.tuesday' => ['required', 'numeric', 'min:0'],
+            'rates.wednesday' => ['required', 'numeric', 'min:0'],
+            'rates.thursday' => ['required', 'numeric', 'min:0'],
+            'rates.friday' => ['required', 'numeric', 'min:0'],
+            'rates.saturday' => ['required', 'numeric', 'min:0'],
+            'rates.sunday' => ['required', 'numeric', 'min:0'],
         ];
     }
 }
