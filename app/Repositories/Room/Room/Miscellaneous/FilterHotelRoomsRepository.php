@@ -40,18 +40,23 @@ class FilterHotelRoomsRepository extends BaseRepository
             $roomTypesQuery->where('capacity', '>=', $capacityFilter);
         }
 
+        // Only show room types with available rooms
+        $roomTypesQuery->whereHas('rooms', function ($query) {
+            $query->where('status', 'AVAILABLE');
+        });
+
         // ORIG
         // Apply availability filter if check-in and check-out dates are provided
-//        if ($checkInDateFilter && $checkOutDateFilter) {
-//            $roomTypesQuery->whereDoesntHave('rooms', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
-//                $query->whereHas('transactions', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
-//                    $query->where(function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
-//                        $query->where('check_in_date', '<', $checkOutDateFilter)
-//                            ->where('check_out_date', '>', $checkInDateFilter);
-//                    });
-//                });
-//            });
-//        }
+        //        if ($checkInDateFilter && $checkOutDateFilter) {
+        //            $roomTypesQuery->whereDoesntHave('rooms', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
+        //                $query->whereHas('transactions', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
+        //                    $query->where(function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
+        //                        $query->where('check_in_date', '<', $checkOutDateFilter)
+        //                            ->where('check_out_date', '>', $checkInDateFilter);
+        //                    });
+        //                });
+        //            });
+        //        }
 
         // MODIFIED
         // Apply availability filter if check-in and check-out dates are provided
