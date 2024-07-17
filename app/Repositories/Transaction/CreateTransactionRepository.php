@@ -38,21 +38,29 @@ class CreateTransactionRepository extends BaseRepository
                 'email' => $request->guest['contact']['email'],
             ];
 
-//            $guest = null;
+            //            $guest = null;
             // Check for existing guest by user ID or other details
-//            if($this->user()->id){
-                $guest = Guest::where('user_id', $this->user()->id ?? null)
-                    ->orWhere(function ($query) use ($guestDetails) {
-                        $query->where('first_name', $guestDetails['first_name'])
-                            ->where('middle_name', $guestDetails['middle_name'])
-                            ->where('last_name', $guestDetails['last_name'])
-                            ->where('province', $guestDetails['province'])
-                            ->where('city', $guestDetails['city'])
-                            ->where('phone_number', $guestDetails['phone_number'])
-                            ->where('email', $guestDetails['email']);
-                    })
-                    ->first();
-//            }
+            //            if($this->user()->id){
+            // $guest = Guest::where('user_id', $this->user()->id ?? null)
+            //     ->orWhere(function ($query) use ($guestDetails) {
+            //         $query->where('first_name', $guestDetails['first_name'])
+            //             ->where('middle_name', $guestDetails['middle_name'])
+            //             ->where('last_name', $guestDetails['last_name'])
+            //             ->where('province', $guestDetails['province'])
+            //             ->where('city', $guestDetails['city'])
+            //             ->where('phone_number', $guestDetails['phone_number'])
+            //             ->where('email', $guestDetails['email']);
+            //     })
+            //     ->first();
+            //            }
+
+            // For help desk
+            $guestAccountId = $request->guest['accountId'] ?? null;
+            if ($guestAccountId) {
+                $guest = Guest::find($guestAccountId);
+            } else if ($this->user()->id) {
+                $guest = Guest::where('user_id', $this->user()->id)->first();
+            }
 
             if (!$guest) {
                 $guest = Guest::create($guestDetails + [

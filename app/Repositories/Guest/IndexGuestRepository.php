@@ -73,7 +73,7 @@ class IndexGuestRepository extends BaseRepository
         });
 
         return $this->success("Successfully retrieved guests", [
-            'guests' => $transformedGuests,
+            'guests' => $transformedGuests->toArray(),
             'pagination' => [
                 'total' => $guests->total(),
                 'perPage' => $guests->perPage(),

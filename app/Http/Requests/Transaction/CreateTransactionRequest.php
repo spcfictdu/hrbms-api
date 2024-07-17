@@ -25,7 +25,6 @@ class CreateTransactionRequest extends ResponseRequest
     public function rules()
     {
         return [
-
             'room.referenceNumber' => ['required', 'string', 'exists:rooms,reference_number', new RoomAvailable($this->checkIn['date'], $this->checkOut['date'])],
 
             'guest.firstName' => ['required', 'string'],
@@ -35,6 +34,7 @@ class CreateTransactionRequest extends ResponseRequest
             'guest.address.city' => ['required', 'string'],
             'guest.contact.phoneNum' => ['required', 'string'],
             'guest.contact.email' => ['required', 'string'],
+            'guest.dbId' => ['nullable', 'integer'],
             'guest.id.type' => ['required'],
             'guest.id.number' => ['required'],
             // 'guest.numberOfGuest' => ['required', 'integer'],

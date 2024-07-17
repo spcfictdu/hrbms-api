@@ -29,13 +29,17 @@ FRONT DESK
 
 #### Request Body
 
-``` json
+```json
 {
     "status": "RESERVED",
     "room": {
         "referenceNumber": "1a3e4628"
     },
     "guest": {
+        // For front desk, dbId is required
+        // For guest that has an account, dbId is not required
+        "accountId": 1, // nullable
+
         "firstName": "Alex",
         "middleName": "Mosing",
         "lastName": "Camaddo",
@@ -52,7 +56,7 @@ FRONT DESK
             "number": "1234"
         }
     },
-    
+
     // IF HAVE PAYMENTS E.G BOOKING FORM
     // "payment": {
     //     "paymentType": "CASH",
