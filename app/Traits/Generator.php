@@ -72,4 +72,11 @@ trait Generator
 
         return $referenceNumber;
     }
+
+    // New method, not being used yet    
+    // private function generateReferenceNumber()
+    // {
+    //     // Your logic to generate a reference number
+    //     return 'TRX' . uniqid();
+    // }
 }

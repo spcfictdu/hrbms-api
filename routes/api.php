@@ -127,7 +127,8 @@ Route::group([
 
 // PUBLIC
 Route::get('/availability-calendar', [AvailabilityCalendarController::class, 'index']);
-Route::post('/transaction/create',                                                      [TransactionController::class, 'create']);
+
+Route::post('/transaction/create',  [TransactionController::class, 'create'])->middleware('optional.auth');
 
 // To check availability of rooms
 Route::group([

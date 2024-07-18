@@ -20,7 +20,12 @@ class LogRequests
 
     private function logOriginalRequest($request, $user)
     {
-        Log::info('Incoming request:', [
+        // Check if the request method is not POST or PUT, then return early
+        // if (!in_array($request->method(), ['POST', 'PUT'])) {
+        //     return;
+        // }
+
+        Log::info(json_encode([
             'user' => $user ? $user->first_name : null,
             'role' => $user ? $user->role : null,
             'method' => $request->method(),
@@ -28,7 +33,7 @@ class LogRequests
             'ip_address' => $request->ip(),
             'parameters' => $request->all(),
             // 'body' => $request->getContent(),
-        ]);
+        ], JSON_PRETTY_PRINT));
     }
 
     private function notAllowedRequest($request, $user)
