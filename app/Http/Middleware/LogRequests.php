@@ -27,7 +27,8 @@ class LogRequests
 
         Log::info(json_encode([
             'user' => $user ? $user->first_name : null,
-            'role' => $user ? $user->role : null,
+            // 'role' => $user ? $user->role : null,
+            'role' => $user ? $user->getRoleNames() : null,
             'method' => $request->method(),
             'url' => $request->fullUrl(),
             'ip_address' => $request->ip(),

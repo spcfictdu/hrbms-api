@@ -19,7 +19,7 @@ class DeleteReservationRepository extends BaseRepository
         try{
         $transaction = Transaction::where('reference_number', $referenceNumber)->where('status', $status)->first();
         
-        $transaction->delete();
+        $transaction->forceDelete();
 
         return $this->success("Reservation Successfully Deleted");
     } catch (\Exception $e) {
