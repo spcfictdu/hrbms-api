@@ -32,6 +32,7 @@ class RoomAvailable implements ValidationRule
         $overlap = DB::table('transactions')
             ->where('room_id', $roomId)
             // ->where('status', 'RESERVED')
+            ->whereNull('deleted_at')
             ->where(function ($query) {
                 $query->where(function ($q) {
                     $q->whereBetween('check_in_date', [$this->checkInDate, $this->checkOutDate])

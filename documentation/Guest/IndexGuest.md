@@ -40,7 +40,7 @@ FRONT DESK
 -   lastName : STRING (optional) - The last name of the guest
 -   fullName : STRING (optional) - The full name of the guest
 -   email : STRING (optional) - The email of the guest
--   phone : STRING (optional) - The phone number of the guest
+-   phoneNumber : STRING (optional) - The phone number of the guest
 
 #### Response Example (Success)
 

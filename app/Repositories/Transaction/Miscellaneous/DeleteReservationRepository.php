@@ -16,14 +16,19 @@ class DeleteReservationRepository extends BaseRepository
 {
     public function execute($status, $referenceNumber)
     {
-        try{
-        $transaction = Transaction::where('reference_number', $referenceNumber)->where('status', $status)->first();
-        
-        $transaction->forceDelete();
+        try {
+            $transaction = Transaction::where('reference_number', $referenceNumber)->where('status', $status)->first();
 
-        return $this->success("Reservation Successfully Deleted");
-    } catch (\Exception $e) {
-        return $this->error("Error: " . $e->getMessage(), 500, [], false);
-    }
+            $transaction->forceDelete();
+
+            // Change the room status to available
+            $transaction->room->update([
+                "status" => strtoupper("AVAILABLE")
+            ]);
+
+            return $this->success("Reservation Successfully Deleted");
+        } catch (\Exception $e) {
+            return $this->error("Error: " . $e->getMessage(), 500, [], false);
+        }
     }
 }
