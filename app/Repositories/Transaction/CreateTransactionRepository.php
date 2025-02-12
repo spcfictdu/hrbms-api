@@ -75,6 +75,8 @@ class CreateTransactionRepository extends BaseRepository
                 "guest_id" => $guest->id,
             ]);
 
+            //
+
             $payment = null;
 
             if (isset($request->payment) && isset($transaction->id)) {
@@ -89,24 +91,27 @@ class CreateTransactionRepository extends BaseRepository
                 ]);
             }
 
-            DB::commit();
 
-            if ($guest) {
-                if ($payment) {
-                    Mail::to($guest->email)->send(new BookTransactionMail($transaction));
-                    return $this->success("Book Transaction Created Successfully.", Arr::collapse([
-                        $this->getCamelCase($guest->toArray()),
-                        $this->getCamelCase($transaction->toArray()),
-                        $this->getCamelCase($payment->toArray())
-                    ]));
-                } else {
-                    Mail::to($guest->email)->send(new ReserveTransactionMail($transaction));
-                    return $this->success("Reservation Transaction Created Successfully.", Arr::collapse([
-                        $this->getCamelCase($guest->toArray()),
-                        $this->getCamelCase($transaction->toArray())
-                    ]));
+            DB::commit();
+            if (app()->environment('production')) {
+                if ($guest) {
+                    if ($payment) {
+                        Mail::to($guest->email)->send(new BookTransactionMail($transaction));
+                        return $this->success("Book Transaction Created Successfully.", Arr::collapse([
+                            $this->getCamelCase($guest->toArray()),
+                            $this->getCamelCase($transaction->toArray()),
+                            $this->getCamelCase($payment->toArray())
+                        ]));
+                    } else {
+                        Mail::to($guest->email)->send(new ReserveTransactionMail($transaction));
+                        return $this->success("Reservation Transaction Created Successfully.", Arr::collapse([
+                            $this->getCamelCase($guest->toArray()),
+                            $this->getCamelCase($transaction->toArray())
+                        ]));
+                    }
                 }
             }
+            return response()->json(['message' => 'Successfully created transaction.'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error('Something went wrong: ' . $e->getMessage());
