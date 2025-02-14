@@ -48,9 +48,13 @@ class UpdateRoomTypeRequest extends ResponseRequest
             'images.update.old.*' => ['nullable', 'string', 'exists:room_type_images,filename'],
 
             'amenities' => ['nullable', 'array'],
-            // Arrays
+            // Arrays - Maybe would remove later
             'amenities.add.*' => ['nullable', 'string', 'exists:amenities,name'],
-            'amenities.delete.*' => ['nullable', 'string', 'exists:amenities,name']
+            'amenities.delete.*' => ['nullable', 'string', 'exists:amenities,name'],
+
+            'amenities.*.name' => ['required', 'string', 'exists:amenities,name'],
+            'amenities.*.quantity' => ['required', 'integer', 'min:1'],
+
         ];
     }
 }

@@ -57,14 +57,20 @@ NO ROLE NEEDED
                     "name": "JUNIOR STANDARD",
                     "capacity": 2,
                     "description": "This single room has a tile/marble floor, cable TV and air conditioning.",
+                    // "amenities": [
+                    //     "AIR CONDITIONING",
+                    //     "SATELLITE/CABLE TV",
+                    //     "TELEPHONE",
+                    //     "FREE WI-FI",
+                    //     "REFRIGERATOR",
+                    //     "IN-ROOM SAFE",
+                    //     "CLOSET"
+                    // ]
                     "amenities": [
-                        "AIR CONDITIONING",
-                        "SATELLITE/CABLE TV",
-                        "TELEPHONE",
-                        "FREE WI-FI",
-                        "REFRIGERATOR",
-                        "IN-ROOM SAFE",
-                        "CLOSET"
+                        {
+                            "name": "AIR CONDITIONING",
+                            "quantity": 1
+                        }
                     ]
                 }
             }

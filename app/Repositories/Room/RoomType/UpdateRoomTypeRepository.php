@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Room\RoomType;
 
+use App\Models\Amenity\Amenity;
 use App\Repositories\BaseRepository;
 
 use Illuminate\Support\Arr;
@@ -19,7 +20,7 @@ class UpdateRoomTypeRepository extends BaseRepository
         $roomType = RoomType::where('reference_number', $referenceNumber)->firstOrFail();
 
         $roomType->update([
-            'name' => strtoupper($request->name),
+            'name' => strtoupper(string: $request->name),
             'description' => $request->description,
             'bed_size' => $request->bedSize,
             'property_size' => $request->propertySize,
@@ -137,10 +138,40 @@ class UpdateRoomTypeRepository extends BaseRepository
                 if (!empty($amenity)) {
                     RoomTypeAmenity::create([
                         'room_type_id' => $roomType->id,
-                        'amenity_id' => $this->getAmenityIdFromName(strtoupper($amenity))
+                        'amenity_id' => $this->getAmenityIdFromName(strtoupper($amenity)),
+                        'quantity' => $amenity['quantity']
                     ]);
                 }
             }
+        }
+
+        // Update amenities only
+        if (isset($request['amenities']['update']) && is_array($request['amenities']['update'])) {
+            foreach ($request['amenities']['update'] as $amenityData) {
+                $amenity = $roomType->amenities->where('amenity_id', $this->getAmenityIdFromName(strtoupper($amenityData['name'])))->first();
+                if ($amenity) {
+                    $amenity->update([
+                        'quantity' => $amenityData['quantity']
+                    ]);
+                }
+            }
+        }
+
+        // Handle amenities with quantity
+        if (!empty($request->amenities)) {
+            // Get amenity IDs and prepare sync data
+            $syncData = [];
+
+            foreach ($request->amenities as $amenity) {
+                $amenityModel = Amenity::where('name', strtoupper($amenity['name']))->firstOrFail();
+
+                if ($amenityModel) {
+                    $syncData[$amenityModel->id] = ['quantity' => $amenity['quantity']];
+                }
+            }
+
+            // Sync amenities with pivot data
+            $roomType->amenities()->sync($syncData);
         }
 
         $roomType = RoomType::where('reference_number', $referenceNumber)->firstOrFail();
@@ -151,8 +182,12 @@ class UpdateRoomTypeRepository extends BaseRepository
                 'images' => $roomType->images->map(function ($image) use ($roomType) {
                     return "{$image->filename}";
                 }),
-                'amenities' => $roomType->amenities->pluck('amenity')->map(function ($amenity) {
-                    return $amenity->name;
+                'amenities' => $roomType->amenities->map(function ($amenity) {
+                    // return $amenity->name;
+                    return [
+                        'name' => $amenity->name,
+                        'quantity' => $amenity->pivot->quantity
+                    ];
                 }),
                 'rates' => $this->getRoomTypeRates($roomType)
             ]

@@ -10,6 +10,7 @@ use App\Models\{
     Room\RoomTypeImage,
     Room\RoomTypeRate
 };
+use App\Models\Amenity\Amenity;
 
 class RoomType extends Model
 {
@@ -44,7 +45,8 @@ class RoomType extends Model
 
     public function amenities()
     {
-        return $this->hasMany(RoomTypeAmenity::class, 'room_type_id');
+        return $this->belongsToMany(Amenity::class, 'room_type_amenities', 'room_type_id', 'amenity_id')
+            ->withPivot('quantity');
     }
 
     public function images()

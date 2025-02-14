@@ -6,26 +6,29 @@ This endpoint retrieves information about a specific room using the provided ref
 
 ```
 {{base_url}}/api/room/{roomReferenceNumber}
-```   
+```
 
 #### Method
+
 ```
 GET
 ```
 
 #### Authentication Needed
+
 ```
 FALSE
 ```
 
 #### Permitted Roles
+
 ```
 NO ROLE NEEDED
 ```
 
 #### Response Example (Success)
 
-``` json
+```json
 {
     "message": "Room found.",
     "results": {
@@ -48,9 +51,10 @@ NO ROLE NEEDED
                 "0185739a/SxQOwZLk2Abj4M1XKogKF0oogoIu2OxgnQFdCUq0.jpg"
             ],
             "amenities": [
-                "AIR CONDITIONING",
-                "FREE WI-FI",
-                "CLOTHES RACK"
+                {
+                    "name": "AIR CONDITIONING",
+                    "quantity": 1
+                }
             ],
             "rates": {
                 "regular": {

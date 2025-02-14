@@ -140,8 +140,12 @@ class IndexRoomRepository extends BaseRepository
                     'image' => $room->roomType->images->first() ? $room->roomType->images->first()->filename : null,
                     'capacity' => $room->roomType->capacity,
                     'description' => $room->roomType->description,
-                    'amenities' => $room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
-                        return $amenity->name;
+                    'amenities' => $room->roomType->amenities->map(function ($amenity) {
+                        // return $amenity->name;
+                        return [
+                            'name' => $amenity->name,
+                            'quantity' => $amenity->pivot->quantity,
+                        ];
                     }),
                     // 'startDate' => $room->roomType->roomTypeRate->start_date,
                     // 'endDate' => $room->roomType->roomTypeRate->end_date,

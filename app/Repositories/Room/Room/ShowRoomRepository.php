@@ -24,8 +24,11 @@ class ShowRoomRepository extends BaseRepository
                     'images' => $room->roomType->images->map(function ($image) use ($room) {
                         return "{$room->roomType->reference_number}/{$image->filename}";
                     }),
-                    'amenities' => $room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
-                        return $amenity->name;
+                    'amenities' => $room->roomType->amenities->map(function ($amenity) {
+                        return [
+                            'name' => $amenity->name,
+                            'quantity' => $amenity->pivot->quantity
+                        ];
                     }),
                     'rates' => $this->getRoomTypeRates($room->roomType)
                 ]

@@ -12,12 +12,14 @@ use App\Models\Room\{
     RoomTypeAmenity,
     RoomTypeRate
 };
+use Exception;
 use Illuminate\Support\Facades\Artisan;
 
 class CreateRoomTypeRepository extends BaseRepository
 {
     public function execute($request)
     {
+
 
         $roomType = RoomType::create([
             'reference_number' => $this->roomTypeReferenceNumber(),
@@ -47,16 +49,26 @@ class CreateRoomTypeRepository extends BaseRepository
             Artisan::call("storage:folder-access " . $roomType->reference_number);
         }
 
-        if ($request['amenities']) {
+        // Check if amenities are provided, then insert them into the pivot table
+        if (isset($request['amenities']) && is_array($request['amenities'])) {
+            $amenitiesData = [];
             foreach ($request['amenities'] as $amenity) {
-
-                RoomTypeAmenity::create([
-                    'room_type_id' => $roomType->id,
-                    'amenity_id' => $this->getAmenityIdFromName(strtoupper($amenity))
-                ]);
+                $amenityId = $this->getAmenityIdFromName(strtoupper($amenity['name']));
+                if ($amenityId) {
+                    $amenitiesData[] = [
+                        'room_type_id' => $roomType->id,
+                        'amenity_id' => $amenityId,
+                        'quantity' => $amenity['quantity']
+                    ];
+                } else {
+                    // Handle the case where amenity ID is not found
+                    throw new Exception("Amenity ID not found for amenity name: " . $amenity['name']);
+                }
+            }
+            if (!empty($amenitiesData)) {
+                RoomTypeAmenity::insert($amenitiesData); // Batch insert
             }
         }
-
         if ($request['rates']) {
 
             RoomTypeRate::create([
@@ -79,8 +91,12 @@ class CreateRoomTypeRepository extends BaseRepository
                 'images' => $roomType->images->map(function ($image) use ($roomType) {
                     return "{$roomType->reference_number}/{$image->filename}";
                 }),
-                'amenities' => $roomType->amenities->pluck('amenity')->map(function ($amenity) {
-                    return $amenity->name;
+                'amenities' => $roomType->amenities->map(function ($amenity) {
+                    // return $amenity->name;
+                    return [
+                        'name' => $amenity->name,
+                        'quantity' => $amenity->pivot->quantity,
+                    ];
                 }),
                 'rates' => $roomType->rates->where('type', 'REGULAR')->flatMap(function ($rate) {
                     return [

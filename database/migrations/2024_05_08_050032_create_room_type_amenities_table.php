@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('room_type_id')->references('id')->on('room_types')->onDelete('cascade');
             $table->unsignedBigInteger('amenity_id');
             $table->foreign('amenity_id')->references('id')->on('amenities')->onDelete('cascade');
+            $table->integer('quantity')->default(1);
         });
     }
 

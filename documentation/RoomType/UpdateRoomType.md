@@ -37,14 +37,30 @@ ADMIN
     "isNonSmoking": true,
     "balconyOrTerrace": false,
     "capacity": 2,
-    "amenities": {
-        "delete": [
-            "CLOSET"
-        ],
-        "add": [
-            "CLOTHES RACK"
-        ]
-    },
+    // "amenities": {
+    //     "delete": [
+    //         "CLOSET"
+    //     ],
+    //     "add": [
+    //         "CLOTHES RACK"
+    //     ]
+    // },
+    // What would be in here should be the amenities that will be added and deleted.
+    // If an item is not here, it would be removed.
+    "amenities": [
+        {
+            "name": "AIR CONDITIONING",
+            "quantity": 1
+        },
+        {
+            "name": "FREE WI-FI",
+            "quantity": 1
+        },
+        {
+            "name": "CLOTHES RACK",
+            "quantity": 1
+        },
+    ],
     "images": {
         "add": [{array of files}],
         "delete": [

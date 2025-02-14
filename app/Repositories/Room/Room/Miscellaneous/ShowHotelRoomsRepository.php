@@ -53,8 +53,12 @@ class ShowHotelRoomsRepository extends BaseRepository
             // "rate" => $roomType->rate,
             "capacity" => $roomType->capacity,
             "description" => $roomType->description,
-            "amenities" => $roomType->amenities->pluck('amenity')->map(function ($amenity) {
-                return $amenity->name;
+            "amenities" => $roomType->amenities->map(function ($amenity) {
+                // return $amenity->name;
+                return [
+                    'name' => $amenity->name,
+                    'quantity' => $amenity->pivot->quantity
+                ];
             }),
             'rates' => $this->getRoomTypeRates($roomType),
         ];

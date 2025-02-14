@@ -1,31 +1,34 @@
 ### Create Room Type
 
-This endpoint is used to create a new room type. 
+This endpoint is used to create a new room type.
 
 #### URL
 
 ```
 {{base_url}}/api/room-type/create
-```   
+```
 
 #### Method
+
 ```
 POST
 ```
 
 #### Authentication Needed
+
 ```
 TRUE
 ```
 
 #### Permitted Roles
+
 ```
 ADMIN
 ```
 
 #### Request Body
 
-``` json
+```json
 {
     "name": "DELUXE",
     "description": "Offering more space, this modern room comes with a flat-screen cable TV, work space and mini-fridge. Free toiletries and a bidet are included in the private bathroom. ",
@@ -34,10 +37,15 @@ ADMIN
     "isNonSmoking": true,
     "balconyOrTerrace": false,
     "capacity": 2,
+    // "amenities": [
+    //     "AIR CONDITIONING",
+    //     "CLOSET",
+    //     "FREE WI-FI"
+    // ],
     "amenities": [
-        "AIR CONDITIONING",
-        "CLOSET",
-        "FREE WI-FI"
+        {"name": "AIR CONDITIONING", "quantity": 1},
+        {"name": "CLOSET", "quantity": 1},
+        {"name": "FREE WI-FI", "quantity": 1}
     ],
     "rates": {
         "monday": 1547,
@@ -50,11 +58,11 @@ ADMIN
     },
     "images": [{array of files}]
 }
-``` 
+```
 
 #### Response Example (Success)
 
-``` json
+```json
 {
     "message": "Room type created successfully.",
     "results": {
@@ -73,11 +81,7 @@ ADMIN
             "08d03ed0/UULXkkdMDbhTUunGFlDD3MMCMXhLhTpndKPCbqWX.jpg",
             "08d03ed0/tU9vYrsJ9LkTWQCJdKwosmwbnyyGFOUsn0blwEzK.jpg"
         ],
-        "amenities": [
-            "AIR CONDITIONING",
-            "CLOSET",
-            "FREE WI-FI"
-        ],
+        "amenities": ["AIR CONDITIONING", "CLOSET", "FREE WI-FI"],
         "rates": {
             "monday": 1547,
             "tuesday": 1547,

@@ -13,13 +13,18 @@ class RoomTypeAmenity extends Model
 
     protected $fillable = [
         'room_type_id',
-        'amenity_id'
+        'amenity_id',
+        'quantity'
     ];
 
     protected $hidden = [
         'id',
         'room_type_id',
         'amenity_id'
+    ];
+
+    protected $casts = [
+        'quantity' => 'integer'
     ];
 
     public $timestamps = false;

@@ -56,14 +56,10 @@ ADMIN
             "ee0cf0ea/storage/ee0cf0ea/RoomPic_3.png"
         ],
         "amenities": [
-            "AIR CONDITIONING",
-            "BATHTUB",
-            "SATELLITE/CABLE TV",
-            "TELEPHONE",
-            "FREE WI-FI",
-            "REFRIGERATOR",
-            "IN-ROOM SAFE",
-            "CLOSET"
+            {
+                "name": "AIR CONDITIONING",
+                "quantity": 1
+            }
         ],
         "rates": {
             "regular": {
