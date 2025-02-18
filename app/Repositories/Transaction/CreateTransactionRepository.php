@@ -2,16 +2,18 @@
 
 namespace App\Repositories\Transaction;
 
-use App\Repositories\BaseRepository;
-use App\Models\Transaction\Transaction;
-use App\Models\Guest\Guest;
 use App\Models\Room\Room;
-use App\Models\Transaction\Payment;
+use App\Models\Guest\Guest;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
+use App\Models\Discount\Voucher;
 use App\Mail\BookTransactionMail;
+use App\Models\Discount\Discount;
+use Illuminate\Support\Facades\DB;
+use App\Models\Transaction\Payment;
 use App\Mail\ReserveTransactionMail;
+use App\Repositories\BaseRepository;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Transaction\Transaction;
 
 class CreateTransactionRepository extends BaseRepository
 {
@@ -78,11 +80,28 @@ class CreateTransactionRepository extends BaseRepository
             //
 
             $payment = null;
+            
+            $discount = Discount::where('name', $request->input('discount'))->first();
+            if($request->discount){
+                $discountName = Discount::where('name', $request->discount)->first();
+      
+           
+                if($discountName->name === 'VOUCHER'){
+                    $voucher = Voucher::where('code', $request->voucherCode)->first();
+    
+                    
+                    $discount = $voucher->value;
+                   
+                }
+            }else{
+                $discountName = null;
+            }
 
             if (isset($request->payment) && isset($transaction->id)) {
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,
                     "payment_type" => strtoupper($request->payment['paymentType']),
+                    "discount_id" => optional($discountName)->id,
                     "amount_received" => $request->payment['amountReceived']
                 ]);
 

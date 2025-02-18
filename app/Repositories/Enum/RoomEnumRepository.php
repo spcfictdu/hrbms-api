@@ -2,11 +2,13 @@
 
 namespace App\Repositories\Enum;
 
-use App\Models\Room\Room;
-use App\Repositories\BaseRepository;
-use DateInterval;
-use DatePeriod;
 use DateTime;
+use DatePeriod;
+use DateInterval;
+use App\Models\Room\Room;
+use App\Models\Discount\Voucher;
+use App\Models\Discount\Discount;
+use App\Repositories\BaseRepository;
 
 class RoomEnumRepository extends BaseRepository
 {
@@ -16,6 +18,9 @@ class RoomEnumRepository extends BaseRepository
         $filterRoomNumber = $request->input('roomNumber');
         $filterDateRange = explode(',', $request->input('dateRange'));
         $extraPersonCount = $request->input('extraPersonCount');
+        $discountName = $request->input('discount');
+        
+        
 
         // Create a DatePeriod object
         $begin = new DateTime($filterDateRange[0]);
@@ -44,11 +49,19 @@ class RoomEnumRepository extends BaseRepository
             $roomsQuery->where('room_number', $filterRoomNumber);
         }
 
+        if($discountName === 'VOUCHER'){
+            $voucherCode = Voucher::where('code', $request->voucherCode)->first();
+            $discount = $voucherCode;
+        }
+        else{
+            $discount = Discount::where('name', $discountName)->first();
+        }
+        // dd($discount);
         // $roomNumbers = $roomsQuery->pluck('room_number');
-        $rooms = $roomsQuery->get()->transform(function ($room) use ($filterDateRange, $dates, $extraPersonCount) {
+        $rooms = $roomsQuery->get()->transform(function ($room) use ($filterDateRange, $dates, $extraPersonCount,  $discount) {
             $dayOfWeek = strtolower(date('l'));
             $today = date('Y-m-d');
-
+            // dd($discount);
             // Default to regular rate
             $rate = collect($room->roomType->rates)->firstWhere('type', 'REGULAR');
 
@@ -65,6 +78,7 @@ class RoomEnumRepository extends BaseRepository
             if ($specialRate) {
                 $rate = $specialRate;
             }
+            
             // Extra person rate
             // $extraPersonRate = collect($room->roomType->rates)->firstWhere('type', 'EXTRA_PERSON');
 
@@ -90,9 +104,10 @@ class RoomEnumRepository extends BaseRepository
                         'extraPersonRate' => $extraPersonRate * ($extraPersonCount ?? 0),
                     ];
                 }, $dates),
-                'roomTotal' => array_sum(array_map(function ($date) use ($rate) {
+                'discount' => ($discount->value * 100 . '%'), // show discount
+                'roomTotal' => array_sum(array_map(function ($date) use ($rate,$discount) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
-                    return $rate[$dayOfWeek] ?? 0;
+                    return ($rate[$dayOfWeek] ?? 0) * (1 - $discount->value);
                 }, $dates)),
                 'extraPersonCount' => $extraPersonCount,
                 'extraPersonTotal' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount) {
@@ -100,10 +115,10 @@ class RoomEnumRepository extends BaseRepository
                     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
                     return $extraPersonRate * $extraPersonCount;
                 }, $dates)),
-                'roomTotalWithExtraPerson' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount) {
+                'roomTotalWithExtraPerson' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discount) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
                     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
-                    return $rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount);
+                    return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount)) * (1 - $discount->value);
                 }, $dates)),
                 'extraPersonCapacity' => $room->roomType->extra_person_capacity ? range(0, $room->roomType->extra_person_capacity) : 0,
             ];

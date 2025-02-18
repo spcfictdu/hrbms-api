@@ -24,7 +24,8 @@ class UpdateTransactionRequest extends ResponseRequest
     public function rules()
     {
         return [
-            //
+            'discount' => ['nullable', 'string', 'exists:discounts,name'],
+            'voucherCode' => ['required_if:discount,VOUCHER', 'string', 'exists:vouchers,code'],
         ];
     }
 }
