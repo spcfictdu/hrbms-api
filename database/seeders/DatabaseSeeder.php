@@ -26,12 +26,15 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             UserSeeder::class,
+            DiscountSeeder::class,
             AmenitySeeder::class,
             RoomTypeSeeder::class,
             RoomSeeder::class,
             TransactionSeeder::class,
             AvailabilityCalendarSeeder::class,
             RoomTypeRateSeeder::class,
+            VoucherSeeder::class,
+            
         ]);
     }
 }

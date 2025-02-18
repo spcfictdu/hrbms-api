@@ -2,8 +2,11 @@
 
 namespace App\Models\Transaction;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+use App\Models\Discount\Voucher;
+use App\Models\Discount\Discount;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Payment extends Model
 {
@@ -14,7 +17,8 @@ class Payment extends Model
     protected $fillable = [
         "transaction_id",
         "payment_type",
-        "amount_received"
+        "amount_received",
+        "discount_id",
     ];
 
     protected $hidden = [
@@ -32,5 +36,12 @@ class Payment extends Model
     public function transaction()
     {
         return $this->belongsTo(Transaction::class, 'transaction_id');
+    }
+
+    public function discount(){
+        return $this->belongsTo(Discount::class, 'discount_id');
+    }
+    public function voucher(){
+        return $this->belongsTo(Voucher::class, 'voucher_id');
     }
 }

@@ -11,6 +11,7 @@ use Faker\Factory as Faker, Str, Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Traits\Generator;
+use App\Models\Discount\Discount;
 
 class TransactionSeeder extends Seeder
 {
@@ -336,6 +337,7 @@ class TransactionSeeder extends Seeder
             Payment::insert([
                 'transaction_id' => $transaction['id'],
                 'payment_type' => $transaction['payment']['payment_type'][$idPaymentTypeIndex],
+                'discount_id' => Discount::pluck('id')->random(),
                 'amount_received' => $transaction['payment']['amount_received']['tuesday'],
                 'created_at' => $now
             ]);
