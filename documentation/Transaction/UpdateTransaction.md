@@ -36,6 +36,8 @@ FRONT DESK
     // IF RESERVED UPDATE
     // "status": "RESERVED",
     // "paymentType": "CASH",
+    "discount" : "VOUCHER",
+    "voucherCode": "1234",
     // "amountReceived": 2000
     
     //IF CONFIRMED UPDATE (BOOKING)

@@ -60,6 +60,8 @@ FRONT DESK
     // IF HAVE PAYMENTS E.G BOOKING FORM
     // "payment": {
     //     "paymentType": "CASH",
+            "discount" : "VOUCHER",
+            "voucherCode": "1234",
     //     "amountReceived": 1858
     // },
 

@@ -70,6 +70,7 @@ NO ROLE NEEDED
                     "extraPersonRate": 360
                 }
             ],
+            "discount" : "10%",
             "roomTotal": 4120,
             "extraPersonCount": null,
             "ExtraPersonTotal": 0,
