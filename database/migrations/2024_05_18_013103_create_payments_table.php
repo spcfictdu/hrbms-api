@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\Discount\Voucher;
 use App\Models\Discount\Discount;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Discount\PaymentDiscount;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -16,8 +18,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('transaction_id')->nullable();
             $table->foreign('transaction_id')->references('id')->on('transactions');
-            $table->enum('payment_type', ['CASH', 'GCASH','CHEQUE', 'CREDIT CARD']);
-            $table->foreignIdFor(Discount::class)->nullable()->constrained();
+            $table->enum('payment_type', ['CASH', 'GCASH','CHEQUE', 'CREDIT_CARD']);
+            // $table->foreignIdFor(PaymentDiscount::class)->nullable()->constrained();
+            // $table->foreignIdFor(Voucher::class)->nullable()->constrained();
             $table->mediumInteger('amount_received');
             $table->timestamps();
         });
