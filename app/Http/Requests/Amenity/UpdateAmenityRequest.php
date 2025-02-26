@@ -10,7 +10,7 @@ use App\Models\Amenity\Amenity;
 
 class UpdateAmenityRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -30,7 +30,8 @@ class UpdateAmenityRequest extends ResponseRequest
         $amenity = Amenity::where('reference_number', $this->referenceNumber)->firstOrFail();
 
         return [
-            'name' => ['required', 'string', Rule::unique('amenities', 'name')->ignore($amenity->id)]
+            'name' => ['required', 'string', Rule::unique('amenities', 'name')->ignore($amenity->id)],
+            'price' => ['nulalble', 'numeric']
         ];
     }
 }

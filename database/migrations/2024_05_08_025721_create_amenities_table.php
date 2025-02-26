@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('reference_number')->unique();
             $table->string('name')->unique();
+            // Price
+            $table->decimal('price', 8, 2)->default(0.00);
         });
     }
 

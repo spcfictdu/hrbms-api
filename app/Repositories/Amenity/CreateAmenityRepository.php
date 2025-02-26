@@ -8,11 +8,13 @@ use App\Models\Amenity\Amenity;
 
 class CreateAmenityRepository extends BaseRepository
 {
-    public function execute($request){
+    public function execute($request)
+    {
 
         $amenity = Amenity::create([
             'reference_number' => $this->amenityReferenceNumber(),
-            'name' => $request->name
+            'name' => $request->name,
+            'price' => $request->price ?? 0,
         ]);
 
         return $this->success("Amenity created successfully.", $this->getCamelCase($amenity->toArray()));

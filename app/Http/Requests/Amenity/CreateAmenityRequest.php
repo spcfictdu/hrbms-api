@@ -6,7 +6,7 @@ use App\Http\Requests\ResponseRequest;
 
 class CreateAmenityRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -24,7 +24,8 @@ class CreateAmenityRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string']
+            'name' => ['required', 'string'],
+            'price' => ['nullable', 'numeric']
         ];
     }
 }

@@ -2,164 +2,200 @@
 
 This endpoint retrieves the list of all amenities.
 
-####  URL
+#### URL
 
 ```
 {{base_url}}/api/amenity/
 ```
 
 #### Method
+
 ```
 GET
 ```
 
 #### Authentication Needed
+
 ```
 TRUE
 ```
 
 #### Permitted Roles
+
 ```
 ADMIN
 ```
 
 #### Response Example (Success)
 
-``` json
+```json
 {
     "message": "List of all amenities",
     "results": [
         {
-            "referenceNumber": "16d453",
-            "name": "ADAPTER"
+            "referenceNumber": "d2be47",
+            "name": "ADAPTER",
+            "price": "94.70"
         },
         {
-            "referenceNumber": "de69e9",
-            "name": "AIR CONDITIONING"
+            "referenceNumber": "2f81a0",
+            "name": "AIR CONDITIONING",
+            "price": "22.62"
         },
         {
-            "referenceNumber": "25c90b",
-            "name": "BATHTUB"
+            "referenceNumber": "bf9c80",
+            "name": "BATHTUB",
+            "price": "51.95"
         },
         {
-            "referenceNumber": "500a05",
-            "name": "BOARD GAMES/PUZZLES"
+            "referenceNumber": "5ab1e3",
+            "name": "BOARD GAMES/PUZZLES",
+            "price": "47.29"
         },
         {
-            "referenceNumber": "c4a8c8",
-            "name": "CLOTHES RACK"
+            "referenceNumber": "3348ce",
+            "name": "CLOTHES RACK",
+            "price": "80.39"
         },
         {
-            "referenceNumber": "a2856d",
-            "name": "CLOSET"
+            "referenceNumber": "d1a23a",
+            "name": "CLOSET",
+            "price": "15.44"
         },
         {
-            "referenceNumber": "7fd044",
-            "name": "DVD/CD PLAYER"
+            "referenceNumber": "a46245",
+            "name": "DVD/CD PLAYER",
+            "price": "25.38"
         },
         {
-            "referenceNumber": "79cb0a",
-            "name": "ELECTRIC KETTLE"
+            "referenceNumber": "ec4f1b",
+            "name": "ELECTRIC KETTLE",
+            "price": "17.89"
         },
         {
-            "referenceNumber": "ab674b",
-            "name": "FREE WI-FI"
+            "referenceNumber": "cf7b3e",
+            "name": "FREE WI-FI",
+            "price": "17.11"
         },
         {
-            "referenceNumber": "fdbaeb",
-            "name": "FULL KITCHEN"
+            "referenceNumber": "254d85",
+            "name": "FULL KITCHEN",
+            "price": "28.87"
         },
         {
-            "referenceNumber": "cfa169",
-            "name": "HAIR DRYER"
+            "referenceNumber": "7f3035",
+            "name": "HAIR DRYER",
+            "price": "97.08"
         },
         {
-            "referenceNumber": "886fc4",
-            "name": "IN-ROOM SAFE"
+            "referenceNumber": "8757e2",
+            "name": "IN-ROOM SAFE",
+            "price": "18.99"
         },
         {
-            "referenceNumber": "cef054",
-            "name": "IRONING FACILITIES"
+            "referenceNumber": "b7119e",
+            "name": "IRONING FACILITIES",
+            "price": "91.47"
         },
         {
-            "referenceNumber": "71f14c",
-            "name": "KITCHENETTE"
+            "referenceNumber": "9e35bf",
+            "name": "KITCHENETTE",
+            "price": "43.58"
         },
         {
-            "referenceNumber": "5a0cb4",
-            "name": "LAPTOP SAFE"
+            "referenceNumber": "910569",
+            "name": "LAPTOP SAFE",
+            "price": "16.75"
         },
         {
-            "referenceNumber": "3f95e7",
-            "name": "LOCKER"
+            "referenceNumber": "7d818c",
+            "name": "LOCKER",
+            "price": "78.22"
         },
         {
-            "referenceNumber": "93dc45",
-            "name": "MICROWAVE"
+            "referenceNumber": "63cf56",
+            "name": "MICROWAVE",
+            "price": "15.83"
         },
         {
-            "referenceNumber": "c8b4a8",
-            "name": "MINI BAR"
+            "referenceNumber": "e6b2be",
+            "name": "MINI BAR",
+            "price": "78.57"
         },
         {
-            "referenceNumber": "3f54b5",
-            "name": "ON-DEMAND MOVIES"
+            "referenceNumber": "88deb9",
+            "name": "ON-DEMAND MOVIES",
+            "price": "26.19"
         },
         {
-            "referenceNumber": "9f5852",
-            "name": "PETS ALLOWED"
+            "referenceNumber": "feb714",
+            "name": "PETS ALLOWED",
+            "price": "58.91"
         },
         {
-            "referenceNumber": "9aabd9",
-            "name": "POOL FACILITIES"
+            "referenceNumber": "924573",
+            "name": "POOL FACILITIES",
+            "price": "68.40"
         },
         {
-            "referenceNumber": "8903a8",
-            "name": "REFRIGERATOR"
+            "referenceNumber": "2d3e9e",
+            "name": "REFRIGERATOR",
+            "price": "42.58"
         },
         {
-            "referenceNumber": "b7945e",
-            "name": "ROLL-IN SHOWER"
+            "referenceNumber": "02f39b",
+            "name": "ROLL-IN SHOWER",
+            "price": "58.61"
         },
         {
-            "referenceNumber": "eb7f3e",
-            "name": "SATELLITE/CABLE TV"
+            "referenceNumber": "f87974",
+            "name": "SATELLITE/CABLE TV",
+            "price": "65.65"
         },
         {
-            "referenceNumber": "e15e68",
-            "name": "SEATING AREA"
+            "referenceNumber": "3a98ca",
+            "name": "SEATING AREA",
+            "price": "47.09"
         },
         {
-            "referenceNumber": "eb14fc",
-            "name": "SEPARATE DINING AREA"
+            "referenceNumber": "cdda45",
+            "name": "SEPARATE DINING AREA",
+            "price": "36.41"
         },
         {
-            "referenceNumber": "e2dae5",
-            "name": "SOFA"
+            "referenceNumber": "c8f23f",
+            "name": "SOFA",
+            "price": "34.15"
         },
         {
-            "referenceNumber": "55cfe1",
-            "name": "SOUNDPROOFING"
+            "referenceNumber": "8e709c",
+            "name": "SOUNDPROOFING",
+            "price": "94.86"
         },
         {
-            "referenceNumber": "a081ba",
-            "name": "STREAMING SERVICES"
+            "referenceNumber": "767864",
+            "name": "STREAMING SERVICES",
+            "price": "72.85"
         },
         {
-            "referenceNumber": "8c1b3e",
-            "name": "TELEPHONE"
+            "referenceNumber": "e42057",
+            "name": "TELEPHONE",
+            "price": "18.05"
         },
         {
-            "referenceNumber": "bd5f3a",
-            "name": "TRANSFER SHOWER"
+            "referenceNumber": "1b1ac9",
+            "name": "TRANSFER SHOWER",
+            "price": "42.73"
         },
         {
-            "referenceNumber": "69b233",
-            "name": "WAKE-UP SERVICE"
+            "referenceNumber": "e6bdd5",
+            "name": "WAKE-UP SERVICE",
+            "price": "56.22"
         },
         {
-            "referenceNumber": "cd50d9",
-            "name": "WASHING MACHINE"
+            "referenceNumber": "0e8952",
+            "name": "WASHING MACHINE",
+            "price": "38.52"
         }
     ],
     "code": 200,

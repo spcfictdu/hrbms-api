@@ -6,10 +6,10 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Amenity\Amenity;
 use App\Traits\Generator;
+use Faker\Factory as Faker;
 
 class AmenitySeeder extends Seeder
 {
-
     use Generator;
 
     /**
@@ -17,6 +17,8 @@ class AmenitySeeder extends Seeder
      */
     public function run(): void
     {
+        $faker = Faker::create();
+
         $amenities = [
             [
                 'id' => 1,
@@ -156,7 +158,8 @@ class AmenitySeeder extends Seeder
             Amenity::insert([
                 'id' => $amenity['id'],
                 'reference_number' => $this->amenityReferenceNumber(),
-                'name' => $amenity['name']
+                'name' => $amenity['name'],
+                'price' => $faker->randomFloat(2, 10, 100) // Generate a random price between 10 and 100
             ]);
         }
     }

@@ -1,39 +1,43 @@
 ### Create Amenity
 
-This endpoint is used to create a new amenity. 
+This endpoint is used to create a new amenity.
 
 #### URL
 
 ```
 {{base_url}}/api/amenity/create
-```   
+```
 
 #### Method
+
 ```
 POST
 ```
 
 #### Authentication Needed
+
 ```
 TRUE
 ```
 
 #### Permitted Roles
+
 ```
 ADMIN
 ```
 
 #### Request Body
 
-``` json
+```json
 {
-    "name": "FREE BREAKFAST"
+    "name": "FREE BREAKFAST",
+    "price": 0
 }
-``` 
+```
 
 #### Response Example (Success)
 
-``` json
+```json
 {
     "message": "Amenity created successfully.",
     "results": {

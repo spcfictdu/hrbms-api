@@ -13,7 +13,8 @@ class Amenity extends Model
 
     protected $fillable = [
         'reference_number',
-        'name'
+        'name',
+        'price',
     ];
 
     protected $hidden = [

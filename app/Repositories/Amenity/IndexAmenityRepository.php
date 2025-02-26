@@ -12,11 +12,13 @@ class IndexAmenityRepository extends BaseRepository
     {
         $amenities = Amenity::all();
 
-        return $this->success("List of all amenities",
+        return $this->success(
+            "List of all amenities",
             $amenities->map(function ($amenity) {
                 return [
                     'referenceNumber' => $amenity->reference_number,
-                    'name' => $amenity->name
+                    'name' => $amenity->name,
+                    'price' => $amenity->price
                 ];
             })
         );
