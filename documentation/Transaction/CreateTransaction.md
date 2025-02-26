@@ -57,12 +57,27 @@ FRONT DESK
         }
     },
 
+     // IF PAYMENT HAVE DISCOUNT
+        // "discount": "VOUCHER",
+        // "voucherCode" : "1234" ,
+        // "idNumber" : "13123",
+        
     // IF HAVE PAYMENTS E.G BOOKING FORM
     // "payment": {
     //     "paymentType": "CASH",
-            "discount" : "VOUCHER",
-            "voucherCode": "1234",
     //     "amountReceived": 1858
+
+    // IF PAYMENT TYPE IS CHEQUE
+        // "paymentType": "CHEQUE",
+        // "chequeNumber" : "12236789",
+        // "chequeBankName" : "asdf"
+
+        // IF PAYMENT TYPE IS CREDIT CARD
+        // "paymentType": "CREDIT_CARD",
+        // "cardHolderName": "John Doe",
+        // "cardNumber": "4111111111111111",
+        // "expirationDate": "12/27",
+        // "cvv": "123"
     // },
 
     "checkIn": {

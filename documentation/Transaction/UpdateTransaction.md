@@ -36,9 +36,24 @@ FRONT DESK
     // IF RESERVED UPDATE
     // "status": "RESERVED",
     // "paymentType": "CASH",
-    "discount" : "VOUCHER",
-    "voucherCode": "1234",
     // "amountReceived": 2000
+    
+    // IF HAVE DISCOUNT
+    // "discount" : "sNr",
+    // "idNumber" : "2131231",
+    // "voucherCode": "1234",
+
+    // IF PAYMENT TYPE IS CHEQUE
+    // "paymentType": "CHEQUE",
+    // "chequeNumber" : "123672289",
+    // "chequeBankName" : "asdf",
+
+    // IF PAYMENT TYPE IS CREDIT CARD
+    // "paymentType": "CREDIT_CARD",
+    // "cardHolderName": "John Doe",
+    // "cardNumber": "4111111111111111",
+    // "expiration_date": "12/27",
+    // "cvc": "123"
     
     //IF CONFIRMED UPDATE (BOOKING)
     //CHECK-IN CHECK-OUT
