@@ -44,14 +44,14 @@ class CreateTransactionRequest extends ResponseRequest
             'idNumber' => ['required_if:discount,SNR,PWD', 'string'],
 
             'payment.paymentType' => ['nullable', 'string', Rule::in(['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'])],
-            'payment.chequeNumber' => ['required_if:paymentType,CHEQUE', 'string', 'unique:cheque_payments,cheque_number'],
-            'payment.chequeBankName' => ['required_if:paymentType,CHEQUE', 'string'],
+            'payment.chequeNumber' => ['required_if:payment.paymentType,CHEQUE', 'string', 'unique:cheque_payments,cheque_number'],
+            'payment.chequeBankName' => ['required_if:payment.paymentType,CHEQUE', 'string'],
 
-            'payment.cardHolderName' => ['required_if:paymentType,CREDIT_CARD', 'string'],
-            'payment.cardNumber' => ['required_if:paymentType,CREDIT_CARD', 'string', 'digits:16'],
-            'payment.expiration_date' => ['required_if:paymentType,CREDIT_CARD', 'string', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'], // Format: MM/YY
-            'payment.cvc' => ['required_if:paymentType,CREDIT_CARD', 'string', 'digits:3'], 
-            
+            'payment.cardHolderName' => ['required_if:payment.paymentType,CREDIT_CARD', 'string'],
+            'payment.cardNumber' => ['required_if:payment.paymentType,CREDIT_CARD', 'string', 'digits:16'],
+            'payment.expiration_date' => ['required_if:payment.paymentType,CREDIT_CARD', 'string', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'], // Format: MM/YY
+            'payment.cvc' => ['required_if:payment.paymentType,CREDIT_CARD', 'string', 'digits:3'],
+
             // 'guest.numberOfGuest' => ['required', 'integer'],
             'checkIn.date' => ['required', 'date', 'after_or_equal:today'],
             'checkIn.time' => ['date_format:H:i'],
