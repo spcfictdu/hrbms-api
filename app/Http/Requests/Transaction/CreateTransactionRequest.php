@@ -43,7 +43,7 @@ class CreateTransactionRequest extends ResponseRequest
             'voucherCode' => ['required_if:discount,VOUCHER', 'string', 'exists:vouchers,code'],
             'idNumber' => ['required_if:discount,SNR,PWD', 'string'],
 
-            'payment.paymentType' => ['required', 'string', Rule::in(['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'])],
+            'payment.paymentType' => ['nullable', 'string', Rule::in(['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'])],
             'payment.chequeNumber' => ['required_if:paymentType,CHEQUE', 'string', 'unique:cheque_payments,cheque_number'],
             'payment.chequeBankName' => ['required_if:paymentType,CHEQUE', 'string'],
 

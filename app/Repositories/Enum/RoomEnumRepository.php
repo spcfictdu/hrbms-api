@@ -51,12 +51,17 @@ class RoomEnumRepository extends BaseRepository
 
         if($discountName === 'VOUCHER'){
             $voucherCode = Voucher::where('code', $request->voucherCode)->first();
+
             $discount = $voucherCode;
         }
         else{
             $discount = Discount::where('name', $discountName)->first();
         }
-        // dd($discount);
+
+        if($discount){
+            $discount = $discount->value * 100 . '%';
+        }
+
         // $roomNumbers = $roomsQuery->pluck('room_number');
         $rooms = $roomsQuery->get()->transform(function ($room) use ($filterDateRange, $dates, $extraPersonCount,  $discount) {
             $dayOfWeek = strtolower(date('l'));
@@ -104,10 +109,10 @@ class RoomEnumRepository extends BaseRepository
                         'extraPersonRate' => $extraPersonRate * ($extraPersonCount ?? 0),
                     ];
                 }, $dates),
-                'discount' => ($discount->value * 100 . '%'), // show discount
+                'discount' => $discount, // show discount
                 'roomTotal' => array_sum(array_map(function ($date) use ($rate,$discount) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
-                    return ($rate[$dayOfWeek] ?? 0) * (1 - $discount->value);
+                    return ($rate[$dayOfWeek] ?? 0) * (1 - $discount);
                 }, $dates)),
                 'extraPersonCount' => $extraPersonCount,
                 'extraPersonTotal' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount) {
@@ -118,7 +123,7 @@ class RoomEnumRepository extends BaseRepository
                 'roomTotalWithExtraPerson' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discount) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
                     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
-                    return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount)) * (1 - $discount->value);
+                    return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount)) * (1 - $discount);
                 }, $dates)),
                 'extraPersonCapacity' => $room->roomType->extra_person_capacity ? range(0, $room->roomType->extra_person_capacity) : 0,
             ];
