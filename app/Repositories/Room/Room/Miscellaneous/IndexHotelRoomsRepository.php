@@ -30,9 +30,13 @@ class IndexHotelRoomsRepository extends BaseRepository
                 "rate" => $rate->$dayName,
                 "capacity" => $roomType->capacity,
                 "description" => $roomType->description,
-                "amenities" => $roomType->amenities->pluck('amenity')->map(function ($amenity) {
-                    return $amenity->name;
-                })->toArray() // Ensure amenities are also returned as an array
+                "amenities" => $roomType->amenities->map(function ($amenity) {
+                    // return $amenity->name;
+                    return [
+                        'name' => $amenity->name,
+                        'quantity' => $amenity->pivot->quantity
+                    ];
+                }), // Ensure amenities are also returned as an array
             ];
         });
 

@@ -19,13 +19,10 @@ class RoomEnumRepository extends BaseRepository
         $filterDateRange = explode(',', $request->input('dateRange'));
         $extraPersonCount = $request->input('extraPersonCount');
         $discountName = $request->input('discount');
-        
-        
 
         // Create a DatePeriod object
         $begin = new DateTime($filterDateRange[0]);
-        $end = new DateTime($filterDateRange[1] ?? 2000 - 01 - 01);
-        // $end = $end->modify('+1 day'); // Add one day to include the end date in the period
+        $end = new DateTime($filterDateRange[1] ?? '2000-01-01');
         $interval = new DateInterval('P1D'); // Set interval to 1 day
         $dateRange = new DatePeriod($begin, $interval, $end);
 
@@ -49,28 +46,22 @@ class RoomEnumRepository extends BaseRepository
             $roomsQuery->where('room_number', $filterRoomNumber);
         }
 
-        if($discountName === 'VOUCHER'){
+        if ($discountName === 'VOUCHER') {
             $voucherCode = Voucher::where('code', $request->voucherCode)->first();
-
             $discount = $voucherCode;
-        }
-        else{
+        } else {
             $discount = Discount::where('name', $discountName)->first();
         }
 
-        if($discount){
-            $discount = $discount->value * 100 . '%';
-        }
+        // Set default discount value if no discount is found
+        $discountValue = $discount->value ?? 0;
 
-        // $roomNumbers = $roomsQuery->pluck('room_number');
-        $rooms = $roomsQuery->get()->transform(function ($room) use ($filterDateRange, $dates, $extraPersonCount,  $discount) {
+        $rooms = $roomsQuery->get()->transform(function ($room) use ($filterDateRange, $dates, $extraPersonCount, $discountValue) {
             $dayOfWeek = strtolower(date('l'));
             $today = date('Y-m-d');
-            // dd($discount);
+
             // Default to regular rate
             $rate = collect($room->roomType->rates)->firstWhere('type', 'REGULAR');
-
-            // return $rate;
 
             // Check if there's a special rate within the date range
             $specialRate = collect($room->roomType->rates)->first(function ($rate) use ($today) {
@@ -83,20 +74,16 @@ class RoomEnumRepository extends BaseRepository
             if ($specialRate) {
                 $rate = $specialRate;
             }
-            
-            // Extra person rate
-            // $extraPersonRate = collect($room->roomType->rates)->firstWhere('type', 'EXTRA_PERSON');
 
             // Extra Person Calculation
             $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
+
             return [
                 'referenceNumber' => $room->reference_number,
                 'roomNumber' => $room->room_number,
                 'roomFloor' => $room->room_floor,
                 'roomType' => $room->roomType->name ?? 'N/A',
                 'roomTypeCapacity' => $room->roomType->capacity ?? 'N/A',
-                // 'rateType' => $rate['type'] ?? 'N/A',
-                // 'roomTotal' => $rate ? $rate[$dayOfWeek] : 0,
                 'duration' => count($dates),
                 'roomRateType' => $rate['type'] ?? 'N/A',
                 'roomRatesArray' => array_map(function ($date) use ($rate, $room, $extraPersonCount) {
@@ -109,10 +96,10 @@ class RoomEnumRepository extends BaseRepository
                         'extraPersonRate' => $extraPersonRate * ($extraPersonCount ?? 0),
                     ];
                 }, $dates),
-                'discount' => $discount, // show discount
-                'roomTotal' => array_sum(array_map(function ($date) use ($rate,$discount) {
+                'discount' => ($discountValue * 100 . '%'), // show discount
+                'roomTotal' => array_sum(array_map(function ($date) use ($rate, $discountValue) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
-                    return ($rate[$dayOfWeek] ?? 0) * (1 - $discount);
+                    return ($rate[$dayOfWeek] ?? 0) * (1 - $discountValue);
                 }, $dates)),
                 'extraPersonCount' => $extraPersonCount,
                 'extraPersonTotal' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount) {
@@ -120,17 +107,17 @@ class RoomEnumRepository extends BaseRepository
                     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
                     return $extraPersonRate * $extraPersonCount;
                 }, $dates)),
-                'roomTotalWithExtraPerson' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discount) {
+                'roomTotalWithExtraPerson' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
                     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
-                    return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount)) * (1 - $discount);
+                    return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount)) * (1 - $discountValue);
                 }, $dates)),
                 'extraPersonCapacity' => $room->roomType->extra_person_capacity ? range(0, $room->roomType->extra_person_capacity) : 0,
             ];
         });
 
         return response()->json([
-            'message' => 'Rooms fetched successfully', // 'Room numbers fetched successfully
+            'message' => 'Rooms fetched successfully',
             'results' => $rooms,
             'code' => 200,
             'error' => false
