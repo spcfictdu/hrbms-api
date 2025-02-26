@@ -14,6 +14,10 @@ use App\Mail\ReserveTransactionMail;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Transaction\Transaction;
+use App\Models\Discount\VoucherDiscount;
+use App\Models\PaymentType\ChequePayment;
+use App\Models\Discount\SeniorPwdDiscount;
+use App\Models\PaymentType\CreditCardPayment;
 
 class CreateTransactionRepository extends BaseRepository
 {
@@ -81,33 +85,63 @@ class CreateTransactionRepository extends BaseRepository
 
             $payment = null;
             
-            $discount = Discount::where('name', $request->input('discount'))->first();
-            if($request->discount){
-                $discountName = Discount::where('name', $request->discount)->first();
-      
-           
-                if($discountName->name === 'VOUCHER'){
-                    $voucher = Voucher::where('code', $request->voucherCode)->first();
-    
-                    
-                    $discount = $voucher->value;
-                   
-                }
-            }else{
-                $discountName = null;
-            }
+            // $discount = Discount::where('name', $request->input('discount'))->first();
+            // if($request->discount){
+            //     $discountName = Discount::where('name', $request->discount)->first();
+            // }
 
             if (isset($request->payment) && isset($transaction->id)) {
+
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,
                     "payment_type" => strtoupper($request->payment['paymentType']),
-                    "discount_id" => optional($discountName)->id,
                     "amount_received" => $request->payment['amountReceived']
                 ]);
 
                 $room->update([
                     "status" => strtoupper("OCCUPIED")
                 ]);
+                
+                 // verify if discount exists and create it to database
+                 if($request->discount){
+                    $discountName = strtoupper($request->discount);
+                    if($discountName === 'VOUCHER'){
+                        $voucher = Voucher::where('code', $request->voucherCode)->first();  
+                        VoucherDiscount::create([
+                            "payment_id" => $payment->id,
+                            "discount" => $discountName,
+                            "value" => $voucher->value,
+                        ]);
+                    }else{
+                        $discount= Discount::where('name', $discountName)->first();  
+                        SeniorPwdDiscount::create([
+                            "payment_id" => $payment->id,
+                            "discount" => $discount->name,
+                            "id_number" => $request->idNumber,
+                            "value" => $discount->value,
+                        ]);
+                    }
+                }
+
+                if($request->paymentType === 'CHEQUE'){
+                 
+                    ChequePayment::create([
+                        "payment_id" => $payment->id,
+                        "cheque_number" => $request->chequeNumber,
+                        "bank_name" => $request->chequeBankName,
+                    ]);
+                }elseif($request->paymentType === 'CREDIT_CARD'){
+             
+                    CreditCardPayment::create([
+                        "payment_id" => $payment->id,
+                        "card_number" =>$request->cardNumber,
+                        "card_holder_name" =>$request->cardHolderName,
+                        "expiration_date" => $request->expiration_date,
+                        "cvc" => $request->cvc,
+
+                    ]);
+                }
+                     
             }
 
 

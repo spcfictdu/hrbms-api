@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\Transaction;
 
-use App\Http\Requests\ResponseRequest;
 use App\Rules\RoomAvailable;
+use Illuminate\Validation\Rule;
+use App\Http\Requests\ResponseRequest;
 
 class CreateTransactionRequest extends ResponseRequest
 {
@@ -37,8 +38,20 @@ class CreateTransactionRequest extends ResponseRequest
             'guest.dbId' => ['nullable', 'integer'],
             'guest.id.type' => ['required'],
             'guest.id.number' => ['required'],
+
             'discount' => ['nullable', 'string', 'exists:discounts,name'],
             'voucherCode' => ['required_if:discount,VOUCHER', 'string', 'exists:vouchers,code'],
+            'idNumber' => ['required_if:discount,SNR,PWD', 'string'],
+
+            'payment.paymentType' => ['required', 'string', Rule::in(['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'])],
+            'payment.chequeNumber' => ['required_if:paymentType,CHEQUE', 'string', 'unique:cheque_payments,cheque_number'],
+            'payment.chequeBankName' => ['required_if:paymentType,CHEQUE', 'string'],
+
+            'payment.cardHolderName' => ['required_if:paymentType,CREDIT_CARD', 'string'],
+            'payment.cardNumber' => ['required_if:paymentType,CREDIT_CARD', 'string', 'digits:16'],
+            'payment.expiration_date' => ['required_if:paymentType,CREDIT_CARD', 'string', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'], // Format: MM/YY
+            'payment.cvc' => ['required_if:paymentType,CREDIT_CARD', 'string', 'digits:3'], 
+            
             // 'guest.numberOfGuest' => ['required', 'integer'],
             'checkIn.date' => ['required', 'date', 'after_or_equal:today'],
             'checkIn.time' => ['date_format:H:i'],
