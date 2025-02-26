@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Enum;
 
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\Enum\{RoomTypeEnumRequest, RoomNumberEnumRequest, RoomEnumRequest, RoomTypeAmenityEnumRequest, RoomTypeRateEnumRequest, GuestAvailableRoomNumbersEnumRequest};
+use App\Http\Requests\Enum\{RoomTypeEnumRequest, RoomNumberEnumRequest, RoomEnumRequest, RoomTypeAmenityEnumRequest, RoomTypeRateEnumRequest, GuestAvailableRoomNumbersEnumRequest, AvailableRoomOptionsForAddingRequest};
 use App\Models\Guest\Guest;
-use App\Repositories\Enum\{RoomNumberEnumRepository, RoomTypeEnumRepository, RoomEnumRepository, GuestEnumRepository, RoomTypeAmenityEnumRepository, RoomTypeRateEnumRepository};
+use App\Repositories\Enum\{RoomNumberEnumRepository, RoomTypeEnumRepository, RoomEnumRepository, GuestEnumRepository, RoomTypeAmenityEnumRepository, RoomTypeRateEnumRepository, AvailableRoomOptionsForAddingRepository};
 use Illuminate\Http\Request;
 
 class EnumController extends Controller
 {
-    protected $roomTypeEnum, $roomNumberEnum, $roomEnum, $guestEnum, $roomTypeAmenityEnum, $roomTypeRateEnum;
+    protected $roomTypeEnum, $roomNumberEnum, $roomEnum, $guestEnum, $roomTypeAmenityEnum, $roomTypeRateEnum, $availableRoomOptionsForAddingEnum;
 
     // * CONSTRUCTOR INJECTION
     public function __construct(
@@ -20,7 +20,8 @@ class EnumController extends Controller
         RoomEnumRepository $roomEnum,
         GuestEnumRepository $guestEnum,
         RoomTypeAmenityEnumRepository $roomTypeAmenityEnum,
-        RoomTypeRateEnumRepository $roomTypeRateEnum
+        RoomTypeRateEnumRepository $roomTypeRateEnum,
+        AvailableRoomOptionsForAddingRepository $availableRoomOptionsForAddingEnum,
 
     ) {
         $this->roomTypeEnum = $roomTypeEnum;
@@ -29,6 +30,7 @@ class EnumController extends Controller
         $this->guestEnum = $guestEnum;
         $this->roomTypeAmenityEnum = $roomTypeAmenityEnum;
         $this->roomTypeRateEnum = $roomTypeRateEnum;
+        $this->availableRoomOptionsForAddingEnum = $availableRoomOptionsForAddingEnum;
     }
 
     public function roomTypeEnum(RoomTypeEnumRequest $request)
@@ -64,5 +66,10 @@ class EnumController extends Controller
     public function guestAvailableRoomNumbersEnum(GuestAvailableRoomNumbersEnumRequest $request)
     {
         return $this->guestEnum->availableRoomNumbers($request);
+    }
+
+    public function availableRoomOptionsForAddingEnum(AvailableRoomOptionsForAddingRequest $request)
+    {
+        return $this->availableRoomOptionsForAddingEnum->execute($request);
     }
 }
