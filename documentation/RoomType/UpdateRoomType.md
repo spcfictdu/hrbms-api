@@ -96,7 +96,20 @@ ADMIN
             "0185739a/HdM5SSvQqKl1wPlKNOsPim79jWeAzDduAtAeAY9O.jpg",
             "0185739a/SxQOwZLk2Abj4M1XKogKF0oogoIu2OxgnQFdCUq0.jpg"
         ],
-        "amenities": ["AIR CONDITIONING", "FREE WI-FI", "CLOTHES RACK"],
+        "amenities": [
+            {
+                "name": "AIR CONDITIONING",
+                "quantity": 1
+            },
+            {
+                "name": "FREE WI-FI",
+                "quantity": 1
+            },
+            {
+                "name": "CLOTHES RACK",
+                "quantity": 1
+            }
+        ],
         "rates": {
             "regular": {
                 "referenceNumber": "d149c3f8",
