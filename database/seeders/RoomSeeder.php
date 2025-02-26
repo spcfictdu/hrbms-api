@@ -80,7 +80,7 @@ class RoomSeeder extends Seeder
                 'id' => $i + 1, // Assuming ID is auto-increment, you might not need to set this manually
                 'room_number' => $baseRoomNumber + $i,
                 'room_floor' => $baseFloor + floor($i / 5), // Increment floor every 5 rooms
-                'room_type_id' => $baseTypeId + ($i % 5), // Cycle through 5 types of rooms
+                'room_type_id' => $baseTypeId + ($i % 6), // Cycle through 5 types of rooms
             ];
         }
 

@@ -133,6 +133,28 @@ class RoomTypeSeeder extends Seeder
                     'sunday' => 2273
                 ]
             ],
+            // Function room type
+            [
+                'id' => 6,
+                'name' => 'SMALL FUNCTION ROOM',
+                'description' => 'This room is perfect for small gatherings and meetings.',
+                'bed_size' => '1 twin bed  and 1 sofa bed',
+                'property_size' => '32 m²/344 ft²',
+                'is_non_smoking' => true,
+                'balcony_or_terrace' => false,
+                'capacity' => 50,
+                'extra_person_capacity' => 0,
+                'amenities' => [2, 9,],
+                'rates' => [
+                    'monday' => 2173,
+                    'tuesday' => 2173,
+                    'wednesday' => 2173,
+                    'thursday' => 2173,
+                    'friday' => 2173,
+                    'saturday' => 2273,
+                    'sunday' => 2273
+                ]
+            ]
         ];
 
         $directories = Storage::directories('public');
