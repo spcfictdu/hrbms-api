@@ -79,7 +79,7 @@ class IndexAvailabilityCalendarRepository extends BaseRepository
         $transactions =  $transactions->map(function ($transaction) {
 
             if ($transaction->room?->status === "UNCLEAN") {
-                $transaction->status = "UNCLEAN";
+                $transaction->status = "HOUSEKEEPING";
             } else {
             }
             $formattedCheckInDateTime = new DateTime($transaction->check_in_date . ' ' . $transaction->check_in_time);

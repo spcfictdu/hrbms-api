@@ -84,7 +84,7 @@ class CreateTransactionRepository extends BaseRepository
             //
 
             $payment = null;
-            
+
             // $discount = Discount::where('name', $request->input('discount'))->first();
             // if($request->discount){
             //     $discountName = Discount::where('name', $request->discount)->first();
@@ -101,19 +101,19 @@ class CreateTransactionRepository extends BaseRepository
                 $room->update([
                     "status" => strtoupper("OCCUPIED")
                 ]);
-                
-                 // verify if discount exists and create it to database
-                 if($request->discount){
+
+                // verify if discount exists and create it to database
+                if ($request->discount) {
                     $discountName = strtoupper($request->discount);
-                    if($discountName === 'VOUCHER'){
-                        $voucher = Voucher::where('code', $request->voucherCode)->first();  
+                    if ($discountName === 'VOUCHER') {
+                        $voucher = Voucher::where('code', $request->voucherCode)->first();
                         VoucherDiscount::create([
                             "payment_id" => $payment->id,
                             "discount" => $discountName,
                             "value" => $voucher->value,
                         ]);
-                    }else{
-                        $discount= Discount::where('name', $discountName)->first();  
+                    } else {
+                        $discount = Discount::where('name', $discountName)->first();
                         SeniorPwdDiscount::create([
                             "payment_id" => $payment->id,
                             "discount" => $discount->name,
@@ -123,25 +123,24 @@ class CreateTransactionRepository extends BaseRepository
                     }
                 }
 
-                if($request->paymentType === 'CHEQUE'){
-                 
+                if ($request->paymentType === 'CHEQUE') {
+
                     ChequePayment::create([
                         "payment_id" => $payment->id,
                         "cheque_number" => $request->chequeNumber,
                         "bank_name" => $request->chequeBankName,
                     ]);
-                }elseif($request->paymentType === 'CREDIT_CARD'){
-             
+                } elseif ($request->paymentType === 'CREDIT_CARD') {
+
                     CreditCardPayment::create([
                         "payment_id" => $payment->id,
-                        "card_number" =>$request->cardNumber,
-                        "card_holder_name" =>$request->cardHolderName,
+                        "card_number" => $request->cardNumber,
+                        "card_holder_name" => $request->cardHolderName,
                         "expiration_date" => $request->expiration_date,
                         "cvc" => $request->cvc,
 
                     ]);
                 }
-                     
             }
 
 
@@ -163,8 +162,14 @@ class CreateTransactionRepository extends BaseRepository
                         ]));
                     }
                 }
+            } else {
+                // return response()->json(['message' => 'Successfully created transaction.'], 200);
+                return $this->success("Successfully created transaction.", Arr::collapse([
+                    $this->getCamelCase($guest->toArray()),
+                    $this->getCamelCase($transaction->toArray()),
+                    $this->getCamelCase($payment ? $payment->toArray() : []),
+                ]));
             }
-            return response()->json(['message' => 'Successfully created transaction.'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->error('Something went wrong: ' . $e->getMessage());

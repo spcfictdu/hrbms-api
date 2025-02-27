@@ -24,8 +24,11 @@ class AccountInfoRepository extends BaseRepository
                     'checkOutDate' => $booking->check_out_date,
                     'amountReceived' => $booking->payment->amount_received,
                     'roomDescription' => $booking->room->roomType->description,
-                    'amenities' => $booking->room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
-                        return $amenity->name;
+                    'amenities' => $booking->room->roomType->amenities->map(function ($amenity) {
+                        return [
+                            'name' => $amenity->name,
+                            'quantity' => $amenity->pivot->quantity
+                        ];
                     })
                 ];
             });
@@ -39,8 +42,11 @@ class AccountInfoRepository extends BaseRepository
                     'checkOutDate' => $reservation->check_out_date,
                     'amountReceived' => $reservation->payment?->amount_received,
                     'roomDescription' => $reservation->room->roomType->description,
-                    'amenities' => $reservation->room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
-                        return $amenity->name;
+                    'amenities' => $reservation->room->roomType->amenities->map(function ($amenity) {
+                        return [
+                            'name' => $amenity->name,
+                            'quantity' => $amenity->pivot->quantity
+                        ];
                     })
                 ];
             });
@@ -54,8 +60,11 @@ class AccountInfoRepository extends BaseRepository
                     'checkOutDate' => $history->check_out_date,
                     'amountReceived' => $history->payment->amount_received,
                     'roomDescription' => $history->room->roomType->description,
-                    'amenities' => $history->room->roomType->amenities->pluck('amenity')->map(function ($amenity) {
-                        return $amenity->name;
+                    'amenities' => $history->room->roomType->amenities->map(function ($amenity) {
+                        return [
+                            'name' => $amenity->name,
+                            'quantity' => $amenity->pivot->quantity
+                        ];
                     })
                 ];
             });
