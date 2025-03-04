@@ -2,6 +2,7 @@
 
 namespace App\Models\Transaction;
 
+use App\Models\Amenity\BookingAddon;
 use App\Models\Guest\Guest;
 use App\Models\Room\Room;
 
@@ -75,5 +76,10 @@ class Transaction extends Model
     public function getFullCheckOutAttribute()
     {
         return $this->check_out_date . 'T' . $this->check_out_time;
+    }
+
+    public function bookingAddOn()
+    {
+        return $this->hasMany(BookingAddon::class);
     }
 }
