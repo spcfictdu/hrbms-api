@@ -25,8 +25,8 @@ class CreateTransactionRepository extends BaseRepository
 {
     public function execute($request)
     {
-        // dd($request->addons);
-        // DB::beginTransaction();
+       
+        DB::beginTransaction();
 
         try {
             $room = Room::where('reference_number', $request->room['referenceNumber'])->first();
@@ -76,6 +76,7 @@ class CreateTransactionRepository extends BaseRepository
                 "reference_number" => $this->transactionReferenceNumber(),
                 "room_id" => $room->id,
                 "status" => strtoupper($request->status),
+                "room_total" => $request->roomTotal,
                 "check_in_date" => $request->checkIn['date'],
                 "check_in_time" => $request->checkIn['time'],
                 "check_out_date" => $request->checkOut['date'],

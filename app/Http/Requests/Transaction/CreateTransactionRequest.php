@@ -56,6 +56,7 @@ class CreateTransactionRequest extends ResponseRequest
             'payment.expiration_date' => ['required_if:payment.paymentType,CREDIT_CARD', 'string', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'], // Format: MM/YY
             'payment.cvc' => ['required_if:payment.paymentType,CREDIT_CARD', 'string', 'digits:3'],
 
+            'roomTotal' => ['required'],
             // 'guest.numberOfGuest' => ['required', 'integer'],
             'checkIn.date' => ['required', 'date', 'after_or_equal:today'],
             'checkIn.time' => ['date_format:H:i'],

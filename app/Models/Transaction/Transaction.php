@@ -20,6 +20,7 @@ class Transaction extends Model
     protected $fillable = [
         'reference_number',
         'room_id',
+        'room_total',
         'status',
         'payment_type',
         'check_in_date',
