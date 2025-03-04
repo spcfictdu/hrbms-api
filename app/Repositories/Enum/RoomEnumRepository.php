@@ -19,10 +19,11 @@ class RoomEnumRepository extends BaseRepository
         $filterRoomType = $request->input('roomType');
         $filterRoomNumber = $request->input('roomNumber');
         $filterDateRange = explode(',', $request->input('dateRange'));
+
         $extraPersonCount = $request->input('extraPersonCount');
         $discountName = $request->input('discount');
-        $addons = explode(',' ,(str_replace('%', ' ', $request->input('addons'))));
-        // $addOns = $request->input('addons');
+        $addonsInput = $request->input('addons', ''); // Default to empty string if not provided
+        $addons = $addonsInput ? explode(',', str_replace('%', ' ', $addonsInput)) : [];
 
         // Create a DatePeriod object
         $begin = new DateTime($filterDateRange[0]);
@@ -59,9 +60,8 @@ class RoomEnumRepository extends BaseRepository
 
         // Set default discount value if no discount is found
         $discountValue = $discount->value ?? 0;
-        
-       
-        $addons = array_map(function ($addon){
+
+        $addons = array_map(function ($addon) {
             $key = ['name', 'quantity'];
             $split = explode('-', $addon);
             $addon = array_combine($key, $split);
@@ -69,20 +69,19 @@ class RoomEnumRepository extends BaseRepository
         }, $addons);
 
         $addonsPrice = array_map(function ($addon) {
-            if($addon['quantity']){
-            $price = Addon::where('name', strtoupper($addon['name']))->first();
-            $price = $price['price'] ?? 0;
-            return $price;
+            if ($addon['quantity']) {
+                $price = Addon::where('name', strtoupper($addon['name']))->first();
+                $price = $price['price'] ?? 0;
+                return $price;
             }
         }, $addons);
 
-        $addonsTotal = array_sum(array_map(function($addon, $addonPrice){
+        $addonsTotal = array_sum(array_map(function ($addon, $addonPrice) {
             $total = ($addon['quantity'] * $addonPrice);
-            // $sample = $total;
             return $total;
         }, $addons, $addonsPrice));
 
-        $fullAddons = array_map(function($addon, $addonPrice){
+        $fullAddons = array_map(function ($addon, $addonPrice) {
             $total = $addon['quantity'] * $addonPrice;
             $total = (float)number_format($total, 2);
             $fullAddon = [
@@ -90,7 +89,7 @@ class RoomEnumRepository extends BaseRepository
                 'quantity' => $addon['quantity'],
                 'unit_price' => $addonPrice,
                 'total' => $total,
-        ];
+            ];
             return $fullAddon;
         }, $addons, $addonsPrice);
 
@@ -156,7 +155,6 @@ class RoomEnumRepository extends BaseRepository
             ];
         });
 
-        // dd($rooms);
         return response()->json([
             'message' => 'Rooms fetched successfully',
             'results' => $rooms,
