@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\amenity\addons;
 use App\Models\AvailabilityCalendar;
 use Illuminate\Database\Seeder;
 
@@ -28,6 +29,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             DiscountSeeder::class,
             AmenitySeeder::class,
+            AddonSeeder::class,
             RoomTypeSeeder::class,
             RoomSeeder::class,
             TransactionSeeder::class,
