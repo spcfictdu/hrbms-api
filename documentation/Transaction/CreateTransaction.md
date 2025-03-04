@@ -71,7 +71,7 @@ FRONT DESK
                     "quantity": "12"
                 }
     ],
-    
+
      // IF PAYMENT HAVE DISCOUNT
         // "discount": "VOUCHER",
         // "voucherCode" : "1234" ,
@@ -94,7 +94,7 @@ FRONT DESK
         // "expirationDate": "12/27",
         // "cvv": "123"
     // },
-
+    "roomTotal": 1234,
     "checkIn": {
         "date": "2024-05-13",
         "time": "09:00"
