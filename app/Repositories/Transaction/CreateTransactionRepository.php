@@ -5,12 +5,14 @@ namespace App\Repositories\Transaction;
 use App\Models\Room\Room;
 use App\Models\Guest\Guest;
 use Illuminate\Support\Arr;
+use App\Models\amenity\Addon;
 use App\Models\Discount\Voucher;
 use App\Mail\BookTransactionMail;
 use App\Models\Discount\Discount;
 use Illuminate\Support\Facades\DB;
 use App\Models\Transaction\Payment;
 use App\Mail\ReserveTransactionMail;
+use App\Models\Amenity\BookingAddon;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Transaction\Transaction;
@@ -23,7 +25,8 @@ class CreateTransactionRepository extends BaseRepository
 {
     public function execute($request)
     {
-        DB::beginTransaction();
+        // dd($request->addons);
+        // DB::beginTransaction();
 
         try {
             $room = Room::where('reference_number', $request->room['referenceNumber'])->first();
@@ -81,14 +84,27 @@ class CreateTransactionRepository extends BaseRepository
                 "guest_id" => $guest->id,
             ]);
 
-            //
+            if(isset($request->addons) && isset($transaction->id)){
+                $sample = array_map(function($addon)use ($request, $transaction){
+                    $checkPrice = Addon::where('name', $addon['name'])->first();
+                    if($checkPrice->price){
+                        $totalPrice = $checkPrice->price * $addon['quantity'];
+                        
+                        $addons = BookingAddon::create([
+                            "transaction_id" => $transaction->id,
+                            "name" => $addon['name'],
+                            "quantity" => $addon['quantity'],
+                            "total_price" => $totalPrice 
+                    ]);
+                    
+                     }
+                    return $addon;
+                    
+                }, $request->addons);
+                         
+            }
 
             $payment = null;
-
-            // $discount = Discount::where('name', $request->input('discount'))->first();
-            // if($request->discount){
-            //     $discountName = Discount::where('name', $request->discount)->first();
-            // }
 
             if (isset($request->payment) && isset($transaction->id)) {
 

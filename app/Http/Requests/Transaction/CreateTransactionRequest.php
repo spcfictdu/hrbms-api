@@ -39,6 +39,10 @@ class CreateTransactionRequest extends ResponseRequest
             'guest.id.type' => ['required'],
             'guest.id.number' => ['required'],
 
+            'addons' => ['array'],
+            'addons.name' => ['string', 'exists:addons, name'],
+            'addons.*.quantity' => ['required_with:addons', 'string', 'min:1'],
+
             'discount' => ['nullable', 'string', 'exists:discounts,name'],
             'voucherCode' => ['required_if:discount,VOUCHER', 'string', 'exists:vouchers,code'],
             'idNumber' => ['required_if:discount,SNR,PWD', 'string'],
