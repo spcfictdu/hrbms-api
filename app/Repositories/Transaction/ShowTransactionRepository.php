@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Transaction;
 
+use App\Models\Amenity\BookingAddOn;
 use App\Models\Transaction\{
     Transaction,
     Payment
@@ -25,6 +26,7 @@ class ShowTransactionRepository extends BaseRepository
         $guest = $transaction->guest;
         $payment = $transaction->payment;
         $day = Str::lower($transaction->created_at->format('l'));
+        $roomTotal = $transaction->room_total;
 
         // if ($payment) {
         //     $pay = Payment::where('id', $payment->id)->first();
@@ -43,13 +45,24 @@ class ShowTransactionRepository extends BaseRepository
             $dayOfWeek = strtolower($date->format('l')); // 'monday', 'tuesday', etc.
 
             // Retrieve the price for the specific day from the RoomTypeRate model
-            $priceForDay = $roomTypeRate->$dayOfWeek;
+            // $priceForDay = $roomTypeRate->$dayOfWeek;
 
             // Add the price for the day to the total cost
-            $totalCost += $priceForDay;
+            // $totalCost += $priceForDay;
         }
 
         // $total = $payment->
+
+        $fullAddons = BookingAddOn::where('transaction_id', $transaction->id)->get() ?? null;
+
+        // Calculate discount
+        $discountValue = 0;
+
+        if ($transaction->payment->voucherDiscount) {
+            $discountValue = $transaction->payment->voucherDiscount->value ?? 0;
+        } else {
+            $discountValue = $transaction->payment->seniorPwdDiscount->value ?? 0;
+        }
 
         return $this->success("Transaction Info", [
             "bookingHistory" => [
@@ -76,7 +89,9 @@ class ShowTransactionRepository extends BaseRepository
                 "guestName" => $guest->full_name,
                 "priceSummary" => [
                     "days" => $diffInDays,
-                    "roomTotal" => $totalCost,
+                    "fullAddons" => $fullAddons,
+                    "discount" => ($discountValue*100 . '%'),
+                    "roomTotal" => $roomTotal,
                 ],
                 "paymentSummary" => [
                     "paymentType" => $payment->payment_type ?? null,

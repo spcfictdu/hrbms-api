@@ -35,6 +35,7 @@ class TransactionSeeder extends Seeder
                     "CHECKED-IN",
                     "CHECKED-OUT"
                 ],
+                "room_total" => 1234.00,
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),
                 "last_name" => Str::upper($faker->lastName),
@@ -89,6 +90,7 @@ class TransactionSeeder extends Seeder
                     "CHECKED-IN",
                     "CHECKED-OUT"
                 ],
+                "room_total" => 1234.00,
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),
                 "last_name" => Str::upper($faker->lastName),
@@ -143,6 +145,7 @@ class TransactionSeeder extends Seeder
                     "CHECKED-IN",
                     "CHECKED-OUT"
                 ],
+                "room_total" => 1234.00,
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),
                 "last_name" => Str::upper($faker->lastName),
@@ -197,6 +200,7 @@ class TransactionSeeder extends Seeder
                     "CHECKED-IN",
                     "CHECKED-OUT"
                 ],
+                "room_total" => 1234.00,
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),
                 "last_name" => Str::upper($faker->lastName),
@@ -251,6 +255,7 @@ class TransactionSeeder extends Seeder
                     "CHECKED-IN",
                     "CHECKED-OUT"
                 ],
+                "room_total" => 1234.00,
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),
                 "last_name" => Str::upper($faker->lastName),
@@ -325,6 +330,7 @@ class TransactionSeeder extends Seeder
                 'room_id' => $transaction['id'],
                 'status' => $transaction['status'][$statusIndex],
                 // 'payment_id' => $transaction['id'],
+                "room_total" => $transaction['room_total'],
                 'check_in_date' => $transaction['checkIn']['date'],
                 'check_in_time' => $transaction['checkIn']['time'],
                 'check_out_date' => $transaction['checkOut']['date'],
