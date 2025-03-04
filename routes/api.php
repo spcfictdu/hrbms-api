@@ -12,6 +12,7 @@ use App\Http\Controllers\{
     Transaction\TransactionController,
     AvailabilityCalendar\AvailabilityCalendarController,
     Amenity\AmenityController,
+    DataResetController,
     Enum\EnumController,
     Guest\GuestController,
     ReportGeneration\ReportGenerationController
@@ -199,4 +200,16 @@ Route::group([
     $route->post('/revenue', [ReportGenerationController::class, 'revenueReport']);
     $route->post('/payment', [ReportGenerationController::class, 'paymentReport']);
     $route->post('/check',   [ReportGenerationController::class, 'checkInOutReport']);
+});
+
+// This route has authentication check inside the controller
+// When I put the middleware (auth:sanctum), the roles.guard_name would be sanctum when I migrate:fresh and seed
+// Instead of web, which is the default guard_name
+Route::post('admin/system/reset-data', [DataResetController::class, 'resetData']);
+
+// Would use for later
+Route::group([
+    'middleware' => 'auth:system',
+    'prefix' => 'admin/system'
+], function ($route) {
 });
