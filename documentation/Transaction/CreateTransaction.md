@@ -57,6 +57,21 @@ FRONT DESK
         }
     },
 
+    "addons": [
+                {
+                    "name": "extra pillow",
+                    "quantity": "1"
+                },
+                {
+                    "name": "extra towel",
+                    "quantity": "3"
+                },
+                {
+                    "name": "champagne bottle",
+                    "quantity": "12"
+                }
+    ],
+    
      // IF PAYMENT HAVE DISCOUNT
         // "discount": "VOUCHER",
         // "voucherCode" : "1234" ,

@@ -70,6 +70,20 @@ NO ROLE NEEDED
                     "extraPersonRate": 360
                 }
             ],
+            "addons": [
+                {
+                    "name": "extra pillow",
+                    "quantity": "1",
+                    "unit_price": "2.24",
+                    "total": 2.24
+                },
+                {
+                    "name": "extra towel",
+                    "quantity": "3",
+                    "unit_price": "8.65",
+                    "total": 25.95
+                }
+            ],
             "discount" : "10%",
             "roomTotal": 4120,
             "extraPersonCount": null,
