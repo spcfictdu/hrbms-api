@@ -17,6 +17,10 @@ class Addon extends Model
         'price'
     ];
 
+    protected $hidden = [
+        'id'
+    ];
+
     public function bookingAddons(){
         return $this->hasMany(BookingAddon::class);
     }

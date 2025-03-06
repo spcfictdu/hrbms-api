@@ -15,7 +15,8 @@ use App\Http\Controllers\{
     DataResetController,
     Enum\EnumController,
     Guest\GuestController,
-    ReportGeneration\ReportGenerationController
+    ReportGeneration\ReportGenerationController,
+    Addon\AddonController
 };
 
 /*
@@ -143,6 +144,7 @@ Route::group([
 
 Route::get('/availability-calendar/{referenceNumber}', [AvailabilityCalendarController::class, 'show']);
 
+Route::get('/addon',[AddonController::class,'index'])->middleware('auth:sanctum');
 // For enums or dropdowns
 Route::group([
     // 'middleware' => 'auth:sanctum',
