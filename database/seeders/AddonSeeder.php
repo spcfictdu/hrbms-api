@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\amenity\Addon;
+use App\Models\Amenity\Addon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Testing\Fakes\Fake;

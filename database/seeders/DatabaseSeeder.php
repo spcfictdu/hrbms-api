@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\amenity\addons;
-use App\Models\AvailabilityCalendar;
 use Illuminate\Database\Seeder;
 
 use Database\Seeders\{
@@ -36,7 +34,7 @@ class DatabaseSeeder extends Seeder
             AvailabilityCalendarSeeder::class,
             RoomTypeRateSeeder::class,
             VoucherSeeder::class,
-            
+
         ]);
     }
 }

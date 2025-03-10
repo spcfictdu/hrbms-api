@@ -2,7 +2,7 @@
 
 namespace App\Models\Amenity;
 
-use App\Models\amenity\Addon;
+use App\Models\Amenity\Addon;
 use App\Models\Transaction\Transaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

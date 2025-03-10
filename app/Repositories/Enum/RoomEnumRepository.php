@@ -6,7 +6,7 @@ use DateTime;
 use DatePeriod;
 use DateInterval;
 use App\Models\Room\Room;
-use App\Models\amenity\Addon;
+use App\Models\Amenity\Addon;
 use App\Models\Discount\Voucher;
 use App\Models\Discount\Discount;
 use App\Repositories\BaseRepository;
