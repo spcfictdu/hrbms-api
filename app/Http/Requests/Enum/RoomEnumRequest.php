@@ -24,8 +24,18 @@ class RoomEnumRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'roomType' => 'nullable|string',
-            'roomNumber' => 'nullable|integer',
+            'roomType' => 'nullable|string|exists:room_types,name',
+            'roomNumber' => 'nullable|integer|exists:rooms,room_number',
+            'dateRange' => ['nullable', 'string', 'regex:/^\d{4}-\d{2}-\d{2},\d{4}-\d{2}-\d{2}$/'],
+            'extraPersonCount' => 'nullable|integer|min:0',
+            'discount' => 'nullable|string|exists:discounts,name',
+            'voucherCode' => [
+                'nullable',
+                'string',
+                'exists:vouchers,code',
+                'required_if:discount,VOUCHER'
+            ],
+            'addons' => 'nullable|string'
         ];
     }
 }
