@@ -144,7 +144,7 @@ Route::group([
 
 Route::get('/availability-calendar/{referenceNumber}', [AvailabilityCalendarController::class, 'show']);
 
-Route::get('/addon',[AddonController::class,'index'])->middleware('auth:sanctum');
+Route::get('/addon', [AddonController::class, 'index']);
 // For enums or dropdowns
 Route::group([
     // 'middleware' => 'auth:sanctum',

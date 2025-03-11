@@ -1,43 +1,44 @@
-### Room Enum
+# **Room Enum API Documentation**
 
-This endpoint is used for dropdowns in the frontend to display the room numbers.
+This endpoint is used in the frontend to fetch room numbers dynamically, often for dropdown selection.
 
-#### URL
+## **Endpoint**
 
 ```
 {{base_url}}/api/enum/room
 ```
 
-#### Method
+## **Method**
 
 ```
 GET
 ```
 
-#### Authentication Needed
+## **Authentication Required**
 
 ```
-FALSE
+No
 ```
 
-#### Permitted Roles
+## **Permitted Roles**
 
 ```
-NO ROLE NEEDED
+Admin, Front Desk
 ```
 
-#### Query Parameters
+## **Query Parameters**
 
--   roomType: STRING (optional) - The room type to filter the room numbers
-    -   Example: {{base_url}}/api/enum/room-number?roomType=DELUXE
--   roomNumber: INT (optional) - The room number to filter the room numbers
-    -   Example: {{base_url}}/api/enum/room-number?roomNumber=101
--   dateRange: STRING (optional) - The date range to filter the room numbers
-    -   Example: {{base_url}}/api/enum/room-number?dateRange=2024-05-23,2024-05-25
--   extraPersonCount: INT (optional) - The number of extra persons to filter the room numbers
-    -   Example: {{base_url}}/api/enum/room-number?extraPersonCount=1
+| Parameter          | Type   | Required                            | Description                                                                                                                |
+| ------------------ | ------ | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `roomType`         | STRING | Optional                            | Filters rooms by type. Example: `DELUXE`                                                                                   |
+| `roomNumber`       | INT    | Optional                            | Filters by a specific room number. Example: `101`                                                                          |
+| `dateRange`        | STRING | Optional                            | Filters rooms available within the specified date range. Format: `YYYY-MM-DD,YYYY-MM-DD`. Example: `2024-05-23,2024-05-25` |
+| `extraPersonCount` | INT    | Optional                            | Filters rooms based on the number of extra persons allowed. Example: `1`                                                   |
+| `discount`         | STRING | Optional                            | Applies a discount filter. Example: `VOUCHER`, `PWD`, `SNR`.                                                               |
+| `voucherCode`      | STRING | Required if `discount` is `VOUCHER` | Filters rooms that accept a specific voucher code. Example: `1234`.                                                        |
+| `addons`           | STRING | Optional                            | Filters rooms based on included add-ons. Example: `EXTRA PILLOW-1`                                                         |
 
-#### Response Example (Success)
+## **Success Response Example**
 
 ```json
 {
@@ -53,41 +54,41 @@ NO ROLE NEEDED
             "roomRatesArray": [
                 {
                     "date": "2024-05-23",
-                    "dayOfWeek": "thursday",
+                    "dayOfWeek": "Thursday",
                     "rate": 1340,
                     "extraPersonRate": 335
                 },
                 {
                     "date": "2024-05-24",
-                    "dayOfWeek": "friday",
+                    "dayOfWeek": "Friday",
                     "rate": 1340,
                     "extraPersonRate": 335
                 },
                 {
                     "date": "2024-05-25",
-                    "dayOfWeek": "saturday",
+                    "dayOfWeek": "Saturday",
                     "rate": 1440,
                     "extraPersonRate": 360
                 }
             ],
             "addons": [
                 {
-                    "name": "extra pillow",
-                    "quantity": "1",
-                    "unit_price": "2.24",
+                    "name": "Extra Pillow",
+                    "quantity": 1,
+                    "unit_price": 2.24,
                     "total": 2.24
                 },
                 {
-                    "name": "extra towel",
-                    "quantity": "3",
-                    "unit_price": "8.65",
+                    "name": "Extra Towel",
+                    "quantity": 3,
+                    "unit_price": 8.65,
                     "total": 25.95
                 }
             ],
-            "discount" : "10%",
+            "discount": "10%",
             "roomTotal": 4120,
             "extraPersonCount": null,
-            "ExtraPersonTotal": 0,
+            "extraPersonTotal": 0,
             "roomTotalWithExtraPerson": 4120
         }
     ],

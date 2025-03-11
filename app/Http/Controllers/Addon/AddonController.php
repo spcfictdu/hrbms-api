@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Addon;
 
 use Illuminate\Http\Request;
-use App\Models\amenity\Addon;
+use App\Models\Amenity\Addon;
 use App\Http\Controllers\Controller;
 
 class AddonController extends Controller

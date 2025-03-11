@@ -53,7 +53,7 @@ class CreateTransactionRequest extends ResponseRequest
 
             'payment.cardHolderName' => ['required_if:payment.paymentType,CREDIT_CARD', 'string'],
             'payment.cardNumber' => ['required_if:payment.paymentType,CREDIT_CARD', 'string', 'digits:16'],
-            'payment.expiration_date' => ['required_if:payment.paymentType,CREDIT_CARD', 'string', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'], // Format: MM/YY
+            'payment.expirationDate' => ['required_if:payment.paymentType,CREDIT_CARD', 'string', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'], // Format: MM/YY
             'payment.cvc' => ['required_if:payment.paymentType,CREDIT_CARD', 'string', 'digits:3'],
 
             'roomTotal' => ['required'],

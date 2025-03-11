@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\amenity;
+namespace App\Models\Amenity;
 
 use App\Models\Amenity\BookingAddon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,9 +21,8 @@ class Addon extends Model
         'id'
     ];
 
-    public function bookingAddons(){
+    public function bookingAddons()
+    {
         return $this->hasMany(BookingAddon::class);
     }
-
-    
 }

@@ -5,7 +5,7 @@ namespace App\Repositories\Transaction;
 use App\Models\Room\Room;
 use App\Models\Guest\Guest;
 use Illuminate\Support\Arr;
-use App\Models\amenity\Addon;
+use App\Models\Amenity\Addon;
 use App\Models\Discount\Voucher;
 use App\Mail\BookTransactionMail;
 use App\Models\Discount\Discount;
