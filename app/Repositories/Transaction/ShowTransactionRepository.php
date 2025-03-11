@@ -7,9 +7,8 @@ use App\Models\Transaction\{
     Transaction,
     Payment
 };
-
+use App\Models\amenity\Addon;
 use Carbon\Carbon;
-
 use Illuminate\Support\{Str, Arr};
 use App\Repositories\BaseRepository;
 
@@ -17,7 +16,7 @@ class ShowTransactionRepository extends BaseRepository
 {
     public function execute($referenceNumber)
     {
-        $transaction = Transaction::where('reference_number', $referenceNumber)->first();
+        $transaction = Transaction::where('reference_number', $referenceNumber)->firstOrFail();
 
         $transactionHistory = $transaction->transactionHistory ?? null;
         $room = $transaction->room ?? null;
@@ -28,9 +27,6 @@ class ShowTransactionRepository extends BaseRepository
         $day = Str::lower($transaction->created_at->format('l'));
         $roomTotal = $transaction->room_total;
 
-        // if ($payment) {
-        //     $pay = Payment::where('id', $payment->id)->first();
-        // }
         // Parse the check-in and check-out dates
         $checkInDate = Carbon::createFromFormat('Y-m-d', $transaction->check_in_date);
         $checkOutDate = Carbon::createFromFormat('Y-m-d', $transaction->check_out_date);
@@ -51,7 +47,36 @@ class ShowTransactionRepository extends BaseRepository
             // $totalCost += $priceForDay;
         }
 
-        // $total = $payment->
+        // Calculate add-ons total
+        $addons = $transaction->bookingAddon ?? [];
+        $addonsTotal = 0;
+        $fullAddons = [];
+        foreach ($addons as $addon) {
+            $addonModel = Addon::where('name', $addon['name'])->first();
+            if ($addonModel) {
+                $totalPrice = $addonModel->price * $addon['quantity'];
+                $addonsTotal += $totalPrice;
+                $fullAddons[] = [
+                    'name' => $addon['name'],
+                    'quantity' => $addon['quantity'],
+                    'unit_price' => $addonModel->price,
+                    // 'total' => $totalPrice,
+                    'total' => (float)number_format($totalPrice, 2),
+                ];
+            }
+        }
+
+        // Calculate discount
+        $discountValue = 0;
+
+        if ($transaction->payment->voucherDiscount) {
+            $discountValue = $transaction->payment->voucherDiscount->value ?? 0;
+        } else {
+            $discountValue = $transaction->payment->seniorPwdDiscount->value ?? 0;
+        }
+
+        // Calculate room total with discount and add-ons
+        $roomTotal = $addonsTotal + ($totalCost * (1 - $discountValue));
 
         $fullAddons = BookingAddOn::where('transaction_id', $transaction->id)->get() ?? null;
 

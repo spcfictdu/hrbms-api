@@ -23,6 +23,7 @@ use App\Models\PaymentType\CreditCardPayment;
 
 class CreateTransactionRepository extends BaseRepository
 {
+
     public function execute($request)
     {
        
@@ -72,6 +73,13 @@ class CreateTransactionRepository extends BaseRepository
                 ]);
             }
 
+            if ($request->discount === 'VOUCHER') {
+                $voucherCode = Voucher::where('code', $request->voucherCode)->first();
+                $discount = $voucherCode;
+            } else {
+                $discount = Discount::where('name', $request->discount)->first();
+            }
+
             $transaction = Transaction::create([
                 "reference_number" => $this->transactionReferenceNumber(),
                 "room_id" => $room->id,
@@ -85,24 +93,21 @@ class CreateTransactionRepository extends BaseRepository
                 "guest_id" => $guest->id,
             ]);
 
-            if(isset($request->addons) && isset($transaction->id)){
-                $sample = array_map(function($addon)use ($request, $transaction){
+            if (isset($request->addons) && isset($transaction->id)) {
+                $sample = array_map(function ($addon) use ($request, $transaction) {
                     $checkPrice = Addon::where('name', $addon['name'])->first();
-                    if($checkPrice->price){
+                    if ($checkPrice->price) {
                         $totalPrice = $checkPrice->price * $addon['quantity'];
-                        
+
                         $addons = BookingAddon::create([
                             "transaction_id" => $transaction->id,
                             "name" => $addon['name'],
                             "quantity" => $addon['quantity'],
-                            "total_price" => $totalPrice 
-                    ]);
-                    
-                     }
+                            "total_price" => $totalPrice
+                        ]);
+                    }
                     return $addon;
-                    
                 }, $request->addons);
-                         
             }
 
             $payment = null;
