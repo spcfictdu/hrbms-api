@@ -3,44 +3,94 @@
 		"_postman_id": "41636985-4405-4e1a-8199-f2480446c8e8",
 		"name": "Auth",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24217473"
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/24217473-41636985-4405-4e1a-8199-f2480446c8e8?action=share&source=collection_link&creator=35042330"
 	},
 	"item": [
 		{
 			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response JSON\r",
+							"const responseJson = pm.response.json();\r",
+							"\r",
+							"// Extract the token from the response\r",
+							"const token = responseJson.results.token;\r",
+							"\r",
+							"// Set the token as an environment variable\r",
+							"if (token) {\r",
+							"    pm.environment.set('token', token);\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "username",
-							"value": "admin123",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "developer",
-							"type": "text"
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"\",\r\n    \"password\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
 				"url": {
-					"raw": "{{base_url}}/user/login",
+					"raw": "{{base_url}}/user/admin/login",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"user",
+						"admin",
 						"login"
 					]
-				}
+				},
+				"description": "### User Login\n\nThis endpoint allows users to log in and obtain an authentication token.\n\n#### URL\n\n```\nhttp://127.0.0.1:8000/api/user/login\n\n ```\n\n#### Request Body\n\n- `username` (string, required): The username of the user.\n    \n- `password` (string, required): The password of the user.\n    \n\n#### Request Example\n\n``` json\n{\n    \"username\": \"admin123\",\n    \"password\": \"developer\"\n}\n\n ```\n\n#### Response\n\nThe response is in JSON format and follows the schema below:\n\n- `message` (string): A message from the server.\n    \n- `results` (object): An object containing user information.\n    \n    - `username` (string): The username of the user.\n        \n    - `firstName` (string): The first name of the user.\n        \n    - `lastName` (string): The last name of the user.\n        \n    - `token` (string): The authentication token.\n        \n    - `role` (string): The role of the user.\n        \n- `code` (integer): A status code.\n    \n- `error` (boolean): Indicates if an error occurred.\n    \n\n#### Response Example (Success)\n\n``` json\n{\n    \"message\": \"Login successful\",\n    \"results\": {\n        \"username\": \"admin123\",\n        \"firstName\": \"JOHN\",\n        \"lastName\": \"DOE\",\n        \"token\": \"1|kDBtn2qBvCCqLueIp9r9rqknqpjbzSYmIF7Rkl7x72b03945\",\n        \"role\": \"ADMIN\"\n    },\n    \"code\": 200,\n    \"error\": false\n}\n\n ```"
 			},
 			"response": []
 		},
 		{
 			"name": "Register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Stores the token in an environment variable\r",
+							"var token = pm.response.json().results.token;\r",
+							"pm.environment.set(\"token\", token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -55,39 +105,13 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "username",
-							"value": "frontdesk",
-							"type": "text"
-						},
-						{
-							"key": "firstName",
-							"value": "JANE",
-							"type": "text"
-						},
-						{
-							"key": "lastName",
-							"value": "DOE",
-							"type": "text"
-						},
-						{
-							"key": "email",
-							"value": "fd2@gmail.co",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "developer",
-							"type": "text"
-						},
-						{
-							"key": "role",
-							"value": "FRONT DESK",
-							"type": "text"
+					"mode": "raw",
+					"raw": "{\r\n//FRONT-DESK OR ADMIN\r\n    // \"username\": \"frontdesk\",\r\n    // \"firstName\": \"JANE\",\r\n    // \"lastName\": \"DOE\",\r\n    // \"email\": \"sample@gmail.com\",\r\n    // \"password\": \"developer\",\r\n    // \"role\": \"FRONT DESK\"\r\n\r\n//GUEST\r\n    \"firstName\": \"alex\",\r\n    \"middleName\": \"m\",\r\n    \"lastName\": \"Alex\",\r\n    \"mobileNumber\": \"09605607559\",\r\n    \"email\": \"test12323@gmail.com\",\r\n    \"password\": \"developer\",\r\n    \"role\": \"GUEST\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
 				"url": {
 					"raw": "{{base_url}}/user/register",
@@ -98,12 +122,49 @@
 						"user",
 						"register"
 					]
-				}
+				},
+				"description": "### User Registration\n\nThis endpoint allows the user to register a new account.\n\n- Method: POST\n    \n- Base URL: {{base_url}}/user/register\n    \n\n#### Request Body\n\n- Type: Raw (application/json)\n    \n    - username: (string) The username of the user.\n        \n    - firstName: (string) The first name of the user.\n        \n    - lastName: (string) The last name of the user.\n        \n    - email: (string) The email address of the user.\n        \n    - password: (string) The password for the user's account.\n        \n    - role: (string) The role of the user.\n        \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n    ```\n        {\n            \"message\": \"\",\n            \"results\": {\n                \"username\": \"\",\n                \"firstName\": \"\",\n                \"lastName\": \"\",\n                \"email\": \"\",\n                \"role\": \"\"\n            },\n            \"code\": 0,\n            \"error\": true\n        }\n    \n     ```"
 			},
 			"response": []
 		},
 		{
 			"name": "Logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response JSON\r",
+							"const responseJson = pm.response.json();\r",
+							"\r",
+							"// Extract the token from the response\r",
+							"const token = responseJson.results.token;\r",
+							"\r",
+							"// Set the token as an environment variable\r",
+							"if (token) {\r",
+							"    pm.environment.set('token', token);\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -117,6 +178,10 @@
 				},
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
 				"url": {
 					"raw": "{{base_url}}/user/logout",
 					"host": [
@@ -125,6 +190,64 @@
 					"path": [
 						"user",
 						"logout"
+					]
+				},
+				"description": "\nThis endpoint is used to log out the user. Upon successful execution, the server returns a JSON response with a status code of 200 and the content type as application/json. The response body includes a \"message\" field, a \"results\" array, a \"code\" field, and an \"error\" field, all of which are part of the JSON schema.\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Guest Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response JSON\r",
+							"const responseJson = pm.response.json();\r",
+							"\r",
+							"// Extract the token from the response\r",
+							"const token = responseJson.results.token;\r",
+							"\r",
+							"// Set the token as an environment variable\r",
+							"if (token) {\r",
+							"    pm.environment.set('token', token);\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/user/guest/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user",
+						"guest",
+						"login"
 					]
 				}
 			},

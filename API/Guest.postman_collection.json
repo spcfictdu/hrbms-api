@@ -1,0 +1,298 @@
+{
+	"info": {
+		"_postman_id": "e452ff96-45e1-4e35-95b6-7d3087b01ad3",
+		"name": "Guest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/35042330-e452ff96-45e1-4e35-95b6-7d3087b01ad3?action=share&source=collection_link&creator=35042330"
+	},
+	"item": [
+		{
+			"name": "Miscellaneous",
+			"item": [
+				{
+					"name": "Account Details",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{base_url}}/guest/account/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"guest",
+								"account",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Account Details",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"alexssasdasd123\",\r\n    \"middleName\": \"m\",\r\n    \"lastName\": \"camaddo\",\r\n    \"email\": \"alex.camaddo02@gmail.com\",\r\n    \"phoneNumber\":\"09605607559\",\r\n    \"city\": \"asd\",\r\n    \"province\": \"asd123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/guest/account/update-details",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"guest",
+								"account",
+								"update-details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Account Details",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/guest/account/edit-details",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"guest",
+								"account",
+								"edit-details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accoung Change Password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\": \"developer\",\r\n    \"newPassword\": \"developer1\",\r\n    \"newPasswordConfirmation\": \"developer1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/guest/account/change-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"guest",
+								"account",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Guest Index Table",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/guest?referenceNumber=6c14e952",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"guest"
+					],
+					"query": [
+						{
+							"key": "firstName",
+							"value": "Ren",
+							"disabled": true
+						},
+						{
+							"key": "middleName",
+							"value": "Whi",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "test",
+							"disabled": true
+						},
+						{
+							"key": "phoneNumber",
+							"value": "1-209",
+							"disabled": true
+						},
+						{
+							"key": "perPage",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "sortOrder",
+							"value": "desc",
+							"disabled": true
+						},
+						{
+							"key": "fullName",
+							"value": "GUSIKOWSKI, Joany",
+							"disabled": true
+						},
+						{
+							"key": "referenceNumber",
+							"value": "6c14e952"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Guest Show Table",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/guest/2?perPage=10&checkInDate=2024-07-18",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"guest",
+						"2"
+					],
+					"query": [
+						{
+							"key": "perPage",
+							"value": "10"
+						},
+						{
+							"key": "checkInDate",
+							"value": "2024-07-18"
+						},
+						{
+							"key": "checkOutDate",
+							"value": "2024-05-22",
+							"disabled": true
+						},
+						{
+							"key": "referenceNumber",
+							"value": "2d85-378d-dc89",
+							"disabled": true
+						},
+						{
+							"key": "phoneNumber",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Guest Details",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/guest/delete/2",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"guest",
+						"delete",
+						"2"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "37e227d3",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

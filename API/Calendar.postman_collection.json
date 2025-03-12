@@ -1,0 +1,95 @@
+{
+	"info": {
+		"_postman_id": "12dd9790-58ce-45bd-beeb-f05d3d698d36",
+		"name": "Calendar",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/35042330-12dd9790-58ce-45bd-beeb-f05d3d698d36?action=share&source=collection_link&creator=35042330"
+	},
+	"item": [
+		{
+			"name": "Availability Calendar Index",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/availability-calendar",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"availability-calendar"
+					],
+					"query": [
+						{
+							"key": "roomType",
+							"value": "JUNIOR STANDARD",
+							"disabled": true
+						},
+						{
+							"key": "roomNumber",
+							"value": "175",
+							"disabled": true
+						},
+						{
+							"key": "dateRange",
+							"value": "2024-07-10,2024-07-17",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Availability Calendar Show",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/availability-calendar/abc92b6a",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"availability-calendar",
+						"abc92b6a"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "Bearer {{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

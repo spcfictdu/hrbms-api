@@ -1,0 +1,238 @@
+{
+	"info": {
+		"_postman_id": "618483d9-45ac-4c2b-bd55-c171cc8b12bf",
+		"name": "Amenity",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/24217473-618483d9-45ac-4c2b-bd55-c171cc8b12bf?action=share&source=collection_link&creator=35042330"
+	},
+	"item": [
+		{
+			"name": "Index",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/amenity/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"amenity",
+						""
+					]
+				},
+				"description": "\n### Get Amenity\n\nThis endpoint retrieves amenity information.\n\n#### Request\n\n- Method: GET\n- URL: `{{base_url}}/amenity/`\n- Authorization: (Authorization details not provided)\n\n##### Request Parameters\n\n- `roomNumber` (text): (Description not provided)\n- `roomType` (text): (Description not provided)\n\n#### Response Sample (JSON)\n\nThe response is in JSON format and follows the schema below:\n\n```json\n{\n    \"message\": \"\",\n    \"results\": [\n        {\n            \"referenceNumber\": \"\",\n            \"name\": \"\"\n        }\n    ],\n    \"code\": 0,\n    \"error\": true\n}\n```\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"FREE BREAKFAST\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/amenity/create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"amenity",
+						"create"
+					]
+				},
+				"description": "The `POST /amenity/create` endpoint is used to create a new amenity.\n\n### Request Body\n\n- `name` (string, required): The name of the amenity to be created.\n    \n\n### Response\n\nThe response is in JSON format and has the following schema:\n\n``` json\n{\n    \"type\": \"object\",\n    \"properties\": {\n        \"message\": {\n            \"type\": \"string\"\n        },\n        \"results\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"referenceNumber\": {\n                    \"type\": \"string\"\n                },\n                \"name\": {\n                    \"type\": \"string\"\n                }\n            }\n        },\n        \"code\": {\n            \"type\": \"integer\"\n        },\n        \"error\": {\n            \"type\": \"boolean\"\n        }\n    }\n}\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "Show",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "roomNumber",
+							"value": "102",
+							"type": "text"
+						},
+						{
+							"key": "roomType",
+							"value": "JUNIOR STANDARD",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/amenity/bf9c80",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"amenity",
+						"bf9c80"
+					]
+				},
+				"description": "This endpoint makes an HTTP GET request to retrieve information about a specific amenity using the provided ID. The request requires form-data in the body with parameters \"roomNumber\" and \"roomType\", both of type \"text\".\n\n### Response\n\nThe response for this request is a JSON object with the following schema:\n\n``` json\n{\n    \"type\": \"object\",\n    \"properties\": {\n        \"message\": {\n            \"type\": \"string\"\n        },\n        \"results\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"referenceNumber\": {\n                    \"type\": \"string\"\n                },\n                \"name\": {\n                    \"type\": \"string\"\n                }\n            }\n        },\n        \"code\": {\n            \"type\": \"integer\"\n        },\n        \"error\": {\n            \"type\": \"boolean\"\n        }\n    }\n}\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"FREE BREAKFAST AND LUNCH\",\r\n    \"price\": 22.23\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/amenity/update/bf9c80",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"amenity",
+						"update",
+						"bf9c80"
+					]
+				},
+				"description": "\n### Amenity Update\n\nThis endpoint is used to update an amenity with a specific ID.\n\n#### Request Body\n- name (string, required): The name of the amenity.\n\n#### Response\nThe response is a JSON object with the following properties:\n- message (string): A message related to the response.\n- results (object): An object containing the updated reference number and name.\n  - referenceNumber (string): The reference number of the updated amenity.\n  - name (string): The name of the updated amenity.\n- code (integer): An error code.\n- error (boolean): Indicates if an error occurred.\n\n#### JSON Schema\n```json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"message\": { \"type\": \"string\" },\n    \"results\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"referenceNumber\": { \"type\": \"string\" },\n        \"name\": { \"type\": \"string\" }\n      }\n    },\n    \"code\": { \"type\": \"integer\" },\n    \"error\": { \"type\": \"boolean\" }\n  }\n}\n```\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/amenity/delete/61956e",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"amenity",
+						"delete",
+						"61956e"
+					]
+				},
+				"description": "The `DELETE` request is used to delete a specific amenity with the ID `61956e`. Upon successful execution, the API returns a JSON response with a status code of 200 and the `Content-Type` as `application/json`. The response body follows the schema below:\n\n``` json\n{\n    \"type\": \"object\",\n    \"properties\": {\n        \"message\": {\n            \"type\": \"string\"\n        },\n        \"results\": {\n            \"type\": \"array\"\n        },\n        \"code\": {\n            \"type\": \"integer\"\n        },\n        \"error\": {\n            \"type\": \"boolean\"\n        }\n    }\n}\n\n ```"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

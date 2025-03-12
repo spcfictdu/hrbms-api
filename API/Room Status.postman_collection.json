@@ -1,0 +1,134 @@
+{
+	"info": {
+		"_postman_id": "722aa4df-863c-4f14-bf4a-6421a83054b6",
+		"name": "Room Status",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/35042330-722aa4df-863c-4f14-bf4a-6421a83054b6?action=share&source=collection_link&creator=35042330"
+	},
+	"item": [
+		{
+			"name": "Index",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/room-status?roomStatus=UNALLOCATED",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room-status"
+					],
+					"query": [
+						{
+							"key": "roomType",
+							"value": "SUITE",
+							"disabled": true
+						},
+						{
+							"key": "perPage",
+							"value": "3",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "roomStatus",
+							"value": "UNALLOCATED"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Show",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/room-status/ebfafd22",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room-status",
+						"ebfafd22"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Status",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"UNCLEAN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/room-status/update/6c595377",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room-status",
+						"update",
+						"6c595377"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "OCCUPIED",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

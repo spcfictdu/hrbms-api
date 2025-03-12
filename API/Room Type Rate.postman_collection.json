@@ -1,0 +1,366 @@
+{
+	"info": {
+		"_postman_id": "77ad7b2a-fc5b-41b7-be32-e8828fa512d2",
+		"name": "Room Type Rate",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/24217473-77ad7b2a-fc5b-41b7-be32-e8828fa512d2?action=share&source=collection_link&creator=35042330"
+	},
+	"item": [
+		{
+			"name": "Regular",
+			"item": [
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rates\": {\r\n        \"monday\": 1547,\r\n        \"tuesday\": 1547,\r\n        \"wednesday\": 1547,\r\n        \"thursday\": 1547,\r\n        \"friday\": 1547,\r\n        \"saturday\": 1747,\r\n        \"sunday\": 1747\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/room-type/rate/regular/update/d149c3f8",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"room-type",
+								"rate",
+								"regular",
+								"update",
+								"d149c3f8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Special",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \r\n    \"roomType\": \"STANDARD\",\r\n    \"discountName\": \"May Discount\",\r\n    \"startDate\": \"2024-05-24\",\r\n    \"endDate\": \"2024-05-31\",\r\n    \"rates\": {\r\n        \"monday\": 1447,\r\n        \"tuesday\": 1447,\r\n        \"wednesday\": 1447,\r\n        \"thursday\": 1447,\r\n        \"friday\": 1447,\r\n        \"saturday\": 1547,\r\n        \"sunday\": 1547\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/room-type/rate/special/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"room-type",
+								"rate",
+								"special",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"discountName\": \"May Discount 2024\",\r\n    \"startDate\": \"2024-05-01\",\r\n    \"endDate\": \"2024-05-31\",\r\n    \"rates\": {\r\n        \"monday\": 1347,\r\n        \"tuesday\": 1447,\r\n        \"wednesday\": 1447,\r\n        \"thursday\": 1347,\r\n        \"friday\": 1447,\r\n        \"saturday\": 1547,\r\n        \"sunday\": 1447\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/room-type/rate/special/update/5558d1c8",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"room-type",
+								"rate",
+								"special",
+								"update",
+								"5558d1c8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Archive",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/room-type/rate/special/archive/5558d1c8",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"room-type",
+								"rate",
+								"special",
+								"archive",
+								"5558d1c8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Archived",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/room-type/rate/special/archived/5558d1c8",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"room-type",
+								"rate",
+								"special",
+								"archived",
+								"5558d1c8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restore",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/room-type/rate/special/restore/177fa9ab",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"room-type",
+								"rate",
+								"special",
+								"restore",
+								"177fa9ab"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Index",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{base_url}}/room-type/rate",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room-type",
+						"rate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Show",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{base_url}}/room-type/rate/0185739a",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room-type",
+						"rate",
+						"0185739a"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

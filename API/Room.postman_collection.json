@@ -1,0 +1,652 @@
+{
+	"info": {
+		"_postman_id": "f44ddc65-1b8a-4027-b154-cdb75df96cdb",
+		"name": "Room",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/24217473-f44ddc65-1b8a-4027-b154-cdb75df96cdb?action=share&source=collection_link&creator=35042330"
+	},
+	"item": [
+		{
+			"name": "Miscellaneous",
+			"item": [
+				{
+					"name": "Index Hotel Room",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/hotel-room",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hotel-room"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Hotel Rooms",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "roomNumber",
+									"value": "102",
+									"type": "text"
+								},
+								{
+									"key": "roomType",
+									"value": "JUNIOR STANDARD",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/hotel-room/search?checkInDate=2024-05-31&checkOutDate=2024-06-01",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hotel-room",
+								"search"
+							],
+							"query": [
+								{
+									"key": "perPage",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "roomType",
+									"value": "STANDARD",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "room_number",
+									"disabled": true
+								},
+								{
+									"key": "sortOrder",
+									"value": "desc",
+									"disabled": true
+								},
+								{
+									"key": "checkInDate",
+									"value": "2024-05-31"
+								},
+								{
+									"key": "checkOutDate",
+									"value": "2024-06-01"
+								},
+								{
+									"key": "capacity",
+									"value": "4",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "BATHTUB",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show Hotel Room Info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "roomName",
+									"value": "JUNIOR STANDARD",
+									"type": "text"
+								},
+								{
+									"key": "checkInDate",
+									"value": "2024-07-03",
+									"type": "text"
+								},
+								{
+									"key": "checkOutDate",
+									"value": "2024-07-05",
+									"type": "text"
+								},
+								{
+									"key": "rate",
+									"value": "1340",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/hotel-room/a42af22f",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hotel-room",
+								"a42af22f"
+							],
+							"query": [
+								{
+									"key": "checkInDate",
+									"value": "2024-07-02",
+									"disabled": true
+								},
+								{
+									"key": "checkOutDate",
+									"value": "2024-07-05",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Index",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "roomNumber",
+							"value": "102",
+							"type": "text"
+						},
+						{
+							"key": "roomType",
+							"value": "JUNIOR STANDARD",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/room?page=2",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room"
+					],
+					"query": [
+						{
+							"key": "perPage",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "2"
+						},
+						{
+							"key": "roomType",
+							"value": "STANDARD",
+							"disabled": true
+						},
+						{
+							"key": "sortBy",
+							"value": "room_number",
+							"disabled": true
+						},
+						{
+							"key": "sortOrder",
+							"value": "desc",
+							"disabled": true
+						},
+						{
+							"key": "checkInDate",
+							"value": "2024-05-31",
+							"disabled": true
+						},
+						{
+							"key": "checkOutDate",
+							"value": "2024-06-01",
+							"disabled": true
+						},
+						{
+							"key": "capacity",
+							"value": "3",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "BATHTUB",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Room Pictures",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "roomNumber",
+							"value": "102",
+							"type": "text"
+						},
+						{
+							"key": "roomType",
+							"value": "JUNIOR STANDARD",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/room",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room"
+					],
+					"query": [
+						{
+							"key": "perPage",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "roomType",
+							"value": "STANDARD",
+							"disabled": true
+						},
+						{
+							"key": "sortBy",
+							"value": "room_number",
+							"disabled": true
+						},
+						{
+							"key": "sortOrder",
+							"value": "desc",
+							"disabled": true
+						},
+						{
+							"key": "checkInDate",
+							"value": "2024-05-31",
+							"disabled": true
+						},
+						{
+							"key": "checkOutDate",
+							"value": "2024-06-01",
+							"disabled": true
+						},
+						{
+							"key": "capacity",
+							"value": "2",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Index Copy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "roomNumber",
+							"value": "102",
+							"type": "text"
+						},
+						{
+							"key": "roomType",
+							"value": "JUNIOR STANDARD",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/hotel-room",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"hotel-room"
+					],
+					"query": [
+						{
+							"key": "perPage",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "roomType",
+							"value": "STANDARD",
+							"disabled": true
+						},
+						{
+							"key": "sortBy",
+							"value": "room_number",
+							"disabled": true
+						},
+						{
+							"key": "sortOrder",
+							"value": "desc",
+							"disabled": true
+						},
+						{
+							"key": "checkInDate",
+							"value": "2024-05-31",
+							"disabled": true
+						},
+						{
+							"key": "checkOutDate",
+							"value": "2024-06-01",
+							"disabled": true
+						},
+						{
+							"key": "capacity",
+							"value": "3",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "BATHTUB",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"roomNumber\": 502,\r\n    \"roomType\": \"SUPERIOR\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/room/create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Show",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "roomNumber",
+							"value": "102",
+							"type": "text"
+						},
+						{
+							"key": "roomType",
+							"value": "JUNIOR STANDARD",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/room/b24d546c",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room",
+						"b24d546c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"roomNumber\": 602,\r\n    \"roomType\": \"DELUXE\",\r\n    \"status\": \"READY FOR OCCUPANCY\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/room/update/840b4991",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room",
+						"update",
+						"840b4991"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/room/delete/5641fc5d",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"room",
+						"delete",
+						"5641fc5d"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

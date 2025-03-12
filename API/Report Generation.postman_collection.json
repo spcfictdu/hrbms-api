@@ -1,0 +1,147 @@
+{
+	"info": {
+		"_postman_id": "09db23cb-55cf-405c-b525-96480fcc0812",
+		"name": "Report Generation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/24217473-09db23cb-55cf-405c-b525-96480fcc0812?action=share&source=collection_link&creator=35042330"
+	},
+	"item": [
+		{
+			"name": "Revenue Report",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"dateFrom\": \"2024-05-21\",\r\n    \"dateTo\": \"2024-05-25\"\r\n    // \"roomType\": \"JUNIOR SUITE\" // nullable\r\n    // \"roomNumber\": 201 // nullable\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/report/revenue",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"report",
+						"revenue"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2024-05-21",
+							"disabled": true
+						},
+						{
+							"key": "dateTo",
+							"value": "2024-05-25",
+							"disabled": true
+						},
+						{
+							"key": "roomType",
+							"value": "JUNIOR SUITE",
+							"disabled": true
+						},
+						{
+							"key": "roomNumber",
+							"value": "201",
+							"disabled": true
+						}
+					]
+				},
+				"description": "### Get Revenue Report\n\nThis endpoint retrieves the revenue report within a specified date range.\n\n#### Request Parameters\n\n- `dateFrom` (string, required): The start date of the report period.\n    \n- `dateTo` (string, required): The end date of the report period.\n    \n- `roomType` (string, optional): The type of room for filtering the report. (nullable)\n    \n- `roomNumber` (number, optional): The room number for filtering the report. (nullable)\n    \n\n#### Response\n\n- `message` (string): A message related to the response.\n    \n- `results` (object): An object containing the report results.\n    \n    - `dateFrom` (string): The start date of the report period.\n        \n    - `dateTo` (string): The end date of the report period.\n        \n    - `total` (string): The total revenue within the specified date range.\n        \n    - `taxes` (string): The total taxes collected within the specified date range.\n        \n    - `bookings` (number): The total number of bookings within the specified date range.\n        \n    - `occupancy` (string): The occupancy rate within the specified date range.\n        \n- `code` (number): The status code of the response.\n    \n- `error` (boolean): Indicates if an error occurred during the request.\n    \n\n#### Example\n\n``` json\n{\n  \"dateFrom\": \"2024-05-21\",\n  \"dateTo\": \"2024-05-25\",\n  \"roomType\": \"JUNIOR SUITE\",\n  \"roomNumber\": 201\n}\n\n ```\n\n``` json\n{\n  \"message\": \"\",\n  \"results\": {\n    \"dateFrom\": \"\",\n    \"dateTo\": \"\",\n    \"total\": \"\",\n    \"taxes\": \"\",\n    \"bookings\": 0,\n    \"occupancy\": \"\"\n  },\n  \"code\": 0,\n  \"error\": true\n}\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "Payment Report",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"dateFrom\": \"2024-07-08\",\r\n    \"dateTo\": \"2024-07-10\",\r\n    \"paymentType\": \"CASH\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/report/payment",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"report",
+						"payment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check In Out Report",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"dateFrom\": \"2024-05-23\",\r\n    \"dateTo\": \"2024-05-27\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/report/check",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"report",
+						"check"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

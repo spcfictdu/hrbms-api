@@ -1,0 +1,378 @@
+{
+	"info": {
+		"_postman_id": "67638db5-2d57-4345-97d1-f9a225a9a2df",
+		"name": "Transaction",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/35067770-67638db5-2d57-4345-97d1-f9a225a9a2df?action=share&source=collection_link&creator=35042330"
+	},
+	"item": [
+		{
+			"name": "Miscellaneous",
+			"item": [
+				{
+					"name": "Delete Reservation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transaction/reservation/delete/RESERVED/24a4-0144-83a2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"reservation",
+								"delete",
+								"RESERVED",
+								"24a4-0144-83a2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShowForm",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transaction/form/8c8cc57f",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transaction",
+								"form",
+								"8c8cc57f"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Guest Transaction",
+			"item": [
+				{
+					"name": "Guest Index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/guest-transaction",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"guest-transaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Guest Show",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/guest-transaction/64065b9b",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"guest-transaction",
+								"64065b9b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Guest Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"RESERVED\",\r\n    \"room\": {\r\n        \"referenceNumber\": \"d4c993c0\"\r\n    },\r\n    \"guest\": {\r\n        \"firstName\": \"Alex\",\r\n        \"middleName\": \"Mosing\",\r\n        \"lastName\": \"Camaddo\",\r\n        \"address\": {\r\n            \"province\": \"Pampanga\",\r\n            \"city\": \"Angeles\"\r\n        },\r\n        \"contact\": {\r\n            \"phoneNum\": \"09605607559\",\r\n            \"email\": \"test@gmail.com\"\r\n        },\r\n        \"id\": {\r\n            \"type\": \"National-ID\",\r\n            \"number\": \"1234\"\r\n        }\r\n    },\r\n    \"payment\": {\r\n        \"paymentType\": \"CASH\",\r\n        \"amountReceived\": 1858\r\n    },\r\n    \"checkIn\": {\r\n        \"date\": \"2024-05-13\",\r\n        \"time\": \"09:00\"\r\n    },\r\n    \"checkOut\": {\r\n        \"date\": \"2024-05-14\",\r\n        \"time\": \"14:00\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/guest-transaction/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"guest-transaction",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create - Reservation",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    //FRONT-DESK\r\n    \"status\": \"RESERVED\",\r\n    \"room\": {\r\n        \"referenceNumber\": \"6a5b6c96\"\r\n    },\r\n    \"guest\": {\r\n        \"firstName\": \"ALEX\",\r\n        \"middleName\": \"M\",\r\n        \"lastName\": \"CAMADDO\",\r\n        \"address\": {\r\n            \"province\": \"Pampanga\",\r\n            \"city\": \"Angeles\"\r\n        },\r\n        \"contact\": {\r\n            \"phoneNum\": \"09605607559\",\r\n            \"email\": \"aaronbaquing1@gmail.com\"\r\n        },\r\n\r\n        \"id\": {\r\n            \"type\": \"National-ID\",\r\n            \"number\": \"1234\"\r\n        },\r\n        \"extraPerson\": 1\r\n    },\r\n    // IF HABE ADDONS\r\n    // \"addons\": [\r\n    //             {\r\n    //                 \"name\": \"extra pillow\",\r\n    //                 \"quantity\": \"1\"\r\n    //             },\r\n    //             {\r\n    //                 \"name\": \"extra towel\",\r\n    //                 \"quantity\": \"3\"\r\n    //             },\r\n    //             {\r\n    //                 \"name\": \"champagne bottle\",\r\n    //                 \"quantity\": \"12\"\r\n    //             }\r\n    // ],\r\n\r\n     // IF PAYMENT HAVE DISCOUNT\r\n    // \"discount\": \"VOUCHER\",\r\n    // \"voucherCode\" : \"1234\" ,\r\n    // \"idNumber\" : \"13123\",\r\n\r\n    // \"payment\": {\r\n    //     \"paymentType\": \"CASH\",\r\n    //     \"amountReceived\": 1858\r\n\r\n         // IF PAYMENT TYPE IS CHEQUE\r\n        // \"paymentType\": \"CHEQUE\"\r\n        // \"chequeNumber\" : \"12236789\",\r\n        // \"chequeBankName\" : \"asdf\"\r\n\r\n        // IF PAYMENT TYPE IS CREDIT CARD\r\n        // \"paymentType\": \"CREDIT_CARD\"\r\n        // \"cardHolderName\": \"John Doe\",\r\n        // \"cardNumber\": \"4111111111111111\",\r\n        // \"expirationDate\": \"12/27\",\r\n        // \"cvv\": \"123\"\r\n    // },\r\n    \"roomTotal\": 200,\r\n    \"checkIn\": {\r\n        \"date\": \"2025-03-13\",\r\n        \"time\": \"08:00\"\r\n    },\r\n    \"checkOut\": {\r\n        \"date\": \"2025-03-14\",\r\n        \"time\": \"14:00\"\r\n    },\r\n    \"extraPerson\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/transaction/create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"transaction",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create - Booking",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|E4bGBdpRyoo4YTQgasTzOGbC94AtZscA0l1WIYcZ96d8d38a",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    //FRONT-DESK\r\n    \"status\": \"RESERVED\",\r\n    \"room\": {\r\n        \"referenceNumber\": \"e99bde1b\"\r\n    },\r\n    \"guest\": {\r\n        \"firstName\": \"ALEX\",\r\n        \"middleName\": \"M\",\r\n        \"lastName\": \"CAMADDO\",\r\n        \"address\": {\r\n            \"province\": \"Pampanga\",\r\n            \"city\": \"Angeles\"\r\n        },\r\n        \"contact\": {\r\n            \"phoneNum\": \"09605607559\",\r\n            \"email\": \"aaronbaquing1@gmail.com\"\r\n        },\r\n        \"id\": {\r\n            \"type\": \"National-ID\",\r\n            \"number\": \"1234\"\r\n        },\r\n        \"extraPerson\": 4\r\n    },\r\n\r\n    \"addons\": [\r\n                {\r\n                    \"name\": \"extra pillow\",\r\n                    \"quantity\": \"1\"\r\n                }\r\n                // {\r\n                //     \"name\": \"extra towel\",\r\n                //     \"quantity\": \"3\"\r\n                // },\r\n                // {\r\n                //     \"name\": \"champagne bottle\",\r\n                //     \"quantity\": \"12\"\r\n                // }\r\n    ],\r\n\r\n    // IF PAYMENT HAVE DISCOUNT\r\n    \"discount\": \"VOUCHER\",\r\n    \"voucherCode\" : \"1234\" ,\r\n    \"idNumber\" : \"13123\",\r\n\r\n    \"payment\": {\r\n        \"paymentType\": \"CASH\",\r\n        \"amountReceived\": 1858\r\n\r\n         // IF PAYMENT TYPE IS CHEQUE\r\n        // \"paymentType\": \"CHEQUE\"\r\n        // \"chequeNumber\" : \"12236789\",\r\n        // \"chequeBankName\" : \"asdf\"\r\n\r\n        // IF PAYMENT TYPE IS CREDIT CARD\r\n        // \"paymentType\": \"CREDIT_CARD\"\r\n        // \"cardHolderName\": \"John Doe\",\r\n        // \"cardNumber\": \"4111111111111111\",\r\n        // \"expirationDate\": \"12/27\",\r\n        // \"cvv\": \"123\"\r\n    },\r\n    \"checkIn\": {\r\n        \"date\": \"2026-01-07\",\r\n        \"time\": \"08:00\"\r\n    },\r\n    \"checkOut\": {\r\n        \"date\": \"2026-01-08\",\r\n        \"time\": \"14:00\"\r\n    },\r\n    \"extraPerson\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/transaction/create",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"transaction",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Index",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/transaction/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"transaction",
+						""
+					],
+					"query": [
+						{
+							"key": "firstName",
+							"value": "ansel",
+							"disabled": true
+						},
+						{
+							"key": "middleName",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "referenceNumber",
+							"value": "5226f069",
+							"disabled": true
+						},
+						{
+							"key": "checkInDate",
+							"value": "2025-02-06",
+							"disabled": true
+						},
+						{
+							"key": "checkOutDate",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "perPage",
+							"value": "10",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "sortOrder",
+							"value": "asc",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Show",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/transaction/show/bb8e-2827-b134",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"transaction",
+						"show",
+						"bb8e-2827-b134"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"referenceNumber\": \"4831-f0a5-0f1e\", //Transaction Reference Number\r\n\r\n    // RESERVED\r\n    \"status\": \"RESERVED\",\r\n    \"paymentType\": \"CASH\",\r\n    \"amountReceived\": 3\r\n\r\n    // IF HAVE DISCOUNT\r\n    // \"discount\" : \"sNr\",\r\n    // \"idNumber\" : \"2131231\",\r\n    // \"voucherCode\": \"1234\",\r\n\r\n    // IF PAYMENT TYPE IS CHEQUE\r\n    // \"paymentType\": \"CHEQUE\",\r\n    // \"chequeNumber\" : \"123672289\",\r\n    // \"chequeBankName\" : \"asdf\",\r\n\r\n    // IF PAYMENT TYPE IS CREDIT CARD\r\n    // \"paymentType\": \"CREDIT_CARD\",\r\n    // \"cardHolderName\": \"John Doe\",\r\n    // \"cardNumber\": \"4111111111111111\",\r\n    // \"expiration_date\": \"12/27\",\r\n    // \"cvc\": \"123\"\r\n\r\n    //IF UPDATING CHECK-IN\r\n    // \"checkInDate\": \"2024-05-18\",\r\n    // \"checkInTime\": \"10:20:00\"\r\n\r\n    //IF UPDATING CHECK-OUT\r\n    // \"checkOutDate\": \"2024-05-19\",\r\n    // \"checkOutTime\": \"15:00:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/transaction/update",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"transaction",
+						"update"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

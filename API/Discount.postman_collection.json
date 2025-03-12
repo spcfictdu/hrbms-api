@@ -1,0 +1,19 @@
+{
+	"info": {
+		"_postman_id": "6dca8762-86c8-4e77-b90e-56bb69628766",
+		"name": "Discount",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/39319926-6dca8762-86c8-4e77-b90e-56bb69628766?action=share&source=collection_link&creator=35042330"
+	},
+	"item": [
+		{
+			"name": "index",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

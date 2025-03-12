@@ -1,0 +1,68 @@
+{
+	"info": {
+		"_postman_id": "337d7c5b-fd66-49f9-a697-86cf9beb0da3",
+		"name": "System Management - Admin Only",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "35042330",
+		"_collection_link": "https://gold-water-818736.postman.co/workspace/HRBMS~21ee30eb-8ee0-4a2d-bd03-2fa2a5001e0c/collection/35042330-337d7c5b-fd66-49f9-a697-86cf9beb0da3?action=share&source=collection_link&creator=35042330"
+	},
+	"item": [
+		{
+			"name": "Reset Data",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/system/reset-data",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"system",
+						"reset-data"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
