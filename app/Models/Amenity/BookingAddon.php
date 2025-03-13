@@ -22,6 +22,11 @@ class BookingAddOn extends Model
         'total_price'
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at'
+    ];
+
     public function addon(){
         return $this->belongsTo(Addon::class, 'addon_id');
     }

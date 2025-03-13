@@ -1,26 +1,27 @@
 <?php
 
-namespace App\Http\Controllers\Addon;
+namespace App\Http\Controllers\Discount;
 
-use App\Repositories\Addon\IndexAddonRepository;
 use Illuminate\Http\Request;
-use App\Models\Amenity\Addon;
+use App\Models\Discount\Discount;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Addon\IndexAddonRequest;
+use App\Http\Requests\Discount\IndexDiscountRequest;
+use App\Repositories\Discount\IndexDiscountRepository;
 
-class AddonController extends Controller
+class DiscountController extends Controller
 {
+
     protected $index;
     public function __construct(
 
-        IndexAddonRepository $index
+        IndexDiscountRepository $index
     ){
         $this->index = $index;
     }
-    /** 
+    /**
      * Display a listing of the resource.
      */
-    public function index(IndexAddonRequest $request)
+    public function index(IndexDiscountRequest $request)
     {
         return $this->index->execute();
     }
