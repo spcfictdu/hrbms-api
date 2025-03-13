@@ -38,6 +38,13 @@ Admin, Front Desk
 | `voucherCode`      | STRING | Required if `discount` is `VOUCHER` | Filters rooms that accept a specific voucher code. Example: `1234`.                                                        |
 | `addons`           | STRING | Optional                            | Filters rooms based on included add-ons. Example: `EXTRA PILLOW-1`                                                         |
 
+## **Discount Types**
+
+| Abbreviation | Meaning         |
+|-------------|----------------|
+| SNR         | Senior Citizen  |
+| PWD         | Person with Disability |
+
 ## **Success Response Example**
 
 ```json
