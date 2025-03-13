@@ -29,7 +29,7 @@ class UpdateTransactionRequest extends ResponseRequest
             'voucherCode' => ['required_if:discount,VOUCHER', 'string', 'exists:vouchers,code'],
             'idNumber' => ['required_ if:discount,SNR,PWD', 'string'],
 
-            'paymentType' => ['required', 'string', Rule::in(['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'])],
+            'paymentType' => ['string', Rule::in(['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'])],
             'chequeNumber' => ['required_if:paymentType,CHEQUE', 'string', 'unique:cheque_payments,cheque_number'],
             'chequeBankName' => ['required_if:paymentType,CHEQUE', 'string'],
 
