@@ -80,14 +80,15 @@ class RoomEnumRepository extends BaseRepository
             $total = ($addon['quantity'] * $addonPrice);
             return $total;
         }, $addons, $addonsPrice));
+        $addonsTotal =  round($addonsTotal, 2);
 
         $fullAddons = array_map(function ($addon, $addonPrice) {
             $total = $addon['quantity'] * $addonPrice;
-            $total = (float)number_format($total, 2);
+            $total = round($total, 2);
             $fullAddon = [
                 'name' => $addon['name'],
                 'quantity' => $addon['quantity'],
-                'unit_price' => $addonPrice,
+                'unitPrice' => $addonPrice,
                 'total' => $total,
             ];
             return $fullAddon;
@@ -134,7 +135,7 @@ class RoomEnumRepository extends BaseRepository
                     ];
                 }, $dates),
                 'addons' => $fullAddons,
-                'addonsTotal' => (float)number_format($addonsTotal, 2),
+                'addonsTotal' => $addonsTotal,
                 'discount' => ($discountValue * 100 . '%'), // show discount
                 'roomTotal' => $addonsTotal + (array_sum(array_map(function ($date) use ($rate, $discountValue) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));

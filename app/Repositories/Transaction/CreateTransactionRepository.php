@@ -71,7 +71,8 @@ class CreateTransactionRepository extends BaseRepository
                     'id_type' => strtoupper($request->guest['id']['type']),
                     'id_number' => $request->guest['id']['number'],
                 ]);
-            }
+            }   
+            
 
             if ($request->discount === 'VOUCHER') {
                 $voucherCode = Voucher::where('code', $request->voucherCode)->first();
@@ -84,7 +85,7 @@ class CreateTransactionRepository extends BaseRepository
                 "reference_number" => $this->transactionReferenceNumber(),
                 "room_id" => $room->id,
                 "status" => strtoupper($request->status),
-                "room_total" => $request->roomTotal,
+                "room_total" => round($request->roomTotal, 2),
                 "check_in_date" => $request->checkIn['date'],
                 "check_in_time" => $request->checkIn['time'],
                 "check_out_date" => $request->checkOut['date'],
