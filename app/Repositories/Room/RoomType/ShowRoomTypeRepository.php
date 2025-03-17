@@ -107,7 +107,7 @@ class ShowRoomTypeRepository extends BaseRepository
                 }),
                 'amenities' => $roomType->amenities->map(function ($amenity) {
                     return [
-                        'name' => ucwords(strtolower($amenity->name)),
+                        'name' => ucwords(strtolower($amenity->name), " -/_.,:;!?#&()[]{}<>|@%^*+="),
                         'quantity' => $amenity->pivot->quantity
                     ];
                 }),
