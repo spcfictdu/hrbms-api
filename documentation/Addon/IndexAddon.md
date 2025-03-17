@@ -35,24 +35,28 @@ ADMIN
     "results": [
         {
             "name": "EXTRA PILLOW ",
-            "price": "8.45"
+            "price": "3.15"
         },
         {
             "name": "EXTRA TOWEL",
-            "price": "4.97"
+            "price": "3.76"
         },
         {
             "name": "CHAMPAGNE BOTTLE",
-            "price": "5.97"
+            "price": "1.90"
         },
         {
             "name": "AIRPORT PICKUP",
-            "price": "6.77"
+            "price": "9.24"
         },
         {
             "name": "AIRPORT DROPOFF",
-            "price": "9.75"
-        }
+            "price": "7.45"
+        },
+        {
+            "name": "EXTRA BEDSHEET",
+            "price": "89.00"
+        },
     ],
     "code": 200,
     "error": false
