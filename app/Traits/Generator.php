@@ -7,7 +7,8 @@ use App\Models\{
     Amenity\Amenity,
     Room\RoomTypeRate,
     Room\Room,
-    Transaction\Transaction
+    Transaction\Transaction,
+    Amenity\Addon
 };
 use App\Models\Guest\Guest;
 
@@ -29,6 +30,16 @@ trait Generator
 
             $referenceNumber = bin2hex(random_bytes(3));
         } while (Amenity::where("reference_number", $referenceNumber)->first());
+
+        return $referenceNumber;
+    }
+
+    protected function addonReferenceNumber()
+    {
+        do {
+
+            $referenceNumber = bin2hex(random_bytes(3));
+        } while (Addon::where("reference_number", $referenceNumber)->first());
 
         return $referenceNumber;
     }

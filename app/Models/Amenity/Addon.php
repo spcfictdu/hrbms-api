@@ -13,6 +13,7 @@ class Addon extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'reference_number',
         'name',
         'price'
     ];

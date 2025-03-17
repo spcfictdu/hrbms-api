@@ -2,58 +2,53 @@
 
 namespace App\Http\Controllers\Addon;
 
-use App\Repositories\Addon\IndexAddonRepository;
-use Illuminate\Http\Request;
-use App\Models\Amenity\Addon;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Addon\IndexAddonRequest;
+
+use App\Http\Requests\Addon\{IndexAddonRequest, CreateAddonRequest, ShowAddonRequest, UpdateAddonRequest, DeleteAddonRequest};
+
+use App\Repositories\Addon\{IndexAddonRepository, CreateAddonRepository, ShowAddonRepository, UpdateAddonRepository, DeleteAddonRepository};
+
 
 class AddonController extends Controller
 {
-    protected $index;
-    public function __construct(
+    protected $index, $create, $show, $update, $delete;
 
-        IndexAddonRepository $index
+    // * CONSTRUCTOR INJECTION
+    public function __construct(
+        IndexAddonRepository   $index,
+        CreateAddonRepository  $create,
+        ShowAddonRepository    $show,
+        UpdateAddonRepository  $update,
+        DeleteAddonRepository  $delete
     ){
-        $this->index = $index;
+        $this->index   = $index;
+        $this->create  = $create;
+        $this->show    = $show;
+        $this->update  = $update;
+        $this->delete  = $delete;
     }
-    /** 
-     * Display a listing of the resource.
-     */
-    public function index(IndexAddonRequest $request)
-    {
+
+    protected function index(IndexAddonRequest $request) {
         return $this->index->execute();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    
+    protected function create(CreateAddonRequest $request) {
+        return $this->create->execute($request);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+    
+    protected function show(ShowAddonRequest $request, $referenceNumber) {
+        return $this->show->execute($referenceNumber);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+    
+    protected function update(UpdateAddonRequest $request, $referenceNumber) {
+        return $this->update->execute($request, $referenceNumber);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+
+    protected function delete(DeleteAddonRequest $request, $id) {
+        return $this->delete->execute($id);
     }
 }

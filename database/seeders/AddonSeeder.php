@@ -6,13 +6,12 @@ use App\Models\Amenity\Addon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Testing\Fakes\Fake;
+use app\Traits\Generator;
 use Faker\Factory as Faker;
 
 class AddonSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    use Generator;
     public function run(): void
     {
         $faker = Faker::create();
@@ -45,6 +44,7 @@ class AddonSeeder extends Seeder
         foreach ($items as $item){
             Addon::insert([
                 'id' => $item['id'],
+                'reference_number' => $this->addonReferenceNumber(),
                 'name' => $item['name'],
                 'price' => $faker->randomFloat(2, 1, 10)
             ]);
