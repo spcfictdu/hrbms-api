@@ -13,7 +13,7 @@ class CreateAmenityRepository extends BaseRepository
 
         $amenity = Amenity::create([
             'reference_number' => $this->amenityReferenceNumber(),
-            'name' => $request->name,
+            'name' => strtoupper($request->name),
             'price' => $request->price ?? 0,
         ]);
 

@@ -31,7 +31,7 @@ class UpdateAmenityRequest extends ResponseRequest
 
         return [
             'name' => ['required', 'string', Rule::unique('amenities', 'name')->ignore($amenity->id)],
-            'price' => ['nulalble', 'numeric']
+            'price' => ['nullable', 'numeric']
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Amenity;
 
+use Illuminate\Validation\Rule;
 use App\Http\Requests\ResponseRequest;
 
 class CreateAmenityRequest extends ResponseRequest
@@ -24,7 +25,7 @@ class CreateAmenityRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string'],
+            'name' => ['required', 'string', Rule::unique('amenities', 'name')],
             'price' => ['nullable', 'numeric']
         ];
     }

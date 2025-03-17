@@ -13,7 +13,7 @@ class UpdateAmenityRepository extends BaseRepository
         $amenity = Amenity::where('reference_number', $referenceNumber)->firstOrFail();
 
         $amenity->update([
-            'name' => $request->name,
+            'name' => strtoupper($request->name),
             'price' => $request->price ?? 0
         ]);
 
