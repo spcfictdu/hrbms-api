@@ -17,8 +17,10 @@ use App\Http\Controllers\{
     Guest\GuestController,
     ReportGeneration\ReportGenerationController,
     Addon\AddonController,
-    Discount\DiscountController
+    Discount\DiscountController,
+    CashierSession\CashierSessionController
 };
+use App\Http\Controllers\CashierSession\UserCashierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -147,7 +149,7 @@ Route::get('/availability-calendar/{referenceNumber}', [AvailabilityCalendarCont
 
 // Route::get('/addon', [AddonController::class, 'index']);
 
-Route::get('/discount',[DiscountController::class, 'index']);
+Route::get('/discount', [DiscountController::class, 'index']);
 
 Route::group([
     'middleware' => 'auth:sanctum',
@@ -217,6 +219,21 @@ Route::group([
     $route->post('/payment', [ReportGenerationController::class, 'paymentReport']);
     $route->post('/check',   [ReportGenerationController::class, 'checkInOutReport']);
 });
+
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'cashier-session'
+], function ($route) {
+    $route->post('/user/start', [UserCashierController::class, 'startSession']);
+    $route->post('/user/show', [UserCashierController::class, 'showSession']);
+    $route->post('/user/close', [UserCashierController::class, 'closeSession']);
+    // $route->get('/', [CashierSessionController::class, 'index']);
+    // $route->post('/', [CashierSessionController::class, 'create']);
+    // $route->get('/{id}', [CashierSessionController::class, 'show']);
+    // $route->put('/{id}', [CashierSessionController::class, 'update']);
+    // $route->delete('/{id}', [CashierSessionController::class, 'delete']);
+});
+
 
 // This route has authentication check inside the controller
 // When I put the middleware (auth:sanctum), the roles.guard_name would be sanctum when I migrate:fresh and seed

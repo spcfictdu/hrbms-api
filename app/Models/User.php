@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\CashierSession\CashierSession;
 use App\Models\Guest\Guest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -57,5 +58,10 @@ class User extends Authenticatable
     public function guest()
     {
         return $this->hasOne(Guest::class, 'user_id');
+    }
+
+    public function cashierSessions()
+    {
+        return $this->hasMany(CashierSession::class);
     }
 }
