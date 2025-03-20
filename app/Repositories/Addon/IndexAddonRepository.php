@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Addon;
 
-use App\Models\amenity\Addon;
+use App\Models\Amenity\Addon;
 use App\Repositories\BaseRepository;
 
 class IndexAddonRepository extends BaseRepository
