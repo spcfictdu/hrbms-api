@@ -117,7 +117,7 @@ class UserSeeder extends Seeder
                     "last_name" => $userData['last_name'],
                     "province" => strtoupper($faker->state),
                     "city" => strtoupper($faker->city),
-                    "phone_number" => $faker->phoneNumber,
+                    "phone_number" => '09' . $faker->numerify('#########'),
                     // "email" => $faker->email,
                     "email" => "dev@gmail.com",
                     "id_type" => "PRC",

@@ -3,9 +3,11 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\{Transaction\Transaction,
-                Transaction\Payment,
-                Guest\Guest};
+use App\Models\{
+    Transaction\Transaction,
+    Transaction\Payment,
+    Guest\Guest
+};
 
 use Faker\Factory as Faker, Str, Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -25,7 +27,7 @@ class TransactionSeeder extends Seeder
     {
         $faker = Faker::create();
         $now = Carbon::now();
-        
+
         $transactions = [
             [
                 "id" => 1,
@@ -41,7 +43,7 @@ class TransactionSeeder extends Seeder
                 "last_name" => Str::upper($faker->lastName),
                 "province" => Str::upper($faker->state),
                 "city" => Str::upper($faker->city),
-                "phone_number" => $faker->numberBetween(1000000000, 9999999999),
+                "phone_number" => '09' . $faker->numerify('#########'),
                 "email" => $faker->unique()->email,
                 "idType" => [
                     "PASSPORT",
@@ -96,7 +98,7 @@ class TransactionSeeder extends Seeder
                 "last_name" => Str::upper($faker->lastName),
                 "province" => Str::upper($faker->state),
                 "city" => Str::upper($faker->city),
-                "phone_number" => $faker->numberBetween(1000000000, 9999999999),
+                "phone_number" => '09' . $faker->numerify('#########'),
                 "email" => $faker->unique()->email,
                 "idType" => [
                     "PASSPORT",
@@ -151,7 +153,7 @@ class TransactionSeeder extends Seeder
                 "last_name" => Str::upper($faker->lastName),
                 "province" => Str::upper($faker->state),
                 "city" => Str::upper($faker->city),
-                "phone_number" => $faker->numberBetween(1000000000, 9999999999),
+                "phone_number" => '09' . $faker->numerify('#########'),
                 "email" => $faker->unique()->email,
                 "idType" => [
                     "PASSPORT",
@@ -206,7 +208,7 @@ class TransactionSeeder extends Seeder
                 "last_name" => Str::upper($faker->lastName),
                 "province" => Str::upper($faker->state),
                 "city" => Str::upper($faker->city),
-                "phone_number" => $faker->numberBetween(1000000000, 9999999999),
+                "phone_number" => '09' . $faker->numerify('#########'),
                 "email" => $faker->unique()->email,
                 "idType" => [
                     "PASSPORT",
@@ -261,7 +263,7 @@ class TransactionSeeder extends Seeder
                 "last_name" => Str::upper($faker->lastName),
                 "province" => Str::upper($faker->state),
                 "city" => Str::upper($faker->city),
-                "phone_number" => $faker->numberBetween(1000000000, 9999999999),
+                "phone_number" => '09' . $faker->numerify('#########'),
                 "email" => $faker->unique()->email,
                 "idType" => [
                     "PASSPORT",
@@ -305,8 +307,8 @@ class TransactionSeeder extends Seeder
         ];
 
         $now = Carbon::now();
-        
-        foreach ($transactions as $transaction){
+
+        foreach ($transactions as $transaction) {
             $statusIndex = array_rand($transaction['status']);
             $idTypeIndex = array_rand($transaction['idType']);
             $idPaymentTypeIndex = array_rand($transaction['payment']['payment_type']);
@@ -323,7 +325,7 @@ class TransactionSeeder extends Seeder
                 'id_type' => $transaction['idType'][$idTypeIndex],
                 'id_number' => $transaction['idNumber']
             ]);
-            
+
             Transaction::insert([
                 'id' => $transaction['id'],
                 'reference_number' => $this->transactionReferenceNumber(),
