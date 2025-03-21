@@ -8,16 +8,13 @@ use App\Models\{
     Transaction\Payment,
     Guest\Guest
 };
-
-use Faker\Factory as Faker, Str, Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
+use Faker\Factory as Faker;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 use App\Traits\Generator;
-use App\Models\Discount\Discount;
 
 class TransactionSeeder extends Seeder
 {
-
     use Generator;
 
     /**
@@ -28,327 +25,94 @@ class TransactionSeeder extends Seeder
         $faker = Faker::create();
         $now = Carbon::now();
 
-        $transactions = [
-            [
-                "id" => 1,
-                "status" => [
-                    "RESERVED",
-                    "CONFIRMED",
-                    "CHECKED-IN",
-                    "CHECKED-OUT"
-                ],
-                "room_total" => 1234.00,
-                "first_name" => Str::upper($faker->firstName),
-                "middle_name" => Str::upper($faker->lastName),
-                "last_name" => Str::upper($faker->lastName),
-                "province" => Str::upper($faker->state),
-                "city" => Str::upper($faker->city),
-                "phone_number" => '09' . $faker->numerify('#########'),
-                "email" => $faker->unique()->email,
-                "idType" => [
-                    "PASSPORT",
-                    "DRIVER'S LICENSE",
-                    "UMID",
-                    "PHILHEALTH",
-                    "TIN",
-                    "POSTAL",
-                    "NBI CLEARANCE",
-                    "PRC",
-                    "SENIOR CITIZEN",
-                    "NATIONAL",
-                    "PWD"
-                ],
-                "idNumber" => "123456789",
-                "checkIn" => [
-                    "date" => $now->startOfDay()->toDateString(),
-                    "time" => "09:00",
-                ],
-                "checkOut" => [
-                    "date" => $now->addDay()->toDateString(),
-                    "time" => "14:00"
-                ],
-                "payment" => [
-                    "payment_type" => [
-                        "CASH",
-                        "GCASH"
-                    ],
-                    "amount_received" => [
-                        'monday' => 1340,
-                        'tuesday' => 1340,
-                        'wednesday' => 1340,
-                        'thursday' => 1340,
-                        'friday' => 1340,
-                        'saturday' => 1440,
-                        'sunday' => 1440
-                    ]
-                ],
-                "number_of_guest" => 2
-            ],
-            [
-                "id" => 2,
-                "status" => [
-                    "RESERVED",
-                    "CONFIRMED",
-                    "CHECKED-IN",
-                    "CHECKED-OUT"
-                ],
-                "room_total" => 1234.00,
-                "first_name" => Str::upper($faker->firstName),
-                "middle_name" => Str::upper($faker->lastName),
-                "last_name" => Str::upper($faker->lastName),
-                "province" => Str::upper($faker->state),
-                "city" => Str::upper($faker->city),
-                "phone_number" => '09' . $faker->numerify('#########'),
-                "email" => $faker->unique()->email,
-                "idType" => [
-                    "PASSPORT",
-                    "DRIVER'S LICENSE",
-                    "UMID",
-                    "PHILHEALTH",
-                    "TIN",
-                    "POSTAL",
-                    "NBI CLEARANCE",
-                    "PRC",
-                    "SENIOR CITIZEN",
-                    "NATIONAL",
-                    "PWD"
-                ],
-                "idNumber" => "123456789",
-                "checkIn" => [
-                    "date" => $now->startOfDay()->toDateString(),
-                    "time" => "09:00",
-                ],
-                "checkOut" => [
-                    "date" => $now->addDay()->toDateString(),
-                    "time" => "14:00"
-                ],
-                "payment" => [
-                    "payment_type" => [
-                        "CASH",
-                        "GCASH"
-                    ],
-                    "amount_received" => [
-                        'monday' => 1444,
-                        'tuesday' => 1444,
-                        'wednesday' => 1444,
-                        'thursday' => 1444,
-                        'friday' => 1444,
-                        'saturday' => 1544,
-                        'sunday' => 1544
-                    ]
-                ],
-                "number_of_guest" => 2
-            ],
-            [
-                "id" => 3,
-                "status" => [
-                    "RESERVED",
-                    "CONFIRMED",
-                    "CHECKED-IN",
-                    "CHECKED-OUT"
-                ],
-                "room_total" => 1234.00,
-                "first_name" => Str::upper($faker->firstName),
-                "middle_name" => Str::upper($faker->lastName),
-                "last_name" => Str::upper($faker->lastName),
-                "province" => Str::upper($faker->state),
-                "city" => Str::upper($faker->city),
-                "phone_number" => '09' . $faker->numerify('#########'),
-                "email" => $faker->unique()->email,
-                "idType" => [
-                    "PASSPORT",
-                    "DRIVER'S LICENSE",
-                    "UMID",
-                    "PHILHEALTH",
-                    "TIN",
-                    "POSTAL",
-                    "NBI CLEARANCE",
-                    "PRC",
-                    "SENIOR CITIZEN",
-                    "NATIONAL",
-                    "PWD"
-                ],
-                "idNumber" => "123456789",
-                "checkIn" => [
-                    "date" => $now->startOfDay()->toDateString(),
-                    "time" => "09:00",
-                ],
-                "checkOut" => [
-                    "date" => $now->addDay()->toDateString(),
-                    "time" => "14:00"
-                ],
-                "payment" => [
-                    "payment_type" => [
-                        "CASH",
-                        "GCASH"
-                    ],
-                    "amount_received" => [
-                        'monday' => 1754,
-                        'tuesday' => 1754,
-                        'wednesday' => 1754,
-                        'thursday' => 1754,
-                        'friday' => 1754,
-                        'saturday' => 1854,
-                        'sunday' => 1854
-                    ]
-                ],
-                "number_of_guest" => 2
-            ],
-            [
-                "id" => 4,
-                "status" => [
-                    "RESERVED",
-                    "CONFIRMED",
-                    "CHECKED-IN",
-                    "CHECKED-OUT"
-                ],
-                "room_total" => 1234.00,
-                "first_name" => Str::upper($faker->firstName),
-                "middle_name" => Str::upper($faker->lastName),
-                "last_name" => Str::upper($faker->lastName),
-                "province" => Str::upper($faker->state),
-                "city" => Str::upper($faker->city),
-                "phone_number" => '09' . $faker->numerify('#########'),
-                "email" => $faker->unique()->email,
-                "idType" => [
-                    "PASSPORT",
-                    "DRIVER'S LICENSE",
-                    "UMID",
-                    "PHILHEALTH",
-                    "TIN",
-                    "POSTAL",
-                    "NBI CLEARANCE",
-                    "PRC",
-                    "SENIOR CITIZEN",
-                    "NATIONAL",
-                    "PWD"
-                ],
-                "idNumber" => "123456789",
-                "checkIn" => [
-                    "date" => $now->startOfDay()->toDateString(),
-                    "time" => "09:00",
-                ],
-                "checkOut" => [
-                    "date" => $now->addDay()->toDateString(),
-                    "time" => "14:00"
-                ],
-                "payment" => [
-                    "payment_type" => [
-                        "CASH",
-                        "GCASH"
-                    ],
-                    "amount_received" => [
-                        'monday' => 1858,
-                        'tuesday' => 1858,
-                        'wednesday' => 1858,
-                        'thursday' => 1858,
-                        'friday' => 1858,
-                        'saturday' => 1958,
-                        'sunday' => 1958
-                    ]
-                ],
-                "number_of_guest" => 2
-            ],
-            [
-                "id" => 5,
-                "status" => [
-                    "RESERVED",
-                    "CONFIRMED",
-                    "CHECKED-IN",
-                    "CHECKED-OUT"
-                ],
-                "room_total" => 1234.00,
-                "first_name" => Str::upper($faker->firstName),
-                "middle_name" => Str::upper($faker->lastName),
-                "last_name" => Str::upper($faker->lastName),
-                "province" => Str::upper($faker->state),
-                "city" => Str::upper($faker->city),
-                "phone_number" => '09' . $faker->numerify('#########'),
-                "email" => $faker->unique()->email,
-                "idType" => [
-                    "PASSPORT",
-                    "DRIVER'S LICENSE",
-                    "UMID",
-                    "PHILHEALTH",
-                    "TIN",
-                    "POSTAL",
-                    "NBI CLEARANCE",
-                    "PRC",
-                    "SENIOR CITIZEN",
-                    "NATIONAL",
-                    "PWD"
-                ],
-                "idNumber" => "123456789",
-                "checkIn" => [
-                    "date" => $now->startOfDay()->toDateString(),
-                    "time" => "09:00",
-                ],
-                "checkOut" => [
-                    "date" => $now->addDay()->toDateString(),
-                    "time" => "14:00"
-                ],
-                "payment" => [
-                    "payment_type" => [
-                        "CASH",
-                        "GCASH"
-                    ],
-                    "amount_received" => [
-                        'monday' => 2173,
-                        'tuesday' => 2173,
-                        'wednesday' => 2173,
-                        'thursday' => 2173,
-                        'friday' => 2173,
-                        'saturday' => 2273,
-                        'sunday' => 2273
-                    ]
-                ],
-                "number_of_guest" => 2
-            ]
-        ];
-
-        $now = Carbon::now();
+        $transactions = $this->generateTransactions($faker, $now);
 
         foreach ($transactions as $transaction) {
-            $statusIndex = array_rand($transaction['status']);
-            $idTypeIndex = array_rand($transaction['idType']);
-            $idPaymentTypeIndex = array_rand($transaction['payment']['payment_type']);
-
-            Guest::insert([
-                'reference_number' => $this->guestReferenceNumber(),
-                'first_name' => $transaction['first_name'],
-                'middle_name' => $transaction['middle_name'],
-                'last_name' => $transaction['last_name'],
-                'province' => $transaction['province'],
-                'city' => $transaction['city'],
-                'phone_number' => $transaction['phone_number'],
-                'email' => $transaction['email'],
-                'id_type' => $transaction['idType'][$idTypeIndex],
-                'id_number' => $transaction['idNumber']
-            ]);
-
-            Transaction::insert([
-                'id' => $transaction['id'],
-                'reference_number' => $this->transactionReferenceNumber(),
-                'room_id' => $transaction['id'],
-                'status' => $transaction['status'][$statusIndex],
-                // 'payment_id' => $transaction['id'],
-                "room_total" => $transaction['room_total'],
-                'check_in_date' => $transaction['checkIn']['date'],
-                'check_in_time' => $transaction['checkIn']['time'],
-                'check_out_date' => $transaction['checkOut']['date'],
-                'check_out_time' => $transaction['checkOut']['time'],
-                'number_of_guest' => $transaction['number_of_guest'],
-                'guest_id' => $transaction['id'],
-                'created_at' => $now
-            ]);
-
-            Payment::insert([
-                'transaction_id' => $transaction['id'],
-                'payment_type' => $transaction['payment']['payment_type'][$idPaymentTypeIndex],
-                // 'discount_id' => Discount::pluck('id')->random(),
-                'amount_received' => $transaction['payment']['amount_received']['tuesday'],
-                'created_at' => $now
-            ]);
+            $this->createGuest($transaction);
+            $this->createTransaction($transaction, $now);
+            $this->createPayment($transaction, $now);
         }
+    }
+
+    private function generateTransactions($faker, $now)
+    {
+        $transactions = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $transactions[] = [
+                "id" => $i,
+                "status" => ["RESERVED", "CONFIRMED", "CHECKED-IN", "CHECKED-OUT"],
+                "room_total" => 1234.00,
+                "first_name" => Str::upper($faker->firstName),
+                "middle_name" => Str::upper($faker->lastName),
+                "last_name" => Str::upper($faker->lastName),
+                "province" => Str::upper($faker->state),
+                "city" => Str::upper($faker->city),
+                "phone_number" => '09' . $faker->numerify('#########'),
+                "email" => $faker->unique()->email,
+                "idType" => ["PASSPORT", "DRIVER'S LICENSE", "UMID", "PHILHEALTH", "TIN", "POSTAL", "NBI CLEARANCE", "PRC", "SENIOR CITIZEN", "NATIONAL", "PWD"],
+                "idNumber" => "123456789",
+                "checkIn" => ["date" => $now->startOfDay()->toDateString(), "time" => "09:00"],
+                "checkOut" => ["date" => $now->addDay()->toDateString(), "time" => "14:00"],
+                "payment" => [
+                    "payment_type" => ["CASH", "GCASH"],
+                    "amount_received" => [
+                        'monday' => 1340 + ($i - 1) * 100,
+                        'tuesday' => 1340 + ($i - 1) * 100,
+                        'wednesday' => 1340 + ($i - 1) * 100,
+                        'thursday' => 1340 + ($i - 1) * 100,
+                        'friday' => 1340 + ($i - 1) * 100,
+                        'saturday' => 1440 + ($i - 1) * 100,
+                        'sunday' => 1440 + ($i - 1) * 100
+                    ]
+                ],
+                "number_of_guest" => 2
+            ];
+        }
+        return $transactions;
+    }
+
+    private function createGuest($transaction)
+    {
+        Guest::insert([
+            'reference_number' => $this->guestReferenceNumber(),
+            'first_name' => $transaction['first_name'],
+            'middle_name' => $transaction['middle_name'],
+            'last_name' => $transaction['last_name'],
+            'province' => $transaction['province'],
+            'city' => $transaction['city'],
+            'phone_number' => $transaction['phone_number'],
+            'email' => $transaction['email'],
+            'id_type' => $transaction['idType'][array_rand($transaction['idType'])],
+            'id_number' => $transaction['idNumber']
+        ]);
+    }
+
+    private function createTransaction($transaction, $now)
+    {
+        Transaction::insert([
+            'id' => $transaction['id'],
+            'reference_number' => $this->transactionReferenceNumber(),
+            'room_id' => $transaction['id'],
+            'status' => $transaction['status'][array_rand($transaction['status'])],
+            'room_total' => $transaction['room_total'],
+            'check_in_date' => $transaction['checkIn']['date'],
+            'check_in_time' => $transaction['checkIn']['time'],
+            'check_out_date' => $transaction['checkOut']['date'],
+            'check_out_time' => $transaction['checkOut']['time'],
+            'number_of_guest' => $transaction['number_of_guest'],
+            'guest_id' => $transaction['id'],
+            'created_at' => $now
+        ]);
+    }
+
+    private function createPayment($transaction, $now)
+    {
+        Payment::insert([
+            'transaction_id' => $transaction['id'],
+            'cashier_session_id' => 1,
+            'payment_type' => $transaction['payment']['payment_type'][array_rand($transaction['payment']['payment_type'])],
+            'amount_received' => $transaction['payment']['amount_received']['tuesday'],
+            'created_at' => $now
+        ]);
     }
 }

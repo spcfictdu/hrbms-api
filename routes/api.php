@@ -224,10 +224,11 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'cashier-session'
 ], function ($route) {
+    $route->get('/user/show', [UserCashierController::class, 'showSession']);
     $route->post('/user/start', [UserCashierController::class, 'startSession']);
-    $route->post('/user/show', [UserCashierController::class, 'showSession']);
     $route->post('/user/close', [UserCashierController::class, 'closeSession']);
-    // $route->get('/', [CashierSessionController::class, 'index']);
+    $route->get('/', [CashierSessionController::class, 'index']);
+    $route->get('/{id}/toggle', [CashierSessionController::class, 'toggle']);
     // $route->post('/', [CashierSessionController::class, 'create']);
     // $route->get('/{id}', [CashierSessionController::class, 'show']);
     // $route->put('/{id}', [CashierSessionController::class, 'update']);

@@ -2,7 +2,7 @@
 
 namespace App\Models\Transaction;
 
-
+use App\Models\CashierSession\CashierSession;
 use App\Models\Discount\Voucher;
 use App\Models\PaymentType\Cash;
 use App\Models\Discount\Discount;
@@ -23,6 +23,7 @@ class Payment extends Model
 
     protected $fillable = [
         "transaction_id",
+        "cashier_session_id",
         "payment_type",
         "amount_received",
         // "payment_discount_id"
@@ -37,6 +38,10 @@ class Payment extends Model
         "updated_at"
     ];
 
+    protected $casts = [
+        "amount_received" => "decimal:2"
+    ];
+
     // protected function transaction()
     // {
     //     return $this->hasMany(Transaction::class, 'payment_id');
@@ -47,30 +52,38 @@ class Payment extends Model
         return $this->belongsTo(Transaction::class, 'transaction_id');
     }
 
-    public function voucherDiscount(){
+    public function voucherDiscount()
+    {
         return $this->hasOne(VoucherDiscount::class);
     }
 
-    public function seniorPwdDiscount(){
+    public function seniorPwdDiscount()
+    {
         return $this->hasOne(SeniorPwdDiscount::class);
     }
 
-    public function discount(){
+    public function discount()
+    {
         return $this->belongsTo(Discount::class);
     }
 
-    public function voucher(){
+    public function voucher()
+    {
         return $this->belongsTo(Voucher::class);
     }
 
-    public function chequePayment(){
+    public function chequePayment()
+    {
         return $this->hasOne(ChequePayment::class);
     }
 
-    public function creditCartPayment(){
+    public function creditCartPayment()
+    {
         return $this->hasOne(CreditCardPayment::class);
     }
 
-
-    
+    public function cashierSession()
+    {
+        return $this->belongsTo(CashierSession::class);
+    }
 }

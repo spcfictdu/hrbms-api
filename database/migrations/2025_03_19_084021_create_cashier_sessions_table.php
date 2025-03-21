@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('closing_balance', 10, 2)->nullable();
             $table->dateTime('opened_at');
             $table->dateTime('closed_at')->nullable();
-            $table->boolean('is_open')->default(true);
+            // $table->boolean('is_open')->default(true);
             $table->string('status')->default('active');
             $table->timestamps();
         });

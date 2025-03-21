@@ -2,6 +2,7 @@
 
 namespace App\Models\CashierSession;
 
+use App\Models\Transaction\Payment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,11 +27,17 @@ class CashierSession extends Model
     ];
 
     protected $casts = [
+        'opening_balance' => 'decimal:2',
         'is_open' => 'boolean'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }
