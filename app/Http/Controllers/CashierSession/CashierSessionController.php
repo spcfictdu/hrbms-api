@@ -30,7 +30,7 @@ class CashierSessionController extends Controller
 
     protected function index(IndexCashierSessionRequest $request)
     {
-        return $this->index->execute();
+        return $this->index->execute($request);
     }
 
 
