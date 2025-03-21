@@ -64,6 +64,7 @@ class UserCashierController extends Controller
             return [
                 'name' => $types,
                 'totalAmount' => number_format((float) $payments->sum('amount_received'), 2, '.', '')
+                // 'totalAmount' => 
             ];
         })->values();
 
@@ -82,9 +83,7 @@ class UserCashierController extends Controller
             'payments' => $payments,
         ];
 
-
-
-        return $this->success('Success', $data);
+        return $this->success('Success, the user\'s cashier has been opened.', $data);
     }
 
     public function closeSession(Request $request)
@@ -92,7 +91,7 @@ class UserCashierController extends Controller
         $user = auth()->user();
 
         $request->validate([
-            'closingBalance' => 'required',
+            'closingBalance' => 'required|numeric|min:0',
         ]);
 
         $userActiveCashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
@@ -105,8 +104,8 @@ class UserCashierController extends Controller
         $total = $totalPayments + $openingBalance;
 
         // Check if the total matches the closing balance
-        if ($total !== $request->closingBalance) {
-            return $this->error('Total and closing balance are not equal');
+        if ($total !== (float) $request->closingBalance) {
+            return $this->error('Total and closing balance are not equal', 500, $total,);
         }
 
         $userActiveCashierSession->update([
@@ -115,6 +114,6 @@ class UserCashierController extends Controller
             'status' => 'INACTIVE'
         ]);
 
-        return $this->success('Success', $userActiveCashierSession);
+        return $this->success('The user\'s cashier has been closed.');
     }
 }
