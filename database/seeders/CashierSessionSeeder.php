@@ -22,6 +22,13 @@ class CashierSessionSeeder extends Seeder
                 // "is_open"
                 "status" => "ACTIVE",
             ],
+            [
+                "userId" => 66,
+                "openingBalance" => "1000",
+                "openedAt" => Date::now(),
+                // "is_open"
+                "status" => "ACTIVE",
+            ]
         ];
 
         foreach ($data as $row) {

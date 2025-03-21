@@ -30,7 +30,7 @@ class TransactionSeeder extends Seeder
         foreach ($transactions as $transaction) {
             $this->createGuest($transaction);
             $this->createTransaction($transaction, $now);
-            $this->createPayment($transaction, $now);
+            $this->createPayment($transaction, $now, $faker);
         }
     }
 
@@ -105,11 +105,11 @@ class TransactionSeeder extends Seeder
         ]);
     }
 
-    private function createPayment($transaction, $now)
+    private function createPayment($transaction, $now, $faker)
     {
         Payment::insert([
             'transaction_id' => $transaction['id'],
-            'cashier_session_id' => 1,
+            'cashier_session_id' => $faker->randomElement([1, 2]),
             'payment_type' => $transaction['payment']['payment_type'][array_rand($transaction['payment']['payment_type'])],
             'amount_received' => $transaction['payment']['amount_received']['tuesday'],
             'created_at' => $now
