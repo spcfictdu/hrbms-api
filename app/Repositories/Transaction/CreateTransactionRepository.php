@@ -26,7 +26,15 @@ class CreateTransactionRepository extends BaseRepository
 
     public function execute($request)
     {
-       
+        DB::transaction(function () use($request) {
+            $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
+
+            if($voucher->expires < now()){
+                $voucher->update(['status' => 'EXPIRED']);
+                
+            }
+        });
+
         DB::beginTransaction();
 
         try {
@@ -129,12 +137,24 @@ class CreateTransactionRepository extends BaseRepository
                 if ($request->discount) {
                     $discountName = strtoupper($request->discount);
                     if ($discountName === 'VOUCHER') {
-                        $voucher = Voucher::where('code', $request->voucherCode)->first();
-                        VoucherDiscount::create([
-                            "payment_id" => $payment->id,
-                            "discount" => $discountName,
-                            "value" => $voucher->value,
-                        ]);
+                        
+                        $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
+
+                        if($voucher->status === 'ACTIVE'){
+                            VoucherDiscount::create([
+                                "payment_id" => $payment->id,
+                                "discount" => $discountName,
+                                "value" => $voucher->value,
+                            ]);
+                            $voucher->update([
+                                'usage' => (int)$voucher->usage - 1,
+                                'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE'
+                            ]);
+
+                        }else{
+                            return $this->error('Voucher is not available');
+                        }
+                      
                     } else {
                         $discount = Discount::where('name', $discountName)->first();
                         SeniorPwdDiscount::create([

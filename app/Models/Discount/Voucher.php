@@ -8,6 +8,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Voucher extends Model
 {
+    protected $fillable = [
+        'reference_number',
+        'code',
+        'value', 
+        'usage',
+        'status',
+        'expires_at'
+    ];
+
+    protected $hidden = [   
+        'created_at',
+        'updated_at',
+        'id'
+    ];
+    
     use HasFactory;
 
     public function payments(){

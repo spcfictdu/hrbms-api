@@ -8,7 +8,8 @@ use App\Models\{
     Room\RoomTypeRate,
     Room\Room,
     Transaction\Transaction,
-    Amenity\Addon
+    Amenity\Addon,
+    Discount\Voucher
 };
 use App\Models\Guest\Guest;
 
@@ -40,6 +41,15 @@ trait Generator
 
             $referenceNumber = bin2hex(random_bytes(3));
         } while (Addon::where("reference_number", $referenceNumber)->first());
+
+        return $referenceNumber;
+    }
+    protected function voucherReferenceNumber()
+    {
+        do {
+
+            $referenceNumber = bin2hex(random_bytes(3));
+        } while (Voucher::where("reference_number", $referenceNumber)->first());
 
         return $referenceNumber;
     }

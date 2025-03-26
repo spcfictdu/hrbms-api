@@ -18,9 +18,12 @@ use App\Http\Controllers\{
     ReportGeneration\ReportGenerationController,
     Addon\AddonController,
     Discount\DiscountController,
-    CashierSession\CashierSessionController
+    CashierSession\CashierSessionController,
+    Voucher\VoucherController,
+    CashierSession\UserCashierController,
+    TestController
 };
-use App\Http\Controllers\CashierSession\UserCashierController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +39,8 @@ use App\Http\Controllers\CashierSession\UserCashierController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::apiResource('test', TestController::class);
 
 Route::group([
     'prefix' => 'user'
@@ -160,6 +165,17 @@ Route::group([
     $route->get('/{referenceNumber}', [AddonController::class, 'show']);
     $route->put('/update/{referenceNumber}', [AddonController::class, 'update']);
     $route->delete('/delete/{referenceNumber}', [AddonController::class, 'delete']);
+});
+
+Route::group([
+    'middleware' => 'auth:sanctum',
+    'prefix' => 'voucher'
+], function($route){
+    $route->get('/', [VoucherController::class, 'index']);
+    $route->post('/create', [VoucherController::class, 'create']);
+    $route->get('/{referenceNumber}', [VoucherController::class, 'show']);
+    $route->put('/update/{referenceNumber}', [VoucherController::class, 'update']);
+    $route->delete('/delete/{referenceNumber}', [VoucherController::class, 'delete']);
 });
 // For enums or dropdowns
 Route::group([
