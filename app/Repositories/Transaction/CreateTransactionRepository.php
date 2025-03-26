@@ -26,19 +26,23 @@ class CreateTransactionRepository extends BaseRepository
 
     public function execute($request)
     {
-        DB::transaction(function () use($request) {
-            $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
+        if (isset($request->voucherCode)) {
+            DB::transaction(function () use ($request) {
+                $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
 
-            if($voucher->expires < now()){
-                $voucher->update(['status' => 'EXPIRED']);
-                
-            }
-        });
+                if ($voucher->expires < now()) {
+                    $voucher->update(['status' => 'EXPIRED']);
+                }
+            });
+        }
 
         DB::beginTransaction();
 
         try {
             $room = Room::where('reference_number', $request->room['referenceNumber'])->first();
+
+            $user = $request->user();
+            $userCashier = $user->cashierSessions->where('status', 'ACTIVE')->first();
 
             if (!$room) {
                 return $this->error('Room not found.');
@@ -79,8 +83,8 @@ class CreateTransactionRepository extends BaseRepository
                     'id_type' => strtoupper($request->guest['id']['type']),
                     'id_number' => $request->guest['id']['number'],
                 ]);
-            }   
-            
+            }
+
 
             if ($request->discount === 'VOUCHER') {
                 $voucherCode = Voucher::where('code', $request->voucherCode)->first();
@@ -125,6 +129,7 @@ class CreateTransactionRepository extends BaseRepository
 
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,
+                    "cashier_session_id" => $userCashier->id,
                     "payment_type" => strtoupper($request->payment['paymentType']),
                     "amount_received" => $request->payment['amountReceived']
                 ]);
@@ -137,10 +142,10 @@ class CreateTransactionRepository extends BaseRepository
                 if ($request->discount) {
                     $discountName = strtoupper($request->discount);
                     if ($discountName === 'VOUCHER') {
-                        
+
                         $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
 
-                        if($voucher->status === 'ACTIVE'){
+                        if ($voucher->status === 'ACTIVE') {
                             VoucherDiscount::create([
                                 "payment_id" => $payment->id,
                                 "discount" => $discountName,
@@ -150,11 +155,9 @@ class CreateTransactionRepository extends BaseRepository
                                 'usage' => (int)$voucher->usage - 1,
                                 'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE'
                             ]);
-
-                        }else{
+                        } else {
                             return $this->error('Voucher is not available');
                         }
-                      
                     } else {
                         $discount = Discount::where('name', $discountName)->first();
                         SeniorPwdDiscount::create([

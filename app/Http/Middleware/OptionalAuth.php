@@ -4,21 +4,28 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class OptionalAuth
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
      */
     public function handle(Request $request, Closure $next)
     {
+        // Check if a bearer token is present in the request
         if ($request->bearerToken()) {
+            // Attempt to authenticate the user using Sanctum
             $user = Auth::guard('sanctum')->user();
+            // Log::info($user);
+
             if ($user) {
+                // Set the authenticated user in the request context
                 $request->setUserResolver(function () use ($user) {
                     return $user;
                 });

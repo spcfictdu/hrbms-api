@@ -44,7 +44,7 @@ class IndexCashierSessionRepository extends BaseRepository
                 'column' => 'opened_at'
             ],
             'closedAt' => [
-                'column' => 'closedAt'
+                'column' => 'closed_at'
             ],
             'status' => [
                 'column' => 'status'

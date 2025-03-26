@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\LogRequests;
+use App\Http\Middleware\OptionalAuth;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -68,6 +69,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         // Custom Middleware
-        'optional.auth' => \App\Http\Middleware\OptionalAuth::class,
+        'optional.auth' => OptionalAuth::class,
     ];
 }

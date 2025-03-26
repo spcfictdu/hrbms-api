@@ -170,7 +170,7 @@ Route::group([
 Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'voucher'
-], function($route){
+], function ($route) {
     $route->get('/', [VoucherController::class, 'index']);
     $route->post('/create', [VoucherController::class, 'create']);
     $route->get('/{referenceNumber}', [VoucherController::class, 'show']);
