@@ -6,7 +6,7 @@ use App\Http\Requests\ResponseRequest;
 
 class LoginRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -24,8 +24,8 @@ class LoginRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'username' => ['required', 'string'],
-            'password' => ['required']
+            'username' => ['required', 'string', 'regex:/^[^\s!@#$%^&*()+=\[\]{};:"\\|,.<>\/?]*$/'],
+            'password' => ['required', 'min:8']
         ];
     }
 }

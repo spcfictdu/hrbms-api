@@ -45,8 +45,8 @@ Route::apiResource('test', TestController::class);
 Route::group([
     'prefix' => 'user'
 ], function ($route) {
-    $route->post('/admin/login',  [AuthController::class, 'login']);
-    $route->post('/guest/login',  [AuthController::class, 'guestLogin']);
+    $route->post('/admin/login',  [AuthController::class, 'login'])->middleware('throttle:login');
+    $route->post('/guest/login',  [AuthController::class, 'guestLogin'])->middleware('throttle:login');;
 });
 
 Route::group([

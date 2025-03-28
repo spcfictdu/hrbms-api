@@ -6,7 +6,7 @@ use App\Http\Requests\ResponseRequest;
 
 class GuestLoginRequest extends ResponseRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -24,7 +24,7 @@ class GuestLoginRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'string'],
+            'email' => ['required', 'string', 'email'],
             'password' => ['required']
         ];
     }

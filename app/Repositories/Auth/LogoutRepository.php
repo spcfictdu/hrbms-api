@@ -3,6 +3,7 @@
 namespace App\Repositories\Auth;
 
 use App\Repositories\BaseRepository;
+use Laravel\Sanctum\TransientToken;
 
 use App\Models\User;
 
@@ -19,7 +20,15 @@ class LogoutRepository extends BaseRepository
 
         // $this->invalidateToken();
 
-        $request->user()->currentAccessToken()->delete();
+        if ($user->tokens()->count() > 0) {
+            $user->tokens()->delete(); // Delete all personal access tokens
+        }
+
+        // $token = $user->currentAccessToken();
+
+        // if ($token) {
+        //     $token->delete(); // Only delete if a token exists
+        // }
 
         return $this->success("Logged out successfully");
     }
