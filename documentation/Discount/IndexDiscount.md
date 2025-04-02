@@ -1,4 +1,4 @@
-### Index Amenity
+### Index Discount
 
 This endpoint retrieves the list of all discounts.
 

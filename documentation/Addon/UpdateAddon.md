@@ -1,4 +1,4 @@
-### Update Amenity
+### Update Addon
 
 This endpoint is used to update an addon using the provided reference number of the addon.
 

@@ -1,4 +1,4 @@
-### Show Amenity
+### Show Addon
 
 This endpoint retrieves information about a specific addon using the provided reference number of the addon.
 

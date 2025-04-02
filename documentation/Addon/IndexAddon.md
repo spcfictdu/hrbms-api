@@ -1,4 +1,4 @@
-### Index Amenity
+### Index Addon
 
 This endpoint retrieves the list of all addons.
 

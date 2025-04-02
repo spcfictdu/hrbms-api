@@ -1,4 +1,4 @@
-### Delete Amenity
+### Delete Addon
 
 This endpoint is used to is used to delete a specific addon using the provided reference number of the addon.
 

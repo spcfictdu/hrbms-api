@@ -1,11 +1,11 @@
-### Create Amenity
+### Create Addon
 
 This endpoint is used to create a new addon.
 
 #### URL
 
 ```
-{{base_url}}/api/adon/create
+{{base_url}}/api/addon/create
 ```
 
 #### Method
