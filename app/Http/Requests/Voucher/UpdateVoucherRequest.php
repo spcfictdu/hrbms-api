@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Voucher;
 
 use Illuminate\Validation\Rule;
+use App\Models\Discount\Voucher;
 use App\Http\Requests\ResponseRequest;
 
 class UpdateVoucherRequest extends ResponseRequest
@@ -24,11 +25,13 @@ class UpdateVoucherRequest extends ResponseRequest
      */
     public function rules()
     {
+        $voucher = Voucher::where('reference_number', $this->referenceNumber)->firstOrFail();
         return [
-            'code' => ['string', Rule::unique('vouchers', 'code')],
+            'code' => ['string', Rule::unique('vouchers', 'code')->ignore($voucher->id)],
             'value' => ['numeric'],
             'usage' => ['numeric'],
-            'status' => ['string', 'exists:voucer,status'],
-        ];
+            'status' => ['string', Rule::in(['ACTIVE', 'INACTIVE'])],
+            'expires_at' => ['date', 'after:today']
+        ]; 
     }
 }

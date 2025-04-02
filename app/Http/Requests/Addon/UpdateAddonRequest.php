@@ -28,7 +28,7 @@ class UpdateAddonRequest extends ResponseRequest
         $addon = Addon::where('reference_number', $this->referenceNumber)->firstOrFail();
         
         return [
-            // 'name' => ['string', Rule::unique('addons', 'name')],
+            'name' => ['string', Rule::unique('addons', 'name')->ignore($addon->id)],
             'price' => ['nullable','numeric']
         ];
     }

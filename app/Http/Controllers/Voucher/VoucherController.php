@@ -38,17 +38,17 @@ class VoucherController extends Controller
     }
 
     
-    protected function show(ShowVoucherRequest $request, $id) {
-        return $this->show->execute($id);
+    protected function show(ShowVoucherRequest $request, $referenceNumber) {
+        return $this->show->execute($referenceNumber);
     }
 
     
-    protected function update(UpdateVoucherRequest $request, $id) {
-        return $this->update->execute($request, $id);
+    protected function update(UpdateVoucherRequest $request, $referenceNumber) {
+        return $this->update->execute($request, $referenceNumber);
     }
 
 
-    protected function delete(DeleteVoucherRequest $request, $id) {
-        return $this->delete->execute($id);
+    protected function delete(DeleteVoucherRequest $request, $referenceNumber) {
+        return $this->delete->execute($referenceNumber);
     }
 }
