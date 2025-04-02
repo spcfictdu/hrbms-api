@@ -12,10 +12,21 @@ class CreateVoucherRepository extends BaseRepository
         $voucher = Voucher::create([
             'reference_number' => $this->voucherReferenceNumber(),
             'code' => $request->code,
-            'value' => $request->value,
+            'value' => ($request->value / 100),
             'usage' => $request->usage,
             'status' => 'ACTIVE',
             'expires_at' => $request->expires_at
         ]);
+
+        return $this->success('Voucher created', 
+                 [
+                    'referenceNumber' => $voucher->reference_number,
+                    'code' => $voucher->code,
+                    'discount' => ($voucher->value*100 . '%'),
+                    'usage' => $voucher->usage,
+                    'status' => $voucher->status,
+                    'expiresAt' => $voucher->expires_at
+                 ]
+            );
     }
 }   

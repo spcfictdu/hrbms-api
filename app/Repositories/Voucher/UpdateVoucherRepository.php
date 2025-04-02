@@ -10,28 +10,45 @@ class UpdateVoucherRepository extends BaseRepository
     public function execute($request, $referenceNumber)
     {
         $voucher = Voucher::where('reference_number', $referenceNumber)->firstOrFail();
-        $voucherUsage = $request->usage?? $voucher->usage;
+        $voucherCode = $request->code ?? $voucher->code;
+        $voucherValue = $request->value ? $request->value / 100 :$voucher->value;
+        $voucherUsage = $request->usage ?? $voucher->usage;
 
         if($request->status){
-            $voucherStatus = $request->status;
-            if($request->status === 'ACTIVATE' && $voucherUsage >= 1){
+            if($request->status === 'ACTIVE' && $voucherUsage >= 1){
                 $voucher->update([
-                    'code' => $request->code,
-                    'value' => $request->value,
+                    'code' => $voucherCode,
+                    'value' => $voucherValue,
                     'usage' => $voucherUsage,
-                    'status' => $voucherStatus
+                    'status' => $request->status
                 ]);
             }else{
-                return $this->error('Voucher is redeemed');
+                $voucher->update([
+                    'code' => $voucherCode,
+                    'value' => $voucherValue,
+                    'usage' => $voucherUsage,
+                    'status' => $request->status
+                ]);
             }
         }else{
             $voucherStatus = $voucherUsage < 1 ? 'INACTIVE' : 'ACTIVE';
             $voucher->update([
-                'code' => $request->code,
-                'value' => $request->value,
+                'code' => $voucherCode,
+                'value' => $voucherValue,
                 'usage' => $voucherUsage,
                 'status' => $voucherStatus
             ]);
         }  
+
+        return $this->success('Voucher updated', 
+                 [
+                    'referenceNumber' => $voucher->reference_number,
+                    'code' => $voucher->code,
+                    'discount' => ($voucher->value*100 . '%'),
+                    'usage' => $voucher->usage,
+                    'status' => $voucher->status,
+                    'expiresAt' => $voucher->expires_at
+                 ]
+            );
     }
 }

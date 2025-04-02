@@ -15,10 +15,12 @@ class IndexVoucherRepository extends BaseRepository
             'list of all vouchers', $vouchers->map(function($voucher){
                 return [
                     'code' => $voucher->code,
-                    'discount' => ($voucher->value*100 . '%')
+                    'discount' => ($voucher->value*100 . '%'),
+                    'usage' => $voucher->usage,
+                    'status' => $voucher->status
                 ];
                 
-            }));
+            })); 
 
     }
 }
