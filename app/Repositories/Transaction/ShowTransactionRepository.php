@@ -69,7 +69,7 @@ class ShowTransactionRepository extends BaseRepository
         // Calculate discount
         $discountValue = 0;
 
-        if ($transaction->payment->voucherDiscount) {
+        if (isset($transaction->payment->voucherDiscount)) {
             $discountValue = $transaction->payment->voucherDiscount->value ?? 0;
         } else {
             $discountValue = $transaction->payment->seniorPwdDiscount->value ?? 0;

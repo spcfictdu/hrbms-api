@@ -42,7 +42,6 @@ class CreateTransactionRepository extends BaseRepository
             $room = Room::where('reference_number', $request->room['referenceNumber'])->first();
 
             $user = $request->user();
-            $userCashier = $user->cashierSessions->where('status', 'ACTIVE')->first();
 
             if (!$room) {
                 return $this->error('Room not found.');
@@ -126,7 +125,7 @@ class CreateTransactionRepository extends BaseRepository
             $payment = null;
 
             if (isset($request->payment) && isset($transaction->id)) {
-
+                $userCashier = $user->cashierSessions->where('status', 'ACTIVE')->first();
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,
                     "cashier_session_id" => $userCashier->id,
