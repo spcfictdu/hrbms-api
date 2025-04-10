@@ -152,7 +152,7 @@ Route::group([
 
 Route::get('/availability-calendar/{referenceNumber}', [AvailabilityCalendarController::class, 'show']);
 
-// Route::get('/addon', [AddonController::class, 'index']);
+Route::get('/addon', [AddonController::class, 'index']);
 
 Route::get('/discount', [DiscountController::class, 'index']);
 
@@ -160,7 +160,7 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'addon'
 ], function ($route) {
-    $route->get('/', [AddonController::class, 'index']);
+    // $route->get('/', [AddonController::class, 'index']);
     $route->post('/create', [AddonController::class, 'create']);
     $route->get('/{referenceNumber}', [AddonController::class, 'show']);
     $route->put('/update/{referenceNumber}', [AddonController::class, 'update']);
