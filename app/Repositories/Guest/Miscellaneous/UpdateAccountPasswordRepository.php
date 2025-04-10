@@ -17,13 +17,17 @@ class UpdateAccountPasswordRepository extends BaseRepository
         // return $this->user();
         $user = auth()->user();
 
-        if ($this->user()->getRoleNames()->first() == "GUEST" && Hash::check($request->oldPassword, $user->password)) {
+        if ($this->user()->getRoleNames()->first() !== "GUEST") {
+            return $this->error("Guest not found");
+        }
+
+        if (Hash::check($request->oldPassword, $user->password)) {
             $user->password = Hash::make($request->newPassword);
             $user->save();
 
             return $this->success("User Details Updated Successfully");
         } else {
-            return $this->error("Guest not found.");
+            return $this->error("Wrong old Password");
         }
     }
 }
