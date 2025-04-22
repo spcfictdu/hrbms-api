@@ -235,7 +235,7 @@ Route::group([
     $route->post('/payment', [ReportGenerationController::class, 'paymentReport']);
     $route->post('/check',   [ReportGenerationController::class, 'checkInOutReport']);
     $route->get('/daily-reservations',   [ReportGenerationController::class, 'dailyReservations']);
-    $route->get('/room-occupancy',   [ReportGenerationController::class, 'room-occupancy']);
+    $route->get('/room-occupancy',   [ReportGenerationController::class, 'roomOccupancy']);
 });
 
 Route::group([
