@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ReportGeneration;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 // * REQUEST
 use App\Http\Requests\ReportGeneration\{
@@ -15,21 +16,24 @@ use App\Http\Requests\ReportGeneration\{
 use App\Repositories\ReportGeneration\{
     GenerateRevenueReportRepository,
     GeneratePaymentReportRepository,
-    GenerateCheckInOutReportRepository
+    GenerateCheckInOutReportRepository,
+    GenerateDailyReservationsReportRepository
 };
 
 class ReportGenerationController extends Controller
 {
-    protected $revenueReport, $paymentReport, $checkInOutReport;
+    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations;
 
     public function __construct(
         GenerateRevenueReportRepository $revenueReport,
         GeneratePaymentReportRepository $paymentReport,
-        GenerateCheckInOutReportRepository $checkInOutReport
+        GenerateCheckInOutReportRepository $checkInOutReport,
+        GenerateDailyReservationsReportRepository $dailyReservations
     ) {
         $this->revenueReport = $revenueReport;
         $this->paymentReport = $paymentReport;
         $this->checkInOutReport = $checkInOutReport;
+        $this->dailyReservations = $dailyReservations;
     }
 
     protected function revenueReport(GenerateRevenueReportRequest $request)
@@ -45,5 +49,10 @@ class ReportGenerationController extends Controller
     protected function checkInOutReport(GenerateCheckInOutReportRequest $request)
     {
         return $this->checkInOutReport->execute($request);
+    }
+    
+    protected function dailyReservations(Request $request)
+    {
+        return $this->dailyReservations->execute($request);
     }
 }
