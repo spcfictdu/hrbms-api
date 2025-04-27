@@ -26,8 +26,6 @@ return new class extends Migration
             $table->integer('number_of_guest')->nullable();
             $table->unsignedBigInteger('guest_id');
             $table->foreign('guest_id')->references('id')->on('guests')->onDelete('cascade');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('transaction_history_id')->nullable();
             $table->foreign('transaction_history_id')->references('id')->on('transaction_histories');
             $table->softDeletes();
