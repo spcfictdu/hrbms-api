@@ -5,6 +5,7 @@ namespace App\Models\Transaction;
 use App\Models\Amenity\BookingAddon;
 use App\Models\Guest\Guest;
 use App\Models\Room\Room;
+use App\Models\User;
 
 use App\Models\Transaction\Payment;
 use Illuminate\Database\Eloquent\Model;
@@ -82,5 +83,10 @@ class Transaction extends Model
     public function bookingAddOn()
     {
         return $this->hasMany(BookingAddon::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
