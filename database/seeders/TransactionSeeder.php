@@ -12,7 +12,6 @@ use Faker\Factory as Faker;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Traits\Generator;
-use App\Models\User;
 
 class TransactionSeeder extends Seeder
 {
@@ -25,12 +24,6 @@ class TransactionSeeder extends Seeder
     {
         $faker = Faker::create();
         $now = Carbon::now();
-
-        $user = User::whereHas('roles', function($query) {
-            $query->whereIn('name', ['ADMIN', 'FRONT DESK']);
-        })->inRandomOrder()->first();
-
-        $user_id = $user ? $user->id : null;
 
         $transactions = $this->generateTransactions($faker, $now);
 
@@ -108,7 +101,6 @@ class TransactionSeeder extends Seeder
             'check_out_time' => $transaction['checkOut']['time'],
             'number_of_guest' => $transaction['number_of_guest'],
             'guest_id' => $transaction['id'],
-            'user_id' => $user_id,
             'created_at' => $now
         ]);
     }
