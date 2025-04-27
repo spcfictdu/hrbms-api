@@ -236,6 +236,7 @@ Route::group([
     $route->post('/check',   [ReportGenerationController::class, 'checkInOutReport']);
     $route->get('/daily-reservations',   [ReportGenerationController::class, 'dailyReservations']);
     $route->get('/room-occupancy',   [ReportGenerationController::class, 'roomOccupancy']);
+    $route->get('/daily-cashier',   [ReportGenerationController::class, 'dailyCashier']);
 });
 
 Route::group([
