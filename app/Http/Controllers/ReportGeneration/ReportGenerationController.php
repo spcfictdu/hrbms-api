@@ -18,25 +18,28 @@ use App\Repositories\ReportGeneration\{
     GeneratePaymentReportRepository,
     GenerateCheckInOutReportRepository,
     GenerateDailyReservationsReportRepository,
-    GenerateRoomOccupancyReportRepository
+    GenerateRoomOccupancyReportRepository,
+    GenerateDailyCashierReportRepository
 };
 
 class ReportGenerationController extends Controller
 {
-    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy;
+    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier;
 
     public function __construct(
         GenerateRevenueReportRepository $revenueReport,
         GeneratePaymentReportRepository $paymentReport,
         GenerateCheckInOutReportRepository $checkInOutReport,
         GenerateDailyReservationsReportRepository $dailyReservations,
-        GenerateRoomOccupancyReportRepository $roomOccupancy
+        GenerateRoomOccupancyReportRepository $roomOccupancy,
+        GenerateDailyCashierReportRepository $dailyCashier
     ) {
         $this->revenueReport = $revenueReport;
         $this->paymentReport = $paymentReport;
         $this->checkInOutReport = $checkInOutReport;
         $this->dailyReservations = $dailyReservations;
         $this->roomOccupancy = $roomOccupancy;
+        $this->dailyCashier = $dailyCashier;
     }
 
     protected function revenueReport(GenerateRevenueReportRequest $request)
@@ -62,5 +65,10 @@ class ReportGenerationController extends Controller
     protected function roomOccupancy(Request $request)
     {
         return $this->roomOccupancy->execute($request);
+    }
+
+    protected function dailyCashier(Request $request)
+    {
+        return $this->dailyCashier->execute($request);
     }
 }
