@@ -2,7 +2,7 @@
 
 namespace App\Repositories\ReportGeneration;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Transaction\Payment;
 use App\Models\CashierSession\CashierSession;
@@ -13,6 +13,13 @@ class GenerateDailyCashierReportRepository
 {
     public function execute(Request $request)
     {
+        if (!Auth::user()->hasRole('ADMIN') && !Auth::user()->hasRole('FRONT DESK')) {
+            return [
+                'message' => 'Unauthorized access.',
+                'data' => []
+            ];
+        }
+
         $date = $request->query('date', now()->toDateString());
 
         $cashierSessions = CashierSession::whereDate('opened_at', $date)
@@ -28,7 +35,9 @@ class GenerateDailyCashierReportRepository
                 continue;
             }
 
-            $payments = Payment::where('cashier_session_id', $session->id)->get();
+            $payments = Payment::where('cashier_session_id', $session->id)
+                ->whereDate('created_at', $date)
+                ->get();
 
             $transactions = [];
 
@@ -37,10 +46,8 @@ class GenerateDailyCashierReportRepository
                     'type' => 'payment',
                     'amount' => $payment->amount_received,
                     'method' => $payment->payment_type,
-                    'timestamp' => $payment->created_at,
-                    'roomNumber' => optional($payment->transaction->room)->room_number ?? null,
-                    'roomType' => optional(optional($payment->transaction->room)->roomType)->name ?? null,
-                ];
+                    'timestamp' => $payment->created_at->timezone('Asia/Manila')->toDateTimeString(),
+                ];                
             }
 
             $userReports[] = [
