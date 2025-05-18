@@ -9,6 +9,9 @@
 		{
 			"name": "Login",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -43,7 +46,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/report/daily-reservations?date=2025-04-28",
+					"raw": "http://localhost:8000/api/report/daily-reservations?date=2025-05-18",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -57,7 +60,7 @@
 					"query": [
 						{
 							"key": "date",
-							"value": "2025-04-28"
+							"value": "2025-05-18"
 						}
 					]
 				}
@@ -103,7 +106,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/report/daily-cashier?date=2025-04-27",
+					"raw": "http://localhost:8000/api/report/daily-cashier?date=2025-05-18",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -117,7 +120,91 @@
 					"query": [
 						{
 							"key": "date",
-							"value": "2025-04-27"
+							"value": "2025-05-18"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Payment Summary Report",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/report/payment-summary?start=2025-04-28&end=2025-05-23",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"report",
+						"payment-summary"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2025-04-28"
+						},
+						{
+							"key": "end",
+							"value": "2025-05-23"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Guest History Report",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/report/guest-history/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"report",
+						"guest-history",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Top Guests Report",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/report/top-guests?start=2025-04-28&end=2025-05-23",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"report",
+						"top-guests"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2025-04-28"
+						},
+						{
+							"key": "end",
+							"value": "2025-05-23"
 						}
 					]
 				}
@@ -130,7 +217,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "2|SzzrFFXsajEfxHNuzcXQARhjcOTmCoNutN8Sxwgt3b955610",
+				"value": "1|gVToRT9yFn9I8We5poMbOPqVvcQYfVjgGMBB6s2tbd87c968",
 				"type": "string"
 			}
 		]
