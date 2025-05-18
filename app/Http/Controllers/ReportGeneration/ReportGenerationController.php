@@ -19,12 +19,15 @@ use App\Repositories\ReportGeneration\{
     GenerateCheckInOutReportRepository,
     GenerateDailyReservationsReportRepository,
     GenerateRoomOccupancyReportRepository,
-    GenerateDailyCashierReportRepository
+    GenerateDailyCashierReportRepository,
+    GeneratePaymentSummaryReportRepository,
+    GenerateGuestHistoryReportRepository,
+    GenerateTopGuestsReportRepository
 };
 
 class ReportGenerationController extends Controller
 {
-    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier;
+    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests;
 
     public function __construct(
         GenerateRevenueReportRepository $revenueReport,
@@ -32,7 +35,10 @@ class ReportGenerationController extends Controller
         GenerateCheckInOutReportRepository $checkInOutReport,
         GenerateDailyReservationsReportRepository $dailyReservations,
         GenerateRoomOccupancyReportRepository $roomOccupancy,
-        GenerateDailyCashierReportRepository $dailyCashier
+        GenerateDailyCashierReportRepository $dailyCashier,
+        GeneratePaymentSummaryReportRepository $paymentSummary,
+        GenerateGuestHistoryReportRepository $guestHistory,
+        GenerateTopGuestsReportRepository $topGuests
     ) {
         $this->revenueReport = $revenueReport;
         $this->paymentReport = $paymentReport;
@@ -40,6 +46,9 @@ class ReportGenerationController extends Controller
         $this->dailyReservations = $dailyReservations;
         $this->roomOccupancy = $roomOccupancy;
         $this->dailyCashier = $dailyCashier;
+        $this->paymentSummary = $paymentSummary;
+        $this->guestHistory = $guestHistory;
+        $this->topGuests = $topGuests;
     }
 
     protected function revenueReport(GenerateRevenueReportRequest $request)
@@ -70,5 +79,20 @@ class ReportGenerationController extends Controller
     protected function dailyCashier(Request $request)
     {
         return $this->dailyCashier->execute($request);
+    }
+
+    protected function paymentSummary(Request $request)
+    {
+        return $this->paymentSummary->execute($request);
+    }
+
+    protected function guestHistory($guestId)
+    {
+        return $this->guestHistory->execute($guestId);
+    }
+
+    protected function topGuests(Request $request)
+    {
+        return $this->topGuests->execute($request);
     }
 }
