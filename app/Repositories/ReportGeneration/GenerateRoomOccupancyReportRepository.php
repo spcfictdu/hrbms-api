@@ -2,93 +2,71 @@
 
 namespace App\Repositories\ReportGeneration;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
+use App\Models\Room\Room;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class GenerateRoomOccupancyReportRepository
 {
-    public function execute(Request $request)
+    public function execute()
     {
-        if(Auth::user()->hasRole('ADMIN') || Auth::user()->hasRole('FRONT DESK')){
-            $today = now()->toDateString();
-
-            $occupied = DB::table('rooms')
-                ->join('transactions', 'rooms.id', '=', 'transactions.room_id')
-                ->join('guests', 'transactions.guest_id', '=', 'guests.id')
-                ->where('rooms.status', 'OCCUPIED')
-                ->whereNull('transactions.deleted_at')
-                ->select('rooms.room_number', 'guests.full_name as guest')
-                ->get()
-                ->map(function ($room) {
-                    return [
-                        'roomNumber' => $room->room_number,
-                        'guest' => $room->guest
-                    ];
-                });
-
-            $reserved = DB::table('rooms')
-                ->join('transactions', 'rooms.id', '=', 'transactions.room_id')
-                ->join('guests', 'transactions.guest_id', '=', 'guests.id')
-                ->where('rooms.status', 'RESERVED')
-                ->whereNull('transactions.deleted_at')
-                ->select('rooms.room_number', 'guests.full_name as guest', 'transactions.check_in_date')
-                ->get()
-                ->map(function ($room) {
-                    return [
-                        'roomNumber' => $room->room_number,
-                        'guest' => $room->guest,
-                        'reservationDate' => $room->check_in_date
-                    ];
-                });
-
-            $available = DB::table('rooms')
-                ->where('status', 'AVAILABLE')
-                ->select('room_number')
-                ->get()
-                ->map(function ($room) {
-                    return [
-                        'roomNumber' => $room->room_number
-                    ];
-                });
-
-            $unclean = DB::table('rooms')
-                ->where('status', 'UNCLEAN')
-                ->select('room_number')
-                ->get()
-                ->map(function ($room) {
-                    return [
-                        'roomNumber' => $room->room_number
-                    ];
-                });
-
-            $unallocated = DB::table('rooms')
-                ->join('transactions', 'rooms.id', '=', 'transactions.room_id')
-                ->whereNull('transactions.deleted_at')
-                ->whereDate('transactions.check_out_date', '<=', $today)
-                ->whereNotIn('rooms.status', ['AVAILABLE', 'OCCUPIED'])
-                ->select('rooms.room_number')
-                ->distinct()
-                ->get()
-                ->map(function ($room) {
-                    return [
-                        'roomNumber' => $room->room_number
-                    ];
-                });
-
-            return response()->json([
-                'message' => 'Room occupancy report generated successfully.',
-                'data' => [
-                    'occupied' => $occupied,
-                    'reserved' => $reserved,
-                    'available' => $available,
-                    'unallocated' => $unallocated,
-                    'unclean' => $unclean,
-                ]
-            ]);
+        if (!Auth::user()->hasRole('ADMIN') && !Auth::user()->hasRole('FRONT DESK')) {
+            return [
+                'message' => 'Unauthorized access.',
+                'data' => []
+            ];
         }
-        else{
-            return response()->json(['message' => 'Not authorized']);
-        }
+
+        $today = Carbon::now()->toDateString();
+
+        $occupied = Room::with(['transactions.guest'])
+            ->where('status', 'OCCUPIED')
+            ->whereHas('transactions', fn ($q) => $q->whereNull('deleted_at'))
+            ->get()
+            ->map(function ($room) {
+                $guest = optional($room->transactions->last()->guest)->full_name;
+                return [
+                    'roomNumber' => $room->room_number
+                ];
+            });
+
+        $reserved = Room::with(['transactions.guest'])
+            ->where('status', 'RESERVED')
+            ->whereHas('transactions', fn ($q) => $q->whereNull('deleted_at'))
+            ->get()
+            ->map(function ($room) {
+                $transaction = $room->transactions->last();
+                return [
+                    'roomNumber' => $room->room_number
+                ];
+            });
+
+        $available = Room::where('status', 'AVAILABLE')
+            ->get()
+            ->map(fn ($room) => ['roomNumber' => $room->room_number]);
+
+        $unclean = Room::where('status', 'UNCLEAN')
+            ->get()
+            ->map(fn ($room) => ['roomNumber' => $room->room_number]);
+
+        $unallocated = Room::whereNotIn('status', ['AVAILABLE', 'OCCUPIED'])
+            ->whereHas('transactions', function ($q) use ($today) {
+                $q->whereDate('check_out_date', '<=', $today)
+                  ->whereNull('deleted_at');
+            })
+            ->distinct()
+            ->get()
+            ->map(fn ($room) => ['roomNumber' => $room->room_number]);
+
+        return [
+            'message' => 'Room occupancy report generated successfully.',
+            'data' => [
+                'occupied' => $occupied,
+                'reserved' => $reserved,
+                'available' => $available,
+                'unclean' => $unclean,
+                'unallocated' => $unallocated,
+            ],
+        ];
     }
 }
