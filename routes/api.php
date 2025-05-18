@@ -237,6 +237,9 @@ Route::group([
     $route->get('/daily-reservations',   [ReportGenerationController::class, 'dailyReservations']);
     $route->get('/room-occupancy',   [ReportGenerationController::class, 'roomOccupancy']);
     $route->get('/daily-cashier',   [ReportGenerationController::class, 'dailyCashier']);
+    $route->get('/payment-summary',   [ReportGenerationController::class, 'paymentSummary']);
+    $route->get('/guest-history/{guest_id}',   [ReportGenerationController::class, 'guestHistory']);
+    $route->get('/top-guests',   [ReportGenerationController::class, 'topGuests']);
 });
 
 Route::group([
