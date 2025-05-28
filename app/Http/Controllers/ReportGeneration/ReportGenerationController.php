@@ -22,12 +22,13 @@ use App\Repositories\ReportGeneration\{
     GenerateDailyCashierReportRepository,
     GeneratePaymentSummaryReportRepository,
     GenerateGuestHistoryReportRepository,
-    GenerateTopGuestsReportRepository
+    GenerateTopGuestsReportRepository,
+    GenerateGuestBookingFrequencyReportRepository
 };
 
 class ReportGenerationController extends Controller
 {
-    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests;
+    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests, $guestFrequency;
 
     public function __construct(
         GenerateRevenueReportRepository $revenueReport,
@@ -38,7 +39,8 @@ class ReportGenerationController extends Controller
         GenerateDailyCashierReportRepository $dailyCashier,
         GeneratePaymentSummaryReportRepository $paymentSummary,
         GenerateGuestHistoryReportRepository $guestHistory,
-        GenerateTopGuestsReportRepository $topGuests
+        GenerateTopGuestsReportRepository $topGuests,
+        GenerateGuestBookingFrequencyReportRepository $guestFrequency
     ) {
         $this->revenueReport = $revenueReport;
         $this->paymentReport = $paymentReport;
@@ -49,6 +51,7 @@ class ReportGenerationController extends Controller
         $this->paymentSummary = $paymentSummary;
         $this->guestHistory = $guestHistory;
         $this->topGuests = $topGuests;
+        $this->guestFrequency = $guestFrequency;
     }
 
     protected function revenueReport(GenerateRevenueReportRequest $request)
@@ -94,5 +97,10 @@ class ReportGenerationController extends Controller
     protected function topGuests(Request $request)
     {
         return $this->topGuests->execute($request);
+    }
+
+    protected function guestFrequency(Request $request)
+    {
+        return $this->guestFrequency->execute($request);
     }
 }
