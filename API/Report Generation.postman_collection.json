@@ -210,6 +210,68 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Guest Frequency Report",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/report/guest-frequency?start=2025-05-29&end=2025-06-02",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"report",
+						"guest-frequency"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2025-05-29"
+						},
+						{
+							"key": "end",
+							"value": "2025-06-02"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Guest Demographic Report",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/report/guest-demographics?start=2025-05-29&end=2025-06-02",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"report",
+						"guest-demographics"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2025-05-29"
+						},
+						{
+							"key": "end",
+							"value": "2025-06-02"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -217,7 +279,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "1|gVToRT9yFn9I8We5poMbOPqVvcQYfVjgGMBB6s2tbd87c968",
+				"value": "1|zXkKYeGDQ5y4BNSuCdGBnqxOUruXZhVCwAsMrQ7O168e252e",
 				"type": "string"
 			}
 		]
