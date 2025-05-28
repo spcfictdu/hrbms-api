@@ -23,12 +23,13 @@ use App\Repositories\ReportGeneration\{
     GeneratePaymentSummaryReportRepository,
     GenerateGuestHistoryReportRepository,
     GenerateTopGuestsReportRepository,
-    GenerateGuestBookingFrequencyReportRepository
+    GenerateGuestBookingFrequencyReportRepository,
+    GenerateGuestDemographicsReportRepository
 };
 
 class ReportGenerationController extends Controller
 {
-    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests, $guestFrequency;
+    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests, $guestFrequency, $guestDemographics;
 
     public function __construct(
         GenerateRevenueReportRepository $revenueReport,
@@ -40,7 +41,8 @@ class ReportGenerationController extends Controller
         GeneratePaymentSummaryReportRepository $paymentSummary,
         GenerateGuestHistoryReportRepository $guestHistory,
         GenerateTopGuestsReportRepository $topGuests,
-        GenerateGuestBookingFrequencyReportRepository $guestFrequency
+        GenerateGuestBookingFrequencyReportRepository $guestFrequency,
+        GenerateGuestDemographicsReportRepository $guestDemographics
     ) {
         $this->revenueReport = $revenueReport;
         $this->paymentReport = $paymentReport;
@@ -52,6 +54,7 @@ class ReportGenerationController extends Controller
         $this->guestHistory = $guestHistory;
         $this->topGuests = $topGuests;
         $this->guestFrequency = $guestFrequency;
+        $this->guestDemographics = $guestDemographics;
     }
 
     protected function revenueReport(GenerateRevenueReportRequest $request)
@@ -102,5 +105,10 @@ class ReportGenerationController extends Controller
     protected function guestFrequency(Request $request)
     {
         return $this->guestFrequency->execute($request);
+    }
+
+    protected function guestDemographics(Request $request)
+    {
+        return $this->guestDemographics->execute($request);
     }
 }
