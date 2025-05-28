@@ -240,6 +240,7 @@ Route::group([
     $route->get('/payment-summary',   [ReportGenerationController::class, 'paymentSummary']);
     $route->get('/guest-history/{guest_id}',   [ReportGenerationController::class, 'guestHistory']);
     $route->get('/top-guests',   [ReportGenerationController::class, 'topGuests']);
+    $route->get('/guest-frequency',   [ReportGenerationController::class, 'guestFrequency']);
 });
 
 Route::group([
