@@ -14,6 +14,7 @@ class IndexAddonRepository extends BaseRepository
             'list of all addons',
             $addons->map(function($addon){
                 return [
+                    'referenceNumber' => $addon->reference_number,
                     'name' => $addon->name,
                     'price' => $addon->price
 
