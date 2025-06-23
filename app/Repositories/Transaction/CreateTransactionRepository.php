@@ -20,22 +20,14 @@ use App\Models\Discount\VoucherDiscount;
 use App\Models\PaymentType\ChequePayment;
 use App\Models\Discount\SeniorPwdDiscount;
 use App\Models\PaymentType\CreditCardPayment;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CreateTransactionRepository extends BaseRepository
 {
 
     public function execute($request)
     {
-        if (isset($request->voucherCode)) {
-            DB::transaction(function () use ($request) {
-                $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
-
-                if ($voucher->expires < now()) {
-                    $voucher->update(['status' => 'EXPIRED']);
-                }
-            });
-        }
-
         DB::beginTransaction();
 
         try {
@@ -51,6 +43,7 @@ class CreateTransactionRepository extends BaseRepository
                 return $this->error('Room is already occupied.');
             }
 
+
             $guestDetails = [
                 'reference_number' => $this->guestReferenceNumber(),
                 'first_name' => strtoupper($request->guest['firstName']),
@@ -58,7 +51,6 @@ class CreateTransactionRepository extends BaseRepository
                 'last_name' => strtoupper($request->guest['lastName']),
                 'province' => strtoupper($request->guest['address']['province']),
                 'city' => strtoupper($request->guest['address']['city']),
-                'phone_number' => $request->guest['contact']['phoneNum'],
                 'email' => $request->guest['contact']['email'],
             ];
 
@@ -72,18 +64,28 @@ class CreateTransactionRepository extends BaseRepository
                 $guest = Guest::where('user_id', $userId)->first();
             }
 
-            if (!$guest) {
-                $guest = Guest::create($guestDetails + [
-                    'id_type' => strtoupper($request->guest['id']['type']),
-                    'id_number' => $request->guest['id']['number'],
-                ]);
-            } else {
-                $guest->update($guestDetails + [
-                    'id_type' => strtoupper($request->guest['id']['type']),
-                    'id_number' => $request->guest['id']['number'],
-                ]);
-            }
+            $validator = Validator::make($request->guest['contact'] + $request->guest['id'], [
+                'phoneNum' => ['required', 'regex:/^(09)\d{9}$/'],
+                'number' => ['required'],
+            ]);
 
+            if (!$validator->fails()) {
+                $data = $validator->validated();
+
+                if (!$guest) {
+                    $guest = Guest::create($guestDetails + [
+                        'phone_number' => $data['phoneNum'],
+                        'id_type' => strtoupper($request->guest['id']['type']),
+                        'id_number' => $data['number'],
+                    ]);
+                } else {
+                    $guest->update($guestDetails + [
+                        'phone_number' => $data['phoneNum'],
+                        'id_type' => strtoupper($request->guest['id']['type']),
+                        'id_number' => $data['number'],
+                    ]);
+                }
+            }
 
             if ($request->discount === 'VOUCHER') {
                 $voucherCode = Voucher::where('code', $request->voucherCode)->first();
@@ -150,15 +152,22 @@ class CreateTransactionRepository extends BaseRepository
                                 "discount" => $discountName,
                                 "value" => $voucher->value,
                             ]);
+
                             $voucher->update([
                                 'usage' => (int)$voucher->usage - 1,
-                                'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE'
+                                'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE',
                             ]);
                         } else {
                             return $this->error('Voucher is not available');
                         }
+
                     } else {
                         $discount = Discount::where('name', $discountName)->first();
+
+                        if (!$discount) {
+                            return $this->error("Discount '$discountName' not found.");
+                        }
+                            
                         SeniorPwdDiscount::create([
                             "payment_id" => $payment->id,
                             "discount" => $discount->name,
