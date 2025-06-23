@@ -253,6 +253,7 @@ Route::group([
     $route->post('/user/close', [UserCashierController::class, 'closeSession']);
     $route->get('/', [CashierSessionController::class, 'index']);
     $route->get('/{id}/toggle', [CashierSessionController::class, 'toggle']);
+    $route->get('/{id}/show-history', [UserCashierController::class, 'showHistory']);
     // $route->post('/', [CashierSessionController::class, 'create']);
     // $route->get('/{id}', [CashierSessionController::class, 'show']);
     // $route->put('/{id}', [CashierSessionController::class, 'update']);
