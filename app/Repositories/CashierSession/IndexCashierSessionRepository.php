@@ -5,6 +5,7 @@ namespace App\Repositories\CashierSession;
 use App\Models\CashierSession\CashierSession;
 use App\Repositories\BaseRepository;
 use App\Traits\QueryBuilder\QueryBuilder;
+use App\Models\Transaction\Payment;
 
 class IndexCashierSessionRepository extends BaseRepository
 {
@@ -56,6 +57,28 @@ class IndexCashierSessionRepository extends BaseRepository
 
         $cashierSessions = $this->applyQueryModifications($query, $request, $filterableFields, $searchableFields, $sortableFields, '', 'desc');
 
+        $allPaymentTypes = ['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'];
+
+        foreach ($cashierSessions as $cashierSession) {
+            $payments = $cashierSession->payments->groupBy('payment_type')->map(function ($payments, $types) {
+                return [
+                    'name' => $types,
+                    'totalAmount' => number_format((float) $payments->sum('amount_received'), 2, '.', '')
+                ];
+            })->values();
+
+            foreach ($allPaymentTypes as $type) {
+                if (!$payments->contains('name', $type)) {
+                    $payments->push([
+                        'name' => $type,
+                        'totalAmount' => '0.00'
+                    ]);
+                }
+            }
+
+            $cashierSession->computed_payments = $payments;
+        }
+
         $cashierSessions = $cashierSessions->map(function ($cashierSession) {
             return [
                 "openingBalance" => $cashierSession->opening_balance,
@@ -63,11 +86,11 @@ class IndexCashierSessionRepository extends BaseRepository
                 "openedAt" => $cashierSession->opened_at,
                 "closedAt" => $cashierSession->closed_at,
                 "status" => $cashierSession->status,
-                "userFullName" => $cashierSession->user->full_name
+                "userFullName" => $cashierSession->user->full_name,
+                "userId" => $cashierSession->user->id,
+                "payments" => $cashierSession->computed_payments
             ];
         });
-
-
 
         return $this->success("Successfully retrieved cashier sessions", $cashierSessions);
     }
