@@ -116,4 +116,45 @@ class UserCashierController extends Controller
 
         return $this->success('The user\'s cashier has been closed.');
     }
+
+    public function showHistory($userId) {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return $this->error('User not found.');
+        }
+
+        $userCashierSessions = CashierSession::with('payments', 'user')
+            ->where('user_id', $userId)
+            ->get();
+
+        if ($userCashierSessions->isEmpty()) {
+            return $this->error('User has no cashier history.');
+        }
+
+        $historyData = [];
+
+        foreach ($userCashierSessions as $cashierSession) {
+            // Get individual payment records as-is
+            $payments = $cashierSession->payments->map(function ($payment) {
+                return [
+                    'paymentId' => $payment->id,
+                    'guestName' => $payment->transaction->guest->full_name,
+                    'paymentType' => $payment->payment_type,
+                    'amountReceived' => number_format((float) $payment->amount_received, 2, '.', ''),
+                    'createdAt' => $payment->created_at,
+                ];
+            });
+
+            $historyData[] = [
+                'userId' => $cashierSession->user->id,
+                'openedAt' => $cashierSession->opened_at,
+                'closedAt' => $cashierSession->closed_at,
+                'status' => $cashierSession->status,
+                'payments' => $payments,
+            ];
+        }
+
+        return $this->success('Success, the user\'s cashier history has been opened.', $historyData);
+    }
 }
