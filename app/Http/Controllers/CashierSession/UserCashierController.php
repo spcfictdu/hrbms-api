@@ -135,13 +135,27 @@ class UserCashierController extends Controller
         $historyData = [];
 
         foreach ($userCashierSessions as $cashierSession) {
-            // Get individual payment records as-is
             $payments = $cashierSession->payments->map(function ($payment) {
+                $discountValue = 0;
+    
+                if (isset($payment->voucherDiscount)) {
+                    $discountValue = $payment->voucherDiscount->value ?? 0;
+                } elseif(isset($payment->seniorPwdDiscount)) {
+                    $discountValue = $payment->seniorPwdDiscount->value ?? 0;
+                }  else{
+                    $discountValue = 0;
+                }
+
+                $discount = $payment->transaction->room_total*$discountValue;
+
                 return [
                     'paymentId' => $payment->id,
                     'guestName' => $payment->transaction->guest->full_name,
                     'paymentType' => $payment->payment_type,
                     'amountReceived' => number_format((float) $payment->amount_received, 2, '.', ''),
+                    'roomTotal' => number_format((float) $payment->transaction->room_total, 2, '.', ''),
+                    'addOnTotal' => $payment->transaction->bookingAddon->sum('total_price'),
+                    'discount' => number_format((float) $discount, 2, '.', ''),
                     'createdAt' => $payment->created_at,
                 ];
             });
