@@ -26,9 +26,9 @@ class Payment extends Model
         "cashier_session_id",
         "payment_type",
         "amount_received",
-        // "payment_discount_id"
-        // "discount_id",
-        // "voucher_id",
+        "payment_discount_id"
+        "discount_id",
+        "voucher_id",
     ];
 
     protected $hidden = [
