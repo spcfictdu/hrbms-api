@@ -142,7 +142,7 @@ class UserCashierController extends Controller
                 ->with([
                     'transaction.guest'
                 ])
-                ->paginate(2, ['*'], "payments_page[$sessionId]", $currentPage);
+                ->paginate(5, ['*'], "payments_page[$sessionId]", $currentPage);
 
             $paymentData = $payments->map(function ($payment) {
                 $transaction = $payment->transaction;
