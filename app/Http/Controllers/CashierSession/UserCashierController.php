@@ -117,58 +117,71 @@ class UserCashierController extends Controller
         return $this->success('The user\'s cashier has been closed.');
     }
 
-    public function showHistory($userId) {
+    public function showHistory(Request $request, $userId)
+    {
         $user = User::find($userId);
-
         if (!$user) {
             return $this->error('User not found.');
         }
 
-        $userCashierSessions = CashierSession::with('payments', 'user')
+        $sessions = CashierSession::with('user')
             ->where('user_id', $userId)
             ->get();
 
-        if ($userCashierSessions->isEmpty()) {
-            return $this->error('User has no cashier history.');
+        if ($sessions->isEmpty()) {
+            return $this->success('No cashier history for user.', []);
         }
 
-        $historyData = [];
+        $paymentsPages = $request->input('payments_page', []);
 
-        foreach ($userCashierSessions as $cashierSession) {
-            $payments = $cashierSession->payments->map(function ($payment) {
-                $discountValue = 0;
-    
-                if (isset($payment->voucherDiscount)) {
-                    $discountValue = $payment->voucherDiscount->value ?? 0;
-                } elseif(isset($payment->seniorPwdDiscount)) {
-                    $discountValue = $payment->seniorPwdDiscount->value ?? 0;
-                }  else{
-                    $discountValue = 0;
-                }
+        $historyData = $sessions->map(function ($session) use ($paymentsPages) {
+            $sessionId = $session->id;
+            $currentPage = $paymentsPages[$sessionId] ?? 1;
 
-                $discount = $payment->transaction->room_total*$discountValue;
+            $payments = $session->payments()
+                ->with([
+                    'transaction.guest'
+                ])
+                ->paginate(2, ['*'], "payments_page[$sessionId]", $currentPage);
+
+            $paymentData = $payments->map(function ($payment) {
+                $transaction = $payment->transaction;
+                $roomTotal = $transaction?->room_total ?? 0;
+                $discountRate = $payment->voucherDiscount->value ?? $payment->seniorPwdDiscount->value ?? 0;
+                $discount = $roomTotal * $discountRate;
 
                 return [
                     'paymentId' => $payment->id,
-                    'guestName' => $payment->transaction->guest->full_name,
+                    'guestName' => optional($transaction?->guest)->full_name,
                     'paymentType' => $payment->payment_type,
                     'amountReceived' => number_format((float) $payment->amount_received, 2, '.', ''),
-                    'roomTotal' => number_format((float) $payment->transaction->room_total, 2, '.', ''),
-                    'addOnTotal' => $payment->transaction->bookingAddon->sum('total_price'),
+                    'roomTotal' => number_format((float) $roomTotal, 2, '.', ''),
+                    'addOnTotal' => $transaction?->bookingAddon->sum('total_price') ?? 0,
                     'discount' => number_format((float) $discount, 2, '.', ''),
                     'createdAt' => $payment->created_at,
                 ];
             });
 
-            $historyData[] = [
-                'userId' => $cashierSession->user->id,
-                'openedAt' => $cashierSession->opened_at,
-                'closedAt' => $cashierSession->closed_at,
-                'status' => $cashierSession->status,
-                'payments' => $payments,
+            return [
+                'sessionId' => $session->id,
+                'userId' => $session->user->id,
+                'openedAt' => $session->opened_at,
+                'closedAt' => $session->closed_at,
+                'status' => $session->status,
+                'payments' => [
+                    'data' => $paymentData,
+                    'meta' => [
+                        'current_page' => $payments->currentPage(),
+                        'last_page' => $payments->lastPage(),
+                        'per_page' => $payments->perPage(),
+                        'total' => $payments->total(),
+                        'next_page_url' => $payments->nextPageUrl(),
+                        'prev_page_url' => $payments->previousPageUrl(),
+                    ]
+                ],
             ];
-        }
+        });
 
-        return $this->success('Success, the user\'s cashier history has been opened.', $historyData);
+        return $this->success("User cashier history loaded successfully.", $historyData);
     }
 }
