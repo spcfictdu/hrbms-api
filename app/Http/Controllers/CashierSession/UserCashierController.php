@@ -127,7 +127,9 @@ class UserCashierController extends Controller
         $sessions = CashierSession::with([
             'payments.transaction.guest',
             'user'
-        ])->where('user_id', $userId)->paginate(2);
+        ])->where('user_id', $userId)
+        ->orderBy('opened_at', 'desc')
+        ->paginate(2);
 
         if ($sessions->isEmpty()) {
             return $this->success('No cashier history for user.', []);
@@ -151,6 +153,8 @@ class UserCashierController extends Controller
                     'createdAt' => $payment->created_at,
                 ];
             });
+
+            $payments = $payments->sortByDesc('createdAt')->values();
 
             return [
                 'userId' => $session->user->id,
