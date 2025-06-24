@@ -124,27 +124,17 @@ class UserCashierController extends Controller
             return $this->error('User not found.');
         }
 
-        $sessions = CashierSession::with('user')
-            ->where('user_id', $userId)
-            ->get();
+        $sessions = CashierSession::with([
+            'payments.transaction.guest',
+            'user'
+        ])->where('user_id', $userId)->paginate(2);
 
         if ($sessions->isEmpty()) {
             return $this->success('No cashier history for user.', []);
         }
 
-        $paymentsPages = $request->input('payments_page', []);
-
-        $historyData = $sessions->map(function ($session) use ($paymentsPages) {
-            $sessionId = $session->id;
-            $currentPage = $paymentsPages[$sessionId] ?? 1;
-
-            $payments = $session->payments()
-                ->with([
-                    'transaction.guest'
-                ])
-                ->paginate(5, ['*'], "payments_page[$sessionId]", $currentPage);
-
-            $paymentData = $payments->map(function ($payment) {
+        $historyData = $sessions->map(function ($session) {
+            $payments = $session->payments->map(function ($payment) {
                 $transaction = $payment->transaction;
                 $roomTotal = $transaction?->room_total ?? 0;
                 $discountRate = $payment->voucherDiscount->value ?? $payment->seniorPwdDiscount->value ?? 0;
@@ -163,25 +153,26 @@ class UserCashierController extends Controller
             });
 
             return [
-                'sessionId' => $session->id,
                 'userId' => $session->user->id,
                 'openedAt' => $session->opened_at,
                 'closedAt' => $session->closed_at,
                 'status' => $session->status,
-                'payments' => [
-                    'data' => $paymentData,
-                    'meta' => [
-                        'current_page' => $payments->currentPage(),
-                        'last_page' => $payments->lastPage(),
-                        'per_page' => $payments->perPage(),
-                        'total' => $payments->total(),
-                        'next_page_url' => $payments->nextPageUrl(),
-                        'prev_page_url' => $payments->previousPageUrl(),
-                    ]
-                ],
+                'payments' => $payments,
             ];
         });
 
-        return $this->success("User cashier history loaded successfully.", $historyData);
+        $response = [
+            'data' => $historyData,
+            'meta' => [
+                'current_page' => $sessions->currentPage(),
+                'last_page' => $sessions->lastPage(),
+                'per_page' => $sessions->perPage(),
+                'total' => $sessions->total(),
+                'next_page_url' => $sessions->nextPageUrl(),
+                'prev_page_url' => $sessions->previousPageUrl(),
+            ],
+        ];
+
+        return $this->success('Success, the user\'s cashier history has been opened.', $response);
     }
 }
