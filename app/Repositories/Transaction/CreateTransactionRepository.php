@@ -28,6 +28,16 @@ class CreateTransactionRepository extends BaseRepository
 
     public function execute($request)
     {
+        if (isset($request->voucherCode)) {
+            DB::transaction(function () use ($request) {
+                $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
+                if ($voucher->expires_at < now()) {
+                    $voucher->update(['status' => 'EXPIRED']);
+                }
+                
+            });
+        }
+
         DB::beginTransaction();
 
         try {
@@ -42,8 +52,7 @@ class CreateTransactionRepository extends BaseRepository
             if ($room->status === 'OCCUPIED') {
                 return $this->error('Room is already occupied.');
             }
-
-
+            
             $guestDetails = [
                 'reference_number' => $this->guestReferenceNumber(),
                 'first_name' => strtoupper($request->guest['firstName']),
