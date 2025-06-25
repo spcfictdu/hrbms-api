@@ -55,31 +55,34 @@ ADMIN
 
 ```json
 {
-    "message": "Success, all cashier sessions have been retrieved.",
+    "message": "Successfully retrieved cashier sessions",
     "results": [
         {
-            "id": 1,
+            "openingBalance": "1500.00",
+            "closingBalance": null,
+            "openedAt": "2025-06-24 10:30:49",
+            "closedAt": null,
             "status": "ACTIVE",
-            "opened_at": "2025-03-21T03:44:23.177816Z",
-            "closed_at": null,
-            "opening_balance": "5000.00",
-            "closing_balance": null,
-            "user": {
-                "id": 1,
-                "name": "John Doe"
-            }
-        },
-        {
-            "id": 2,
-            "status": "ACTIVE",
-            "opened_at": "2025-03-21T03:44:23.177816Z",
-            "closed_at": null,
-            "opening_balance": "5000.00",
-            "closing_balance": null,
-            "user": {
-                "id": 2,
-                "name": "Jane Doe"
-            }
+            "userFullName": "JANE DOE",
+            "userId": 64,
+            "payments": [
+                {
+                    "name": "GCASH",
+                    "totalAmount": "1858.00"
+                },
+                {
+                    "name": "CASH",
+                    "totalAmount": "2500.00"
+                },
+                {
+                    "name": "CREDIT_CARD",
+                    "totalAmount": "1340.00"
+                },
+                {
+                    "name": "CHEQUE",
+                    "totalAmount": "0.00"
+                }
+            ]
         }
     ],
     "code": 200,
