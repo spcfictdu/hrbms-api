@@ -4,11 +4,13 @@ namespace App\Repositories\Transaction;
 
 use App\Models\Room\Room;
 use Illuminate\Support\Arr;
+use App\Models\Amenity\Addon;
 use App\Models\Discount\Voucher;
 use App\Models\Discount\Discount;
 use Illuminate\Support\Facades\DB;
 use App\Models\Transaction\Payment;
 use Illuminate\Support\Facades\Log;
+use App\Models\Amenity\BookingAddon;
 use App\Repositories\BaseRepository;
 use App\Models\Transaction\Transaction;
 use App\Models\Discount\VoucherDiscount;
@@ -41,6 +43,23 @@ class UpdateTransactionRepository extends BaseRepository
                         "payment_type" => $request->paymentType,
                         "amount_received" => $request->amountReceived,
                     ]);
+
+                    if (isset($request->addons) && isset($transaction->id)) {
+                        $sample = array_map(function ($addon) use ($request, $transaction) {
+                            $checkPrice = Addon::where('name', $addon['name'])->first();
+                            if ($checkPrice->price) {
+                                $totalPrice = $checkPrice->price * $addon['quantity'];
+
+                                $addons = BookingAddon::create([
+                                    "transaction_id" => $transaction->id,
+                                    "name" => $addon['name'],
+                                    "quantity" => $addon['quantity'],
+                                    "total_price" => $totalPrice
+                                ]);
+                            }
+                            return $addon;
+                        }, $request->addons);
+                    }
 
 
                     // verify if discount exists and create it to database
