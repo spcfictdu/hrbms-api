@@ -77,7 +77,7 @@ class ShowTransactionRepository extends BaseRepository
             $discountName = 'VOUCHER';
         } elseif(isset($transaction->payment->seniorPwdDiscount)) {
             $discountValue = $transaction->payment->seniorPwdDiscount->value ?? 0;
-            $discountName = $transaction->payment->seniorPwdDiscount->name;
+            $discountName = $transaction->payment->seniorPwdDiscount->discount;
         }else{
             $discountValue = 0;
             $discountName = NULL;
