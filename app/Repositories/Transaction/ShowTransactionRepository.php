@@ -66,17 +66,6 @@ class ShowTransactionRepository extends BaseRepository
             }
         }
 
-        // Calculate discount
-        $discountValue = 0;
-
-        if (isset($transaction->payment->voucherDiscount)) {
-            $discountValue = $transaction->payment->voucherDiscount->value ?? 0;
-        } else {
-            $discountValue = $transaction->payment->seniorPwdDiscount->value ?? 0;
-        }
-
-        // Calculate room total with discount and add-ons
-        $roomTotal = $addonsTotal + ($totalCost * (1 - $discountValue));
 
         $fullAddons = BookingAddOn::where('transaction_id', $transaction->id)->get() ?? null;
 
@@ -85,11 +74,17 @@ class ShowTransactionRepository extends BaseRepository
     
         if (isset($transaction->payment->voucherDiscount)) {
             $discountValue = $transaction->payment->voucherDiscount->value ?? 0;
+            $discountName = 'VOUCHER';
         } elseif(isset($transaction->payment->seniorPwdDiscount)) {
             $discountValue = $transaction->payment->seniorPwdDiscount->value ?? 0;
+            $discountName = $transaction->payment->seniorPwdDiscount->name;
         }else{
             $discountValue = 0;
+            $discountName = NULL;
         }
+
+        // Calculate room total with discount and add-ons
+        $finalRoomTotal =$roomTotal * (1 - $discountValue);
         
         return $this->success("Transaction Info", [
             "bookingHistory" => [
@@ -118,7 +113,9 @@ class ShowTransactionRepository extends BaseRepository
                     "days" => $diffInDays,
                     "fullAddons" => $fullAddons,
                     "discount" => ($discountValue*100 . '%'),
+                    "discountName" => $discountName,
                     "roomTotal" => $roomTotal,
+                    "finalRoomTotal" => $finalRoomTotal,
                 ],
                 "paymentSummary" => [
                     "paymentType" => $payment->payment_type ?? null,
