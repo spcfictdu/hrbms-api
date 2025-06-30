@@ -10,10 +10,12 @@ class VoucherDiscount extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['discount','value', 'payment_id'];
+    protected $fillable = ['discount','value', 'payment_id', 'voucher_id'];
 
-    public function payments(){
+    public function payment(){
         return $this->belongsTo(Payment::class);
     }
-  
+    public function voucher(){
+        return $this->belongsTo(Voucher::class);
+    }
 }

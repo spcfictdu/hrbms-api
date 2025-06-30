@@ -18,6 +18,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Payment::class)->constrained()->cascadeOnDelete();
             $table->string('discount');
+            $table->foreignIdFor(Voucher::class)->constrained()->cascadeOnDelete();
             $table->string('value');
             $table->timestamps();
         });

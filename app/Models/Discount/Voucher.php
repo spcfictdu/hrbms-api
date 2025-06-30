@@ -28,4 +28,7 @@ class Voucher extends Model
     public function payments(){
         return $this->hasmany(Payment::class)->withDefault();
     }
+    public function voucherDiscounts(){
+        return $this->hasMany(VoucherDiscount::class);
+    }
 }
