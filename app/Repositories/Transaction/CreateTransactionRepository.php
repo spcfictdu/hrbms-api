@@ -34,7 +34,6 @@ class CreateTransactionRepository extends BaseRepository
                 if ($voucher->expires_at < now()) {
                     $voucher->update(['status' => 'EXPIRED']);
                 }
-                
             });
         }
 
@@ -49,10 +48,23 @@ class CreateTransactionRepository extends BaseRepository
                 return $this->error('Room not found.');
             }
 
-            if ($room->status === 'OCCUPIED') {
-                return $this->error('Room is already occupied.');
-            }
-            
+            // $checkInDates = Transaction::where('room_id', $room['id'])->get();
+            // // dd($checkInDates->pluck('status'));
+            // $filteredDates = $checkInDates->whereIn('status', ['CONFIRMED', 'RESERVED', 'CHECKED-IN'])->all();
+            // $conflict = collect($filteredDates)->first(function ($date) use ($request) {
+            //     // dd($request->checkIn['date']);
+            //     // dd($date->check_in_date);
+            //     $conf = $request->checkIn['date'] < $date->check_out_date &&
+            //         $request->checkOut['date'] > $date->check_in_date;
+            //     return $conf ;
+            // });
+
+            // dd($conflict);
+
+            // if ($room->status === 'OCCUPIED') {
+            //     return $this->error('Room is already occupied.');
+            // }
+
             $guestDetails = [
                 'reference_number' => $this->guestReferenceNumber(),
                 'first_name' => strtoupper($request->guest['firstName']),
@@ -103,6 +115,7 @@ class CreateTransactionRepository extends BaseRepository
                 $discount = Discount::where('name', $request->discount)->first();
             }
 
+            // dd($request->roomTotal);
             $transaction = Transaction::create([
                 "reference_number" => $this->transactionReferenceNumber(),
                 "room_id" => $room->id,
@@ -143,21 +156,25 @@ class CreateTransactionRepository extends BaseRepository
                     "payment_type" => strtoupper($request->payment['paymentType']),
                     "amount_received" => $request->payment['amountReceived']
                 ]);
-
+                
                 $room->update([
                     "status" => strtoupper("OCCUPIED")
                 ]);
-
+                
+                    
                 // verify if discount exists and create it to database
                 if ($request->discount) {
+
                     $discountName = strtoupper($request->discount);
                     if ($discountName === 'VOUCHER') {
 
                         $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
 
                         if ($voucher->status === 'ACTIVE') {
+                            $voucherCode = Voucher::where('code', $request->voucherCode)->first('id');
                             VoucherDiscount::create([
                                 "payment_id" => $payment->id,
+                                "voucher_id" => $voucherCode->id,
                                 "discount" => $discountName,
                                 "value" => $voucher->value,
                             ]);
@@ -169,14 +186,13 @@ class CreateTransactionRepository extends BaseRepository
                         } else {
                             return $this->error('Voucher is not available');
                         }
-
                     } else {
                         $discount = Discount::where('name', $discountName)->first();
 
                         if (!$discount) {
                             return $this->error("Discount '$discountName' not found.");
                         }
-                            
+
                         SeniorPwdDiscount::create([
                             "payment_id" => $payment->id,
                             "discount" => $discount->name,

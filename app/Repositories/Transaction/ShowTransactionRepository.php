@@ -5,8 +5,9 @@ namespace App\Repositories\Transaction;
 use App\Models\Amenity\BookingAddOn;
 use App\Models\Transaction\{
     Transaction,
-    Payment
+    Payment,
 };
+use App\Models\Discount\Voucher;
 use App\Models\amenity\Addon;
 use Carbon\Carbon;
 use Illuminate\Support\{Str, Arr};
@@ -75,9 +76,13 @@ class ShowTransactionRepository extends BaseRepository
         if (isset($transaction->payment->voucherDiscount)) {
             $discountValue = $transaction->payment->voucherDiscount->value ?? 0;
             $discountName = 'VOUCHER';
+            $discountCode = Voucher::where('id', $transaction->payment->voucherDiscount->voucher_id)->first()->code;
+            
+            dd($discountCode);
         } elseif(isset($transaction->payment->seniorPwdDiscount)) {
             $discountValue = $transaction->payment->seniorPwdDiscount->value ?? 0;
             $discountName = $transaction->payment->seniorPwdDiscount->discount;
+           
         }else{
             $discountValue = 0;
             $discountName = NULL;

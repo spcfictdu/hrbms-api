@@ -63,25 +63,44 @@ class UpdateTransactionRepository extends BaseRepository
 
 
                     // verify if discount exists and create it to database
-                    if ($request->discount) {
-                        $discountName = strtoupper($request->discount);
-                        if ($discountName === 'VOUCHER') {
-                            $voucher = Voucher::where('code', $request->voucherCode)->first();
+                if ($request->discount) {
+
+                    $discountName = strtoupper($request->discount);
+                    if ($discountName === 'VOUCHER') {
+
+                        $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
+
+                        if ($voucher->status === 'ACTIVE') {
+                            $voucherCode = Voucher::where('code', $request->voucherCode)->first('id');
                             VoucherDiscount::create([
                                 "payment_id" => $payment->id,
+                                "voucher_id" => $voucherCode->id,
                                 "discount" => $discountName,
                                 "value" => $voucher->value,
                             ]);
-                        } else {
-                            $discount = Discount::where('name', $discountName)->first();
-                            SeniorPwdDiscount::create([
-                                "payment_id" => $payment->id,
-                                "discount" => $discount->name,
-                                "id_number" => $request->idNumber,
-                                "value" => $discount->value,
+
+                            $voucher->update([
+                                'usage' => (int)$voucher->usage - 1,
+                                'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE',
                             ]);
+                        } else {
+                            return $this->error('Voucher is not available');
                         }
+                    } else {
+                        $discount = Discount::where('name', $discountName)->first();
+
+                        if (!$discount) {
+                            return $this->error("Discount '$discountName' not found.");
+                        }
+
+                        SeniorPwdDiscount::create([
+                            "payment_id" => $payment->id,
+                            "discount" => $discount->name,
+                            "id_number" => $request->idNumber,
+                            "value" => $discount->value,
+                        ]);
                     }
+                }
 
 
                     if ($request->paymentType === 'CHEQUE') {
