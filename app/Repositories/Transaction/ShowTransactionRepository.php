@@ -24,7 +24,7 @@ class ShowTransactionRepository extends BaseRepository
         $roomType = $room->roomType ?? null;
         $roomTypeRate = $roomType->rates->first();
         $guest = $transaction->guest;
-        $payment = $transaction->payment;
+        // $payment = $transaction->payment;
         $day = Str::lower($transaction->created_at->format('l'));
         $roomTotal = $transaction->room_total;
 
@@ -90,6 +90,19 @@ class ShowTransactionRepository extends BaseRepository
 
         // Calculate room total with discount and add-ons
         $finalRoomTotal =$roomTotal * (1 - $discountValue);
+
+        //show multiple payments in a single transaction
+        $payments = Payment::where('transaction_id', $transaction->id)
+            ->get();
+            
+        $paymentSummary = [];
+
+        foreach ($payments as $payment) {
+            $paymentSummary[] = [
+                    'paymentType' => $payment->payment_type,
+                    'amountReceived' => $payment->amount_received,
+            ];
+        }
         
         return $this->success("Transaction Info", [
             "bookingHistory" => [
@@ -122,10 +135,11 @@ class ShowTransactionRepository extends BaseRepository
                     "roomTotal" => $roomTotal,
                     "finalRoomTotal" => $finalRoomTotal,
                 ],
-                "paymentSummary" => [
-                    "paymentType" => $payment->payment_type ?? null,
-                    "amountReceived" => $payment->amount_received ?? null
-                ]
+                "paymentSummary" => $paymentSummary
+                // [
+                //     "paymentType" => $payment->payment_type ?? null,
+                //     "amountReceived" => $payment->amount_received ?? null
+                // ]
             ]
         ]);
     }

@@ -25,7 +25,17 @@ class UpdateTransactionRepository extends BaseRepository
     {
         // dd($request);
         // DB::transaction(function() use($request, &$payment, &$transaction) { 
+        // try {
+            
+        // } catch (\Exception $e) {
+        //     Log::error("Transaction update error: " . $e->getMessage());
+        //     return $this->error("Error: " . $e->getMessage(), 500, [], false);
+        // }
+        // });
+
         try {
+            DB::beginTransaction();
+
             $transaction = Transaction::where('reference_number', $request->referenceNumber)->first();
 
             $user = auth()->user();
@@ -36,7 +46,7 @@ class UpdateTransactionRepository extends BaseRepository
                 $transactionHistory = TransactionHistory::where('id', $transaction->transaction_history_id)->first();
 
 
-                if ($request->status === "RESERVED") {
+                if ($request->status !== "CHECKED-OUT") {
                     $payment = Payment::create([
                         "transaction_id" => $transaction->id,
                         "cashier_session_id" => $userCashier->id,
@@ -167,20 +177,27 @@ class UpdateTransactionRepository extends BaseRepository
             } else {
                 return $this->error('Transaction not found.');
             }
+
+            DB::commit();
+            // show payment and transaction if successul payment
+            //     $data = [
+            //         'payment' => $payment,
+            //         'transaction' => $transaction
+            //     ];
+            //     return $this->success("Transaction updated successfully.", $data);
+            // }
+            // return $this->success("Transaction updated successfully.");
+    
+            return $this->success("Transaction updated successfully.", [
+                'payment' => $payment ?? null,
+                'transaction' => $transaction,
+            ]);
+
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error("Transaction update error: " . $e->getMessage());
             return $this->error("Error: " . $e->getMessage(), 500, [], false);
         }
-        // });
-
-        // show payment and transaction if successul payment
-        //     $data = [
-        //         'payment' => $payment,
-        //         'transaction' => $transaction
-        //     ];
-        //     return $this->success("Transaction updated successfully.", $data);
-        // }
-        return $this->success("Transaction updated successfully.");
     }
 
     private function updateTransactionAndRoomStatus($transaction, $request)
