@@ -14,7 +14,7 @@ class UpdateTransactionRequest extends ResponseRequest
      */
     public function authorize()
     {
-        return $this->user()->hasRole('ADMIN') || $this->user()->hasRole('GUEST');
+        return $this->user()->hasRole('ADMIN') || $this->user()->hasRole('GUEST') || $this->user()->hasRole('FRONT DESK'); ; 
     }
 
     /**
