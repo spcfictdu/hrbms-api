@@ -78,7 +78,11 @@ class IndexTransactionRepository extends BaseRepository
                 "checkInDate" => $transaction->check_in_date,
                 "checkOutDate" => $transaction->check_out_date,
                 "booked" => $transaction->created_at->format('Y-m-d'),
-                "room" => $transaction->room->room_number,
+                "room" => [
+                    "number" => $transaction->room->room_number,
+                    "name" => $transaction->room->roomType->name,
+                    "capacity" => $transaction->room->roomType->capacity,
+                ],
                 "total" => $transaction->payment?->amount_received,
             ];
         });
