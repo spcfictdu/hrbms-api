@@ -78,7 +78,7 @@ class ShowTransactionRepository extends BaseRepository
             $discountName = 'VOUCHER';
             $discountCode = Voucher::where('id', $transaction->payment->voucherDiscount->voucher_id)->first()->code;
             
-            dd($discountCode);
+            // dd($discountCode);
         } elseif(isset($transaction->payment->seniorPwdDiscount)) {
             $discountValue = $transaction->payment->seniorPwdDiscount->value ?? 0;
             $discountName = $transaction->payment->seniorPwdDiscount->discount;
@@ -131,6 +131,7 @@ class ShowTransactionRepository extends BaseRepository
                     "days" => $diffInDays,
                     "fullAddons" => $fullAddons,
                     "discount" => ($discountValue*100 . '%'),
+                    "voucherCode" => $discountCode ?? null,
                     "discountName" => $discountName,
                     "roomTotal" => $roomTotal,
                     "finalRoomTotal" => $finalRoomTotal,
