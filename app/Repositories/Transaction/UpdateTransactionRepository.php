@@ -132,10 +132,12 @@ class UpdateTransactionRepository extends BaseRepository
                         ]);
                     }
 
-                    $transaction->update([
-                        "status" => "CONFIRMED",
-                        "payment_id" => $payment->id
-                    ]);
+                    if ($request->status !== "CHECKED-IN") {
+                        $transaction->update([
+                            "status" => "CONFIRMED",
+                            "payment_id" => $payment->id
+                        ]);
+                    }
 
                     $transaction->room->update([
                         "status" => strtoupper("OCCUPIED")
