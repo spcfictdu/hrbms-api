@@ -68,41 +68,40 @@ class ShowTransactionRepository extends BaseRepository
         }
 
 
-        $fullAddons = BookingAddOn::where('transaction_id', $transaction->id)->get() ?? null;
-
-        // Calculate discount
-        $discountValue = 0;
-    
-        if (isset($transaction->payment->voucherDiscount)) {
-            $discountValue = $transaction->payment->voucherDiscount->value ?? 0;
-            $discountName = 'VOUCHER';
-            $discountCode = Voucher::where('id', $transaction->payment->voucherDiscount->voucher_id)->first()->code;
-            
-            // dd($discountCode);
-        } elseif(isset($transaction->payment->seniorPwdDiscount)) {
-            $discountValue = $transaction->payment->seniorPwdDiscount->value ?? 0;
-            $discountName = $transaction->payment->seniorPwdDiscount->discount;
-           
-        }else{
-            $discountValue = 0;
-            $discountName = NULL;
-        }
-
-        // Calculate room total with discount and add-ons
-        $finalRoomTotal =$roomTotal * (1 - $discountValue);
+        // $fullAddons = BookingAddOn::where('transaction_id', $transaction->id)->get() ?? null;
 
         //show multiple payments in a single transaction
         $payments = Payment::where('transaction_id', $transaction->id)
             ->get();
             
         $paymentSummary = [];
+        $discountValue = 0;
+        $discountName = NULL;
 
         foreach ($payments as $payment) {
+            // Calculate discount
+        
+            if (isset($payment->voucherDiscount)) {
+                $discountValue = $payment->voucherDiscount->value ?? 0;
+                $discountName = 'VOUCHER';
+                $discountCode = Voucher::where('id', $payment->voucherDiscount->voucher_id)->first()->code;
+                
+                // dd($discountCode);
+            } elseif(isset($payment->seniorPwdDiscount)) {
+                $discountValue = $payment->seniorPwdDiscount->value ?? 0;
+                $discountName = $payment->seniorPwdDiscount->discount;
+            
+            }
+
+
             $paymentSummary[] = [
                     'paymentType' => $payment->payment_type,
                     'amountReceived' => $payment->amount_received,
             ];
         }
+
+        // Calculate room total with discount and add-ons
+        $finalRoomTotal =$roomTotal * (1 - $discountValue);
         
         return $this->success("Transaction Info", [
             "bookingHistory" => [
