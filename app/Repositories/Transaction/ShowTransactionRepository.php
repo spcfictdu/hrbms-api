@@ -90,7 +90,7 @@ class ShowTransactionRepository extends BaseRepository
             } elseif(isset($payment->seniorPwdDiscount)) {
                 $discountValue = $payment->seniorPwdDiscount->value ?? 0;
                 $discountName = $payment->seniorPwdDiscount->discount;
-            
+                $snrPwdId = $payment->seniorPwdDiscount->id_number;
             }
 
 
@@ -131,6 +131,7 @@ class ShowTransactionRepository extends BaseRepository
                     "fullAddons" => $fullAddons,
                     "discount" => ($discountValue*100 . '%'),
                     "voucherCode" => $discountCode ?? null,
+                    "idNumber" => $snrPwdId ?? null,
                     "discountName" => $discountName,
                     "roomTotal" => $roomTotal,
                     "finalRoomTotal" => $finalRoomTotal,
