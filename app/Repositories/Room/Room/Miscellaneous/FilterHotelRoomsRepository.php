@@ -102,7 +102,14 @@ class FilterHotelRoomsRepository extends BaseRepository
                 'rate' => $roomType->rates->first()->{$dayName} ?? 0,
                 'capacity' => $roomType->capacity,
                 'description' => $roomType->description,
-                'roomsAvailable' => $roomType->rooms()->whereNotIn('status', ['OCCUPIED', 'UNCLEAN'])->count(),
+                'roomsAvailable' => $roomType->rooms()->whereNotIn('status', ['OCCUPIED', 'UNCLEAN'])
+                    ->whereDoesntHave('transactions', function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
+                        $query->where(function ($query) use ($checkInDateFilter, $checkOutDateFilter) {
+                            $query->where('check_in_date', '<', $checkOutDateFilter)
+                                ->where('check_out_date', '>', $checkInDateFilter);
+                        });
+                    })
+                    ->count(),
             ];
         }
 
