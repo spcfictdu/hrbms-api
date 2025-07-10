@@ -19,7 +19,7 @@ class AddonSeeder extends Seeder
         $items = ([
             [
                 'id' => 1,
-                'name' => 'EXTRA PILLOW ',
+                'name' => 'EXTRA PILLOW',
             ],
             [
                 'id' => 2,

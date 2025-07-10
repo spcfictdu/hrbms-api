@@ -34,7 +34,7 @@ class UpdateTransactionRepository extends BaseRepository
         // });
 
         try {
-            DB::beginTransaction();
+            // DB::beginTransaction();
 
             $transaction = Transaction::where('reference_number', $request->referenceNumber)->first();
 
@@ -46,11 +46,11 @@ class UpdateTransactionRepository extends BaseRepository
                 $transactionHistory = TransactionHistory::where('id', $transaction->transaction_history_id)->first();
 
 
-                if ($request->status !== "CHECKED-OUT") {
+                if ($request->status !== "CHECKED-OUT" && $request->paymentType) {
                     $payment = Payment::create([
                         "transaction_id" => $transaction->id,
                         "cashier_session_id" => $userCashier->id,
-                        "payment_type" => $request->paymentType,
+                        "payment_type" => $request->paymentType ,
                         "amount_received" => $request->amountReceived,
                     ]);
 
@@ -180,7 +180,7 @@ class UpdateTransactionRepository extends BaseRepository
                 return $this->error('Transaction not found.');
             }
 
-            DB::commit();
+            // DB::commit();
             // show payment and transaction if successul payment
             //     $data = [
             //         'payment' => $payment,
@@ -196,7 +196,7 @@ class UpdateTransactionRepository extends BaseRepository
             ]);
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            // DB::rollBack();
             Log::error("Transaction update error: " . $e->getMessage());
             return $this->error("Error: " . $e->getMessage(), 500, [], false);
         }
