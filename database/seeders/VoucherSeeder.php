@@ -29,7 +29,8 @@ class VoucherSeeder extends Seeder
             'code' => '1234',
             'value' => .1,
             'usage' => 10,
-            'status' => 'ACTIVE'
+            'status' => 'ACTIVE',
+            'expires_at' => now()->addDays(1000)
         ]);
     }
 }
