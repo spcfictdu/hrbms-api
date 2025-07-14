@@ -14,6 +14,8 @@ class CashierSession extends Model
     protected $fillable = [
         'user_id',
         'opening_balance',
+        'opening_adjustment',
+        'beginning_balance',
         'closing_balance',
         'opened_at',
         'closed_at',

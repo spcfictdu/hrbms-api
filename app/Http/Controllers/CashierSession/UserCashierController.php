@@ -14,10 +14,16 @@ use Illuminate\Support\Facades\DB;
 class UserCashierController extends Controller
 {
     use ResponseAPI;
-    public function startSession(Request $request)
+    public function startSession(Request $request, $userId)
     {
-        $user = auth()->user();
-        $userId = $user->id;
+        $user = User::find($userId);
+        if (!$user) {
+            return $this->error('User not found.');
+        }
+
+        if (!$user->hasRole('FRONT DESK')) {
+            return $this->error('User is not front desk');
+        }
 
         // Check if user has an opened cashier,
         // If there is, they cannot create another
@@ -25,16 +31,21 @@ class UserCashierController extends Controller
         // if ($user->cashierSessions)
         $activeSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
         if ($activeSession) {
-            return $this->error("User already has an active cashier");
+            return $this->error('User already has an active cashier');
         }
 
+        $userLatestCashierSession = $user->cashierSessions()->latest()->first();
+        $latestClosingBalance = $userLatestCashierSession->closing_balance ?? 0;
+
         $request->validate([
-            'openingBalance' => 'required|integer|min:0'
+            'openingAdjustment' => 'required|integer|min:0'
         ]);
 
         $cashierSession = CashierSession::create([
-            'user_id' => $userId,
-            'opening_balance' => $request->openingBalance,
+            'user_id' => $user->id,
+            'opening_balance' => $latestClosingBalance,
+            'opening_adjustment' => $request->openingAdjustment,
+            'beginning_balance' => $latestClosingBalance + $request->openingAdjustment,
             'opened_at' => Date::now(),
             'status' => 'ACTIVE'
         ]);
@@ -42,53 +53,12 @@ class UserCashierController extends Controller
         return $this->success('Success', $cashierSession);
     }
 
-    public function showSession()
+    public function closeSession(Request $request, $userId)
     {
-        $user = auth()->user();
-
-        $userActiveCashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
-
-        // If not found
-        if (!$userActiveCashierSession) {
-            return $this->error('User has no active cashier');
+        $user = User::find($userId);
+        if (!$user) {
+            return $this->error('User not found.');
         }
-
-        $openingBalance = $userActiveCashierSession->opening_balance;
-
-        // data = { drawerCash: $$$, payments: [{name: gcash, amount: $$$}, {name: cash, amount: $$$}...]}
-        // $allPaymentTypes = DB::table('payment_methods')->pluck('name')->toArray();
-
-        $allPaymentTypes = ['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'];
-
-        $payments = $userActiveCashierSession->payments->groupBy('payment_type')->map(function ($payments, $types) {
-            return [
-                'name' => $types,
-                'totalAmount' => number_format((float) $payments->sum('amount_received'), 2, '.', '')
-                // 'totalAmount' => 
-            ];
-        })->values();
-
-        // Add 0 amount for payment types that are not present
-        foreach ($allPaymentTypes as $type) {
-            if (!$payments->contains('name', $type)) {
-                $payments->push([
-                    'name' => $type,
-                    'totalAmount' => '0.00'
-                ]);
-            }
-        }
-
-        $data = [
-            'drawerCash' => $openingBalance,
-            'payments' => $payments,
-        ];
-
-        return $this->success('Success, the user\'s cashier has been opened.', $data);
-    }
-
-    public function closeSession(Request $request)
-    {
-        $user = auth()->user();
 
         $request->validate([
             'closingBalance' => 'required|numeric|min:0',
@@ -99,9 +69,9 @@ class UserCashierController extends Controller
         // Calculate the total payments received
         $totalPayments = $userActiveCashierSession->payments->sum('amount_received');
 
-        $openingBalance = $userActiveCashierSession->opening_balance;
+        $beginningBalance = $userActiveCashierSession->beginning_balance;
 
-        $total = $totalPayments + $openingBalance;
+        $total = $totalPayments + $beginningBalance;
 
         // Check if the total matches the closing balance
         if ($total !== (float) $request->closingBalance) {
@@ -115,6 +85,65 @@ class UserCashierController extends Controller
         ]);
 
         return $this->success('The user\'s cashier has been closed.');
+    }
+
+    public function showCashiers()
+    {
+        $users = User::Role('FRONT DESK')->get();
+
+        $data = [];
+
+        foreach($users as $user) {
+
+            $userLatestCashierSession = $user->cashierSessions()->latest()->first();
+            if (!$userLatestCashierSession) {
+                $data[] = [
+                    'userId' => $user->id,
+                    'message' => 'User has no cashier sessions',
+                ];
+                continue;
+            }
+
+            $openingBalance = $userLatestCashierSession->opening_balance;
+            $openingAdjustment = $userLatestCashierSession->opening_adjustment;
+            $beginningBalance = $userLatestCashierSession->beginning_balance;
+            $closingBalance = $userLatestCashierSession->closing_balance;
+
+            // data = { drawerCash: $$$, payments: [{name: gcash, amount: $$$}, {name: cash, amount: $$$}...]}
+            // $allPaymentTypes = DB::table('payment_methods')->pluck('name')->toArray();
+
+            $allPaymentTypes = ['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'];
+
+            $payments = $userLatestCashierSession->payments->groupBy('payment_type')->map(function ($payments, $types) {
+                return [
+                    'name' => $types,
+                    'totalAmount' => number_format((float) $payments->sum('amount_received'), 2, '.', '')
+                    // 'totalAmount' => 
+                ];
+            })->values();
+
+            // Add 0 amount for payment types that are not present
+            foreach ($allPaymentTypes as $type) {
+                if (!$payments->contains('name', $type)) {
+                    $payments->push([
+                        'name' => $type,
+                        'totalAmount' => '0.00'
+                    ]);
+                }
+            }
+
+            $data[] = [
+                'userId' => $user->id,
+                'status' => $userLatestCashierSession->status,
+                'openingBalance' => $openingBalance,
+                'openingAdjustment' => $openingAdjustment,
+                'beginningBalance' => $beginningBalance,
+                'closingBalance' => $closingBalance,
+                'payments' => $payments,
+            ];
+        }
+
+        return $this->success('Success, cashier data has been fetched', $data);
     }
 
     public function showHistory(Request $request, $userId)
