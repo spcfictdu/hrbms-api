@@ -81,6 +81,7 @@ class IndexCashierSessionRepository extends BaseRepository
 
         $cashierSessions = $cashierSessions->map(function ($cashierSession) {
             return [
+                "cashierSessionId" => $cashierSession->id,
                 "openingBalance" => $cashierSession->opening_balance,
                 "closingBalance" => $cashierSession->closing_balance,
                 "openedAt" => $cashierSession->opened_at,

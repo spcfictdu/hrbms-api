@@ -9,6 +9,7 @@ use App\Models\Amenity\Addon;
 use App\Models\Discount\Voucher;
 use App\Mail\BookTransactionMail;
 use App\Models\Discount\Discount;
+use App\Models\CashierSession\CashierSession;
 use Illuminate\Support\Facades\DB;
 use App\Models\Transaction\Payment;
 use App\Mail\ReserveTransactionMail;
@@ -149,10 +150,10 @@ class CreateTransactionRepository extends BaseRepository
             $payment = null;
 
             if (isset($request->payment) && isset($transaction->id)) {
-                $userCashier = $user->cashierSessions->where('status', 'ACTIVE')->first();
+                $cashierSession = CashierSession::where('status', 'ACTIVE')->first();
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,
-                    "cashier_session_id" => $userCashier->id,
+                    "cashier_session_id" => $cashierSession->id,
                     "payment_type" => strtoupper($request->payment['paymentType']),
                     "amount_received" => $request->payment['amountReceived']
                 ]);
