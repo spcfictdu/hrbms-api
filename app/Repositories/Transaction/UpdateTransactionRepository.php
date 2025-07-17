@@ -18,6 +18,8 @@ use App\Models\PaymentType\ChequePayment;
 use App\Models\Discount\SeniorPwdDiscount;
 use App\Models\PaymentType\CreditCardPayment;
 use App\Models\Transaction\TransactionHistory;
+use App\Models\CashierSession\CashierSession;
+use App\Models\User;
 
 class UpdateTransactionRepository extends BaseRepository
 {
@@ -39,7 +41,25 @@ class UpdateTransactionRepository extends BaseRepository
             $transaction = Transaction::where('reference_number', $request->referenceNumber)->first();
 
             $user = auth()->user();
-            $userCashier = $user->cashierSessions->where('status', 'ACTIVE')->first();
+            // if ($user->hasRole('ADMIN')) {
+
+            //     $cashier = User::find($request->cashierId);
+            //     $cashierSession = CashierSession::where('user_id', $cashier->id)->latest()->first();
+
+            // } elseif ($user->hasRole('FRONT DESK')) {
+
+            //     $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
+            //     if (!$cashierSession) {
+            //         return $this->error('User\'s cashier is not open');
+            //     }
+
+            // }
+
+            if ($user->hasRole('ADMIN')) {
+                $cashierSession = CashierSession::where('status', 'ACTIVE')->first();
+            } elseif ($user->hasRole('FRONT DESK')) {
+                $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
+            }
 
 
             if ($transaction) {
@@ -49,7 +69,7 @@ class UpdateTransactionRepository extends BaseRepository
                 if ($request->status !== "CHECKED-OUT" && $request->paymentType) {
                     $payment = Payment::create([
                         "transaction_id" => $transaction->id,
-                        "cashier_session_id" => $userCashier->id,
+                        "cashier_session_id" => $cashierSession->id,
                         "payment_type" => $request->paymentType ,
                         "amount_received" => $request->amountReceived,
                     ]);

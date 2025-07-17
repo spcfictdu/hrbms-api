@@ -10,6 +10,7 @@ use App\Models\Discount\Voucher;
 use App\Mail\BookTransactionMail;
 use App\Models\Discount\Discount;
 use App\Models\CashierSession\CashierSession;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\Transaction\Payment;
 use App\Mail\ReserveTransactionMail;
@@ -150,7 +151,25 @@ class CreateTransactionRepository extends BaseRepository
             $payment = null;
 
             if (isset($request->payment) && isset($transaction->id)) {
-                $cashierSession = CashierSession::where('status', 'ACTIVE')->first();
+                // if ($user->hasRole('ADMIN')) {
+
+                //     $cashier = User::find($request->cashierId);
+                //     $cashierSession = CashierSession::where('user_id', $cashier->id)->latest()->first();
+
+                // } elseif ($user->hasRole('FRONT DESK')) {
+
+                //     $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
+                //     if (!$cashierSession) {
+                //         return $this->error('User\'s cashier is not open');
+                //     }
+
+                // }
+                if ($user->hasRole('ADMIN')) {
+                    $cashierSession = CashierSession::where('status', 'ACTIVE')->first();
+                } elseif ($user->hasRole('FRONT DESK')) {
+                    $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
+                }
+
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,
                     "cashier_session_id" => $cashierSession->id,
