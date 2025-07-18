@@ -31,6 +31,9 @@ class ShowGuestRepository extends BaseRepository
 
         $camelCaseGuest = [
             'id' => $guest->id,
+            'firstName' => $guest->first_name,
+            'middleName' => $guest->middle_name,
+            'lastName' => $guest->last_name,
             'fullName' => $guest->full_name,
             'email' => $guest->email,
             'phone' => $guest->phone_number,

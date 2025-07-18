@@ -223,6 +223,10 @@ class UpdateTransactionRepository extends BaseRepository
                             'id_type' => strtoupper($request->guest['id']['type']),
                             'id_number' => $data['number'],
                         ]);
+
+                        $transaction->update([
+                            'number_of_guest' => $request->guest['extraPerson'],
+                        ]);
                     }
 
                     if ($request->status === 'CHECKED-IN' || $request->status === 'CHECKED-OUT') {
