@@ -19,7 +19,8 @@ use App\Models\Discount\SeniorPwdDiscount;
 use App\Models\PaymentType\CreditCardPayment;
 use App\Models\Transaction\TransactionHistory;
 use App\Models\CashierSession\CashierSession;
-use App\Models\User;
+use App\Models\Guest\Guest;
+use Illuminate\Support\Facades\Validator;
 
 class UpdateTransactionRepository extends BaseRepository
 {
@@ -43,8 +44,7 @@ class UpdateTransactionRepository extends BaseRepository
             $user = auth()->user();
             // if ($user->hasRole('ADMIN')) {
 
-            //     $cashier = User::find($request->cashierId);
-            //     $cashierSession = CashierSession::where('user_id', $cashier->id)->latest()->first();
+            //     $cashierSession = CashierSession::where('user_id', $request->cashierId)->latest()->first();
 
             // } elseif ($user->hasRole('FRONT DESK')) {
 
@@ -93,44 +93,44 @@ class UpdateTransactionRepository extends BaseRepository
 
 
                     // verify if discount exists and create it to database
-                if ($request->discount) {
+                    if ($request->discount) {
 
-                    $discountName = strtoupper($request->discount);
-                    if ($discountName === 'VOUCHER') {
+                        $discountName = strtoupper($request->discount);
+                        if ($discountName === 'VOUCHER') {
 
-                        $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
+                            $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
 
-                        if ($voucher->status === 'ACTIVE') {
-                            $voucherCode = Voucher::where('code', $request->voucherCode)->first('id');
-                            VoucherDiscount::create([
-                                "payment_id" => $payment->id,
-                                "voucher_id" => $voucherCode->id,
-                                "discount" => $discountName,
-                                "value" => $voucher->value,
-                            ]);
+                            if ($voucher->status === 'ACTIVE') {
+                                $voucherCode = Voucher::where('code', $request->voucherCode)->first('id');
+                                VoucherDiscount::create([
+                                    "payment_id" => $payment->id,
+                                    "voucher_id" => $voucherCode->id,
+                                    "discount" => $discountName,
+                                    "value" => $voucher->value,
+                                ]);
 
-                            $voucher->update([
-                                'usage' => (int)$voucher->usage - 1,
-                                'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE',
-                            ]);
+                                $voucher->update([
+                                    'usage' => (int)$voucher->usage - 1,
+                                    'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE',
+                                ]);
+                            } else {
+                                return $this->error('Voucher is not available');
+                            }
                         } else {
-                            return $this->error('Voucher is not available');
-                        }
-                    } else {
-                        $discount = Discount::where('name', $discountName)->first();
+                            $discount = Discount::where('name', $discountName)->first();
 
-                        if (!$discount) {
-                            return $this->error("Discount '$discountName' not found.");
-                        }
+                            if (!$discount) {
+                                return $this->error("Discount '$discountName' not found.");
+                            }
 
-                        SeniorPwdDiscount::create([
-                            "payment_id" => $payment->id,
-                            "discount" => $discount->name,
-                            "id_number" => $request->idNumber,
-                            "value" => $discount->value,
-                        ]);
+                            SeniorPwdDiscount::create([
+                                "payment_id" => $payment->id,
+                                "discount" => $discount->name,
+                                "id_number" => $request->idNumber,
+                                "value" => $discount->value,
+                            ]);
+                        }
                     }
-                }
 
 
                     if ($request->paymentType === 'CHEQUE') {
@@ -166,19 +166,26 @@ class UpdateTransactionRepository extends BaseRepository
                     if ($transactionHistory) {
                         if ($request->checkInDate && $request->checkInTime) {
                             $transactionHistory->update([
-                                "check_in_date" => $request->checkInDate,
-                                "check_in_time" => $request->checkInTime,
+                                "check_in_date" => $request->checkInDate ?? null,
+                                "check_in_time" => $request->checkInTime ?? null,
+                            ]);
+                            $transaction->update([
+                                "check_in_date" => $request->checkInDate ?? null,
+                                "check_in_time" => $request->checkInTime ?? null,
                             ]);
                         }
 
                         if ($request->checkOutDate && $request->checkOutTime) {
                             $transactionHistory->update([
-                                "check_out_date" => $request->checkOutDate,
-                                "check_out_time" => $request->checkOutTime,
+                                "check_out_date" => $request->checkOutDate ?? null,
+                                "check_out_time" => $request->checkOutTime ?? null,
+                            ]);
+                            $transaction->update([
+                                "check_out_date" => $request->checkOutDate ?? null,
+                                "check_out_time" => $request->checkOutTime ?? null,
                             ]);
                         }
 
-                        $this->updateTransactionAndRoomStatus($transaction, $request);
                     } else {
                         $transactionHistory = TransactionHistory::create([
                             "check_in_date" => $request->checkInDate ?? null,
@@ -191,8 +198,37 @@ class UpdateTransactionRepository extends BaseRepository
                             "transaction_history_id" => $transactionHistory->id
                         ]);
 
+                    }
+
+                    $guestDetails = [
+                        'reference_number' => $this->guestReferenceNumber(),
+                        'first_name' => strtoupper($request->guest['firstName']),
+                        'middle_name' => strtoupper($request->guest['middleName'] ?? ''),
+                        'last_name' => strtoupper($request->guest['lastName']),
+                        'province' => strtoupper($request->guest['address']['province']),
+                        'city' => strtoupper($request->guest['address']['city']),
+                        'email' => $request->guest['contact']['email'],
+                    ];
+
+                    $validator = Validator::make($request->guest['contact'] + $request->guest['id'], [
+                        'phoneNum' => ['required'],
+                        'number' => ['required'],
+                    ]);
+
+                    if (!$validator->fails()) {
+                        $data = $validator->validated();
+
+                        $transaction->guest->update($guestDetails + [
+                            'phone_number' => $data['phoneNum'],
+                            'id_type' => strtoupper($request->guest['id']['type']),
+                            'id_number' => $data['number'],
+                        ]);
+                    }
+
+                    if ($request->status === 'CHECKED-IN' || $request->status === 'CHECKED-OUT') {
                         $this->updateTransactionAndRoomStatus($transaction, $request);
                     }
+
                 } else {
                     return $this->error('Invalid status provided.');
                 }

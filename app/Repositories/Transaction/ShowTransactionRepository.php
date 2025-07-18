@@ -126,6 +126,7 @@ class ShowTransactionRepository extends BaseRepository
                     "checkOutTime" => $transactionHistory?->check_out_time,
                 ],
                 "guestName" => $guest->full_name,
+                "guestId" => $guest->id,
                 "priceSummary" => [
                     "days" => $diffInDays,
                     "fullAddons" => $fullAddons,

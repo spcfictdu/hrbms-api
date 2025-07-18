@@ -10,7 +10,6 @@ use App\Models\Discount\Voucher;
 use App\Mail\BookTransactionMail;
 use App\Models\Discount\Discount;
 use App\Models\CashierSession\CashierSession;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\Transaction\Payment;
 use App\Mail\ReserveTransactionMail;
@@ -88,7 +87,7 @@ class CreateTransactionRepository extends BaseRepository
             }
 
             $validator = Validator::make($request->guest['contact'] + $request->guest['id'], [
-                'phoneNum' => ['required', 'regex:/^(09)\d{9}$/'],
+                'phoneNum' => ['required'],
                 'number' => ['required'],
             ]);
 
@@ -153,8 +152,7 @@ class CreateTransactionRepository extends BaseRepository
             if (isset($request->payment) && isset($transaction->id)) {
                 // if ($user->hasRole('ADMIN')) {
 
-                //     $cashier = User::find($request->cashierId);
-                //     $cashierSession = CashierSession::where('user_id', $cashier->id)->latest()->first();
+                //     $cashierSession = CashierSession::where('user_id', $request->cashierId)->latest()->first();
 
                 // } elseif ($user->hasRole('FRONT DESK')) {
 

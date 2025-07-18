@@ -72,6 +72,7 @@ class IndexTransactionRepository extends BaseRepository
         $transformedTransactions = $filteredTransactions->map(function ($transaction) {
             return [
                 "fullName" => $transaction->guest->full_name,
+                "guestId" => $transaction->guest->id,
                 "status" => $transaction->status,
                 "transactionRefNum" => $transaction->reference_number,
                 "occupants" => $transaction->number_of_guest,
