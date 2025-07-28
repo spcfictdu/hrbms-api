@@ -57,21 +57,21 @@ class CashierSessionController extends Controller
         return $this->delete->execute($id);
     }
 
-    protected function toggle(Request $request, $id)
-    {
-        $cashierSession = CashierSession::find($id);
+    // protected function toggle(Request $request, $id)
+    // {
+    //     // $cashierSession = CashierSession::find($id);
 
-        $request->validate([
-            'status' => 'required|in:INACTIVE,ACTIVE'
-        ]);
+    //     // $request->validate([
+    //     //     'status' => 'required|in:INACTIVE,ACTIVE'
+    //     // ]);
 
-        $cashierSession->update([
-            'status' => $request->status
-        ]);
+    //     // $cashierSession->update([
+    //     //     'status' => $request->status
+    //     // ]);
 
-        return response()->json([
-            'message' => 'succcess',
-            'data' => $cashierSession
-        ]);
-    }
+    //     // return response()->json([
+    //     //     'message' => 'succcess',
+    //     //     'data' => $cashierSession
+    //     // ]);
+    // }
 }
