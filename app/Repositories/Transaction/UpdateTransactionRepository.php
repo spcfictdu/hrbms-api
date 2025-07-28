@@ -65,8 +65,7 @@ class UpdateTransactionRepository extends BaseRepository
             if ($transaction) {
                 $transactionHistory = TransactionHistory::where('id', $transaction->transaction_history_id)->first();
 
-
-                if ($request->status !== "CHECKED-OUT" && $request->paymentType) {
+                if ($request->paymentType) {
                     $payment = Payment::create([
                         "transaction_id" => $transaction->id,
                         "cashier_session_id" => $cashierSession->id,
@@ -152,7 +151,7 @@ class UpdateTransactionRepository extends BaseRepository
                         ]);
                     }
 
-                    if ($request->status !== "CHECKED-IN") {
+                    if ($request->status === "RESERVED") {
                         $transaction->update([
                             "status" => "CONFIRMED",
                             "payment_id" => $payment->id
@@ -197,41 +196,32 @@ class UpdateTransactionRepository extends BaseRepository
                         $transaction->update([
                             "transaction_history_id" => $transactionHistory->id
                         ]);
-
                     }
+
+                    $guestDetails = null;
 
                     $guestDetails = [
                         'reference_number' => $this->guestReferenceNumber(),
-                        'first_name' => strtoupper($request->guest['firstName']),
-                        'middle_name' => strtoupper($request->guest['middleName'] ?? ''),
-                        'last_name' => strtoupper($request->guest['lastName']),
-                        'province' => strtoupper($request->guest['address']['province']),
-                        'city' => strtoupper($request->guest['address']['city']),
-                        'email' => $request->guest['contact']['email'],
+                        'first_name' => strtoupper($request->guest['firstName'] ?? $transaction->guest->first_name),
+                        'middle_name' => strtoupper($request->guest['middleName'] ?? $transaction->guest->middle_name),
+                        'last_name' => strtoupper($request->guest['lastName'] ?? $transaction->guest->last_name),
+                        'province' => strtoupper($request->guest['address']['province'] ?? $transaction->guest->province),
+                        'city' => strtoupper($request->guest['address']['city'] ?? $transaction->guest->city),
+                        'phone_number' => $request->guest['contact']['phoneNum'] ?? $transaction->guest->phone_number,
+                        'email' => $request->guest['contact']['email'] ?? $transaction->guest->email,
+                        'id_type' => strtoupper($request->guest['id']['type'] ?? $transaction->guest->id_type),
+                        'id_number' => $request->guest['id']['number'] ?? $transaction->guest->id_number,
                     ];
 
-                    $validator = Validator::make($request->guest['contact'] + $request->guest['id'], [
-                        'phoneNum' => ['required'],
-                        'number' => ['required'],
-                    ]);
+                    if ($guestDetails) {
+                            $transaction->guest->update($guestDetails);
 
-                    if (!$validator->fails()) {
-                        $data = $validator->validated();
-
-                        $transaction->guest->update($guestDetails + [
-                            'phone_number' => $data['phoneNum'],
-                            'id_type' => strtoupper($request->guest['id']['type']),
-                            'id_number' => $data['number'],
-                        ]);
-
-                        $transaction->update([
-                            'number_of_guest' => $request->guest['extraPerson'],
-                        ]);
+                            $transaction->update([
+                                'number_of_guest' => $request->guest['extraPerson'] ?? $transaction->number_of_guest,
+                            ]);
                     }
 
-                    if ($request->status === 'CHECKED-IN' || $request->status === 'CHECKED-OUT') {
-                        $this->updateTransactionAndRoomStatus($transaction, $request);
-                    }
+                    $this->updateTransactionAndRoomStatus($transaction, $request);
 
                 } else {
                     return $this->error('Invalid status provided.');
@@ -252,7 +242,7 @@ class UpdateTransactionRepository extends BaseRepository
     
             return $this->success("Transaction updated successfully.", [
                 'payment' => $payment ?? null,
-                'transaction' => $transaction,
+                'transaction' => $transaction ?? null,
             ]);
 
         } catch (\Exception $e) {
