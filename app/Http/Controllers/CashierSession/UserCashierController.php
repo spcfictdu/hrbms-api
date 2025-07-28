@@ -35,7 +35,9 @@ class UserCashierController extends Controller
         }
 
         $userLatestCashierSession = $user->cashierSessions()->latest()->first();
-        $latestClosingBalance = $userLatestCashierSession->closing_balance + $userLatestCashierSession->closing_adjustment ?? 0;
+        $latestClosingBalance = $userLatestCashierSession->closing_balance ?? 0;
+        $latestClosingAdjustment = $userLatestCashierSession->closing_adjustment ?? 0;
+        $latestClosing = $latestClosingBalance + $latestClosingAdjustment;
 
         $request->validate([
             'openingAdjustment' => 'required|integer|min:0'
@@ -43,9 +45,9 @@ class UserCashierController extends Controller
 
         $cashierSession = CashierSession::create([
             'user_id' => $user->id,
-            'opening_balance' => $latestClosingBalance,
+            'opening_balance' => $latestClosing,
             'opening_adjustment' => $request->openingAdjustment,
-            'beginning_balance' => $latestClosingBalance + $request->openingAdjustment,
+            'beginning_balance' => $latestClosing + $request->openingAdjustment,
             'opened_at' => Date::now(),
             'status' => 'ACTIVE'
         ]);
