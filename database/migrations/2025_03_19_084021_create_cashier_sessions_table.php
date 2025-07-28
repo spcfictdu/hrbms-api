@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->decimal('opening_balance', 10, 2);
             $table->decimal('opening_adjustment', 10, 2)->default(0);
-            $table->decimal('beginning_balance', 10, 2);
+            $table->decimal('beginning_balance', 10, 2)->nullable();
             $table->decimal('closing_adjustment', 10, 2)->default(0);
             $table->decimal('closing_balance', 10, 2)->nullable();
             $table->dateTime('opened_at');
