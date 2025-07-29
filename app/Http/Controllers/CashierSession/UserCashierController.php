@@ -142,6 +142,7 @@ class UserCashierController extends Controller
                 'openingBalance' => $openingBalance,
                 'openingAdjustment' => $openingAdjustment,
                 'beginningBalance' => $beginningBalance,
+                'closingAdjustment' => $userLatestCashierSession->closing_adjustment,
                 'closingBalance' => $closingBalance,
                 'payments' => $payments,
             ];

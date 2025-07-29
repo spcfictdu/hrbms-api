@@ -16,6 +16,7 @@ class CashierSession extends Model
         'opening_balance',
         'opening_adjustment',
         'beginning_balance',
+        'closing_adjustment',
         'closing_balance',
         'opened_at',
         'closed_at',
