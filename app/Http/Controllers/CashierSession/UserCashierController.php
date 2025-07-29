@@ -138,6 +138,7 @@ class UserCashierController extends Controller
 
             $data[] = [
                 'userId' => $user->id,
+                'fullName' => $user->full_name,
                 'status' => $userLatestCashierSession->status,
                 'openingBalance' => $openingBalance,
                 'openingAdjustment' => $openingAdjustment,
