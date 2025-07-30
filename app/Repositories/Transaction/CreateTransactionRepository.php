@@ -150,23 +150,23 @@ class CreateTransactionRepository extends BaseRepository
             $payment = null;
 
             if (isset($request->payment) && isset($transaction->id)) {
-                // if ($user->hasRole('ADMIN')) {
-
-                //     $cashierSession = CashierSession::where('user_id', $request->cashierId)->latest()->first();
-
-                // } elseif ($user->hasRole('FRONT DESK')) {
-
-                //     $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
-                //     if (!$cashierSession) {
-                //         return $this->error('User\'s cashier is not open');
-                //     }
-
-                // }
                 if ($user->hasRole('ADMIN')) {
-                    $cashierSession = CashierSession::where('status', 'ACTIVE')->first();
+
+                    $cashierSession = CashierSession::where('user_id', $request->cashierId)->latest()->first();
+
                 } elseif ($user->hasRole('FRONT DESK')) {
+
                     $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
+                    if (!$cashierSession) {
+                        return $this->error('User\'s cashier is not open');
+                    }
+
                 }
+                // if ($user->hasRole('ADMIN')) {
+                //     $cashierSession = CashierSession::where('status', 'ACTIVE')->first();
+                // } elseif ($user->hasRole('FRONT DESK')) {
+                //     $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
+                // }
 
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,

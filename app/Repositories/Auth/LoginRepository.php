@@ -38,6 +38,7 @@ class LoginRepository extends BaseRepository
 
         return $this->success("Login successful", [
             'username' => $user->username,
+            'userId' => $user->id,
             'firstName' => $user->first_name,
             'lastName' => $user->last_name,
             // 'token' => $user->token,
