@@ -46,6 +46,10 @@ class UpdateTransactionRepository extends BaseRepository
 
                 $cashierSession = CashierSession::where('user_id', $request->cashierId)->latest()->first();
 
+                if ($cashierSession->status === 'INACTIVE') {
+                    return $this->error('User\'s cashier is not open');
+                }
+
             } elseif ($user->hasRole('FRONT DESK')) {
 
                 $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
