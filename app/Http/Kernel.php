@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
 
         // Custom Middleware
         'optional.auth' => OptionalAuth::class,
+        'role' => \App\Http\Middleware\CheckRole::class,
     ];
 }
