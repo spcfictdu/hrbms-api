@@ -23,6 +23,8 @@ class UserCashierController extends Controller
 
         if (!$user->hasRole('FRONT DESK')) {
             return $this->error('User is not front desk');
+        } elseif (!auth()->user()->hasRole('ADMIN') && (int) auth()->user()->id !== (int) $user->id) {
+            return $this->error('Forbidden Access');
         }
 
         // Check if user has an opened cashier,
@@ -93,11 +95,61 @@ class UserCashierController extends Controller
 
     public function showCashiers()
     {
-        $users = User::Role('FRONT DESK')->get();
+        if (auth()->user()->hasRole('ADMIN')) {
+            $users = User::Role('FRONT DESK')->get();
 
-        $data = [];
+            $data = [];
 
-        foreach($users as $user) {
+            foreach($users as $user) {
+
+                $userLatestCashierSession = $user->cashierSessions()->latest()->first();
+                if (!$userLatestCashierSession) {
+                    $data[] = [
+                        'userId' => $user->id,
+                        'message' => 'User has no cashier sessions',
+                    ];
+                    continue;
+                }
+
+                // data = { drawerCash: $$$, payments: [{name: gcash, amount: $$$}, {name: cash, amount: $$$}...]}
+                // $allPaymentTypes = DB::table('payment_methods')->pluck('name')->toArray();
+
+                $allPaymentTypes = ['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'];
+
+                $payments = $userLatestCashierSession->payments->groupBy('payment_type')->map(function ($payments, $types) {
+                    return [
+                        'name' => $types,
+                        'totalAmount' => number_format((float) $payments->sum('amount_received'), 2, '.', '')
+                        // 'totalAmount' => 
+                    ];
+                })->values();
+
+                // Add 0 amount for payment types that are not present
+                foreach ($allPaymentTypes as $type) {
+                    if (!$payments->contains('name', $type)) {
+                        $payments->push([
+                            'name' => $type,
+                            'totalAmount' => '0.00'
+                        ]);
+                    }
+                }
+
+                $data[] = [
+                    'userId' => $user->id,
+                    'fullName' => $user->full_name,
+                    'status' => $userLatestCashierSession->status,
+                    'openingBalance' => $userLatestCashierSession->opening_balance,
+                    'openingAdjustment' => $userLatestCashierSession->opening_adjustment,
+                    'beginningBalance' => $userLatestCashierSession->beginning_balance,
+                    'closingAdjustment' => $userLatestCashierSession->closing_adjustment,
+                    'closingBalance' => $userLatestCashierSession->closing_balance,
+                    'payments' => $payments,
+                ];
+            }
+        } elseif (auth()->user()->hasRole('FRONT DESK')) {
+            $user = auth()->user();
+
+            $data = [];
 
             $userLatestCashierSession = $user->cashierSessions()->latest()->first();
             if (!$userLatestCashierSession) {
@@ -105,16 +157,7 @@ class UserCashierController extends Controller
                     'userId' => $user->id,
                     'message' => 'User has no cashier sessions',
                 ];
-                continue;
             }
-
-            $openingBalance = $userLatestCashierSession->opening_balance;
-            $openingAdjustment = $userLatestCashierSession->opening_adjustment;
-            $beginningBalance = $userLatestCashierSession->beginning_balance;
-            $closingBalance = $userLatestCashierSession->closing_balance;
-
-            // data = { drawerCash: $$$, payments: [{name: gcash, amount: $$$}, {name: cash, amount: $$$}...]}
-            // $allPaymentTypes = DB::table('payment_methods')->pluck('name')->toArray();
 
             $allPaymentTypes = ['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'];
 
@@ -122,11 +165,9 @@ class UserCashierController extends Controller
                 return [
                     'name' => $types,
                     'totalAmount' => number_format((float) $payments->sum('amount_received'), 2, '.', '')
-                    // 'totalAmount' => 
                 ];
             })->values();
 
-            // Add 0 amount for payment types that are not present
             foreach ($allPaymentTypes as $type) {
                 if (!$payments->contains('name', $type)) {
                     $payments->push([
@@ -140,11 +181,11 @@ class UserCashierController extends Controller
                 'userId' => $user->id,
                 'fullName' => $user->full_name,
                 'status' => $userLatestCashierSession->status,
-                'openingBalance' => $openingBalance,
-                'openingAdjustment' => $openingAdjustment,
-                'beginningBalance' => $beginningBalance,
+                'openingBalance' => $userLatestCashierSession->opening_balance,
+                'openingAdjustment' => $userLatestCashierSession->opening_adjustment,
+                'beginningBalance' => $userLatestCashierSession->beginning_balance,
                 'closingAdjustment' => $userLatestCashierSession->closing_adjustment,
-                'closingBalance' => $closingBalance,
+                'closingBalance' => $userLatestCashierSession->closing_balance,
                 'payments' => $payments,
             ];
         }
