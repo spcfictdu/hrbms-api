@@ -42,22 +42,7 @@ class UpdateTransactionRepository extends BaseRepository
             $transaction = Transaction::where('reference_number', $request->referenceNumber)->first();
 
             $user = auth()->user();
-            if ($user->hasRole('ADMIN')) {
-
-                $cashierSession = CashierSession::where('user_id', $request->cashierId)->latest()->first();
-
-                if ($cashierSession->status === 'INACTIVE') {
-                    return $this->error('User\'s cashier is not open');
-                }
-
-            } elseif ($user->hasRole('FRONT DESK')) {
-
-                $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
-                if (!$cashierSession) {
-                    return $this->error('User\'s cashier is not open');
-                }
-
-            }
+            
 
             // if ($user->hasRole('ADMIN')) {
             //     $cashierSession = CashierSession::where('status', 'ACTIVE')->first();
@@ -70,6 +55,23 @@ class UpdateTransactionRepository extends BaseRepository
                 $transactionHistory = TransactionHistory::where('id', $transaction->transaction_history_id)->first();
 
                 if ($request->paymentType) {
+                    if ($user->hasRole('ADMIN')) {
+
+                        $cashierSession = CashierSession::where('user_id', $request->cashierId)->latest()->first();
+
+                        if ($cashierSession->status === 'INACTIVE') {
+                            return $this->error('User\'s cashier is not open');
+                        }
+
+                    } elseif ($user->hasRole('FRONT DESK')) {
+
+                        $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
+                        if (!$cashierSession) {
+                            return $this->error('User\'s cashier is not open');
+                        }
+
+                    }
+                    
                     $payment = Payment::create([
                         "transaction_id" => $transaction->id,
                         "cashier_session_id" => $cashierSession->id,
