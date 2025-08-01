@@ -83,6 +83,11 @@ class UserCashierController extends Controller
             return $this->error('Total and closing balance are not equal', 500, $total,);
         }
 
+        // Check if new drawer cash total would become negative
+        if (($request->closingBalance + $request->closingAdjustment) < 0) {
+            return $this->error('New drawer cash total is less than 0');
+        }
+
         $userActiveCashierSession->update([
             'closing_balance' => $request->closingBalance,
             'closing_adjustment' => $request->closingAdjustment,
