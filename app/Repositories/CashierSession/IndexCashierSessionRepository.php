@@ -13,8 +13,10 @@ class IndexCashierSessionRepository extends BaseRepository
     public function execute($request)
     {
         $filterableFields = [
-            // 'openingBalance' => 'opening_balance',
-            // 'closingBalance' => 'closing_balance',
+            'openingBalance' => 'opening_balance',
+            'closingBalance' => 'closing_balance',
+            'beginningBalance' => 'beginning_balance',
+            'openingAdjustment' => 'opening_adjustment',
             'openedAt' => 'opened_at',
             'closedAt' => 'closed_at',
             'status' => 'status'
@@ -23,6 +25,8 @@ class IndexCashierSessionRepository extends BaseRepository
         $searchableFields = [
             'opening_balance',
             'closing_balance',
+            'beginning_balance',
+            'opening_adjustment',
             'opened_at' => [
                 'type' => 'date'
             ],
@@ -40,6 +44,12 @@ class IndexCashierSessionRepository extends BaseRepository
             ],
             'closingBalance' => [
                 'column' => 'closing_balance'
+            ],
+            'beginningBalance' => [
+                'column' => 'beginning_balance'
+            ],
+            'openingAdjustment' => [
+                'column' => 'opening_adjustment'
             ],
             'openedAt' => [
                 'column' => 'opened_at'
@@ -84,6 +94,8 @@ class IndexCashierSessionRepository extends BaseRepository
                 "cashierSessionId" => $cashierSession->id,
                 "openingBalance" => $cashierSession->opening_balance,
                 "closingBalance" => $cashierSession->closing_balance,
+                "beginningBalance" => $cashierSession->beginning_balance,
+                "openingAdjustment" => $cashierSession->opening_adjustment,
                 "openedAt" => $cashierSession->opened_at,
                 "closedAt" => $cashierSession->closed_at,
                 "status" => $cashierSession->status,

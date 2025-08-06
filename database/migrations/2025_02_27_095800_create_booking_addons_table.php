@@ -17,6 +17,9 @@ return new class extends Migration
             // $table->foreignIdFor(Transaction::class)->constrained()->cascadeOnDelete();
             $table->unsignedBigInteger('transaction_id');
             $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
+            $table->enum('payment_status', ['PENDING', 'PAID', 'VOIDED', 'REFUNDED'])->default('PENDING');
+            $table->date('voided_at')->nullable();
+            $table->date('refunded_at')->nullable();
             $table->string('name');
             // $table->unsignedBigInteger('addon_id');
             // $table->foreign('addon_id')->references('id')->on('add_ons')->onDelete('cascade');

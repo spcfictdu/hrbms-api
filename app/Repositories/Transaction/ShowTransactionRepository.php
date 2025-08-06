@@ -63,6 +63,7 @@ class ShowTransactionRepository extends BaseRepository
                     'unit_price' => $addonModel->price,
                     // 'total' => $totalPrice,
                     'total' => (float)number_format($totalPrice, 2),
+                    'paymentStatus' => $addon->payment_status,
                 ];
             }
         }
@@ -113,6 +114,7 @@ class ShowTransactionRepository extends BaseRepository
                 "transaction" => [
                     "referenceNumber" => $transaction->reference_number,
                     "status" => $transaction->status,
+                    "paymentStatus" => $transaction->payment_status,
                     "extraPerson" => $transaction->number_of_guest,
                     "checkInDate" => $transaction->check_in_date,
                     "checkInTime" => $transaction->check_in_time,

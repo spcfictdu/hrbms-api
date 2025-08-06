@@ -178,6 +178,31 @@ class CreateTransactionRepository extends BaseRepository
                     "payment_type" => strtoupper($request->payment['paymentType']),
                     "amount_received" => $request->payment['amountReceived']
                 ]);
+
+                if ($payment->amount_received >= $transaction->room_total) {
+                    $transaction->update([
+                        'payment_status' => 'PAID',
+                    ]);
+                }
+
+                $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+                    ->whereNot('payment_status', 'VOIDED')
+                    ->orderBy('id', 'asc')
+                    ->get();
+
+                $totalReceived = Payment::where('transaction_id', $transaction->id)
+                    ->sum('amount_received');
+                $addonsPayment = $totalReceived - $transaction->room_total;
+
+                foreach ($fullAddons as $addon) {
+                    if (($addonsPayment - $addon->total_price) >= 0) {
+                        if ($addon->payment_status === 'PENDING'){
+                            $addon->update([
+                                'payment_status' => 'PAID',
+                            ]);
+                        }
+                    }
+                }
                 
                 $room->update([
                     "status" => strtoupper("OCCUPIED")

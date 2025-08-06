@@ -109,6 +109,12 @@ class CreateTransactionRepository extends BaseRepository
                     "amount_received" => $request->payment['amountReceived']
                 ]);
 
+                if ($payment->amount_received >= $transaction->room_total) {
+                    $transaction->update([
+                        'payment_status' => 'PAID',
+                    ]);
+                }
+
                 $room->update([
                     "status" => strtoupper("OCCUPIED")
                 ]);

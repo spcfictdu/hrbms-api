@@ -79,6 +79,17 @@ class UpdateTransactionRepository extends BaseRepository
                         "amount_received" => $request->amountReceived,
                     ]);
 
+                    if ($transaction->payment_status === 'PENDING') {
+                        $totalReceived = Payment::where('transaction_id', $transaction->id)
+                            ->sum('amount_received');
+
+                        if ($totalReceived >= $transaction->room_total) {
+                            $transaction->update([
+                                'payment_status' => 'PAID',
+                            ]);
+                        }
+                    }
+
                     if (isset($request->addons) && isset($transaction->id)) {
                         $sample = array_map(function ($addon) use ($request, $transaction) {
                             $checkPrice = Addon::where('name', $addon['name'])->first();
@@ -94,6 +105,25 @@ class UpdateTransactionRepository extends BaseRepository
                             }
                             return $addon;
                         }, $request->addons);
+                    }
+
+                    $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+                        ->whereNot('payment_status', 'VOIDED')
+                        ->orderBy('id', 'asc')
+                        ->get();
+
+                    $totalReceived = Payment::where('transaction_id', $transaction->id)
+                        ->sum('amount_received');
+                    $addonsPayment = $totalReceived - $transaction->room_total;
+
+                    foreach ($fullAddons as $addon) {
+                        if (($addonsPayment - $addon->total_price) >= 0) {
+                            if ($addon->payment_status === 'PENDING'){
+                                $addon->update([
+                                    'payment_status' => 'PAID',
+                                ]);
+                            }
+                        }
                     }
 
 
@@ -227,6 +257,18 @@ class UpdateTransactionRepository extends BaseRepository
                             ]);
                     }
 
+                    if (isset($request->paymentStatus)) {
+                        if ($transaction->status !== 'CHECKED-IN' && $transaction->status !== 'CHECKED-OUT') {
+                            $this->voidRefundTransaction($transaction, $request);
+                        }
+                    }
+
+                    if (isset($request->addonsPaymentStatus)) {
+                        if ($transaction->status !== 'CHECKED-OUT') {
+                            $this->voidRefundAddons($transaction, $request);
+                        }
+                    }
+
                     $this->updateTransactionAndRoomStatus($transaction, $request);
 
                 } else {
@@ -270,6 +312,90 @@ class UpdateTransactionRepository extends BaseRepository
 
             $room = $transaction->room;
             $room->update(["status" => "UNCLEAN"]);
+        }
+    }
+
+    private function voidRefundTransaction($transaction, $request)
+    {
+        $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+            ->get();
+        
+        if ($request->paymentStatus === 'VOIDED') {
+            $totalReceived = Payment::where('transaction_id', $transaction->id)
+                ->sum('amount_received');
+            if ($totalReceived !== 0) {
+                return $this->error('Voiding is unavailable for this transaction');
+            } else {
+                foreach ($fullAddons as $addon) {
+                    if ($addon->payment_status !== 'REFUNDED' && $addon->payment_status !== 'VOIDED') {
+                        $addon->update([
+                            'payment_status' => 'VOIDED',
+                            'voided_at' => now(),
+                        ]);
+                    } else {
+                        continue;
+                    }
+                }
+
+                $transaction->update([
+                    'payment_status' => 'VOIDED',
+                    'voided_at' => now(),
+                ]);
+            }
+
+        } elseif ($request->paymentStatus === 'REFUNDED') {
+            $totalReceived = Payment::where('transaction_id', $transaction->id)
+                ->sum('amount_received');
+            if ($totalReceived === 0) {
+                return $this->error('Refunding is unavailable for this transaction');
+            } else {
+                foreach ($fullAddons as $addon) {
+                    if ($addon->payment_status !== 'REFUNDED' && $addon->payment_status !== 'VOIDED') {
+                        $addon->update([
+                            'payment_status' => 'REFUNDED',
+                            'voided_at' => now(),
+                        ]);
+                    } else {
+                        continue;
+                    }
+                }
+
+                $transaction->update([
+                    'payment_status' => 'REFUNDED',
+                    'refunded_at' => now(),
+                ]);
+            }
+        }
+    }
+
+    private function voidRefundAddons($transaction, $request)
+    {
+        $addon = BookingAddon::where('id', $request->addonId)->first();
+
+        if (!$addon) {
+            return $this->error('Addon not found');
+        }
+
+        if ($request->addonsPaymentStatus === 'VOIDED') {
+            if ($addon->payment_status === 'PENDING') {
+                $addon->update([
+                    'payment_status' => 'VOIDED',
+                    'voided_at' => now(),
+                ]);
+            } else {
+                return $this->error('Voiding is unavailable for this addon');
+            }
+
+        } elseif ($request->addonsPaymentStatus === 'REFUNDED') {
+            if ($addon->payment_status === 'PAID') {
+                $addon->update([
+                    'payment_status' => 'REFUNDED',
+                    'refunded_at' => now(),
+                ]);
+            } else {
+                return $this->error('Refunding is unavailable for this addon');
+            }
+
         }
     }
 }
