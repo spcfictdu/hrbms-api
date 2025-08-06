@@ -239,6 +239,7 @@ class UserCashierController extends Controller
 
             return [
                 'userId' => $session->user->id,
+                'firstName' => $session->user->first_name,
                 'openedAt' => $session->opened_at,
                 'closedAt' => $session->closed_at,
                 'status' => $session->status,
