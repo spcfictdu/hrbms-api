@@ -113,6 +113,10 @@ class CreateTransactionRepository extends BaseRepository
                     $transaction->update([
                         'payment_status' => 'PAID',
                     ]);
+                } elseif ($payment->amount_received !== 0) {
+                    $transaction->update([
+                        'payment_status' => 'PARTIAL',
+                    ]);
                 }
 
                 $room->update([

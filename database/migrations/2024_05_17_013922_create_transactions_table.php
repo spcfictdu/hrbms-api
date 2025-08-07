@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
          
             $table->enum('status', ['RESERVED', 'CONFIRMED', 'CHECKED-IN', 'CHECKED-OUT']);
-            $table->enum('payment_status', ['PENDING', 'PAID', 'VOIDED', 'REFUNDED'])->default('PENDING');
+            $table->enum('payment_status', ['PENDING', 'PARTIAL', 'PAID', 'VOIDED', 'REFUNDED'])->default('PENDING');
             $table->date('voided_at')->nullable();
             $table->date('refunded_at')->nullable();
             $table->decimal('room_total', 65, 2);

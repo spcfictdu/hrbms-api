@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CashierSession\CashierSession;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\Payment;
+use App\Models\Transaction\VoidRefund;
 use App\Models\Amenity\BookingAddon;
 use App\Models\User;
 use App\Traits\ResponseAPI;
@@ -141,6 +142,13 @@ class UserCashierController extends Controller
                     }
                 }
 
+                $totalRefund = VoidRefund::where('cashier_session_id', $userLatestCashierSession->id)
+                    ->where('type', 'REFUND')
+                    ->sum('amount');
+                $totalVoid = VoidRefund::where('cashier_session_id', $userLatestCashierSession->id)
+                    ->where('type', 'VOID')
+                    ->sum('amount');
+
                 $data[] = [
                     'userId' => $user->id,
                     'fullName' => $user->full_name,
@@ -151,6 +159,8 @@ class UserCashierController extends Controller
                     'closingAdjustment' => $userLatestCashierSession->closing_adjustment,
                     'closingBalance' => $userLatestCashierSession->closing_balance,
                     'payments' => $payments,
+                    'refunded' => $totalRefund,
+                    'voided' => $totalVoid,
                 ];
             }
         } elseif (auth()->user()->hasRole('FRONT DESK')) {
@@ -184,6 +194,13 @@ class UserCashierController extends Controller
                 }
             }
 
+            $totalRefund = VoidRefund::where('cashier_session_id', $userLatestCashierSession->id)
+                ->where('type', 'REFUND')
+                ->sum('amount');
+            $totalVoid = VoidRefund::where('cashier_session_id', $userLatestCashierSession->id)
+                ->where('type', 'VOID')
+                ->sum('amount');
+
             $data[] = [
                 'userId' => $user->id,
                 'fullName' => $user->full_name,
@@ -194,6 +211,8 @@ class UserCashierController extends Controller
                 'closingAdjustment' => $userLatestCashierSession->closing_adjustment,
                 'closingBalance' => $userLatestCashierSession->closing_balance,
                 'payments' => $payments,
+                'refunded' => $totalRefund,
+                'voided' => $totalVoid,
             ];
         }
 

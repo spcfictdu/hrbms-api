@@ -6,6 +6,7 @@ use App\Models\CashierSession\CashierSession;
 use App\Repositories\BaseRepository;
 use App\Traits\QueryBuilder\QueryBuilder;
 use App\Models\Transaction\Payment;
+use App\Models\Transaction\VoidRefund;
 
 class IndexCashierSessionRepository extends BaseRepository
 {
@@ -87,6 +88,13 @@ class IndexCashierSessionRepository extends BaseRepository
             }
 
             $cashierSession->computed_payments = $payments;
+
+            $cashierSession->totalRefund = VoidRefund::where('cashier_session_id', $cashierSession->id)
+                ->where('type', 'REFUND')
+                ->sum('amount');
+            $cashierSession->totalVoid = VoidRefund::where('cashier_session_id', $cashierSession->id)
+                ->where('type', 'VOID')
+                ->sum('amount');
         }
 
         $cashierSessions = $cashierSessions->map(function ($cashierSession) {
@@ -101,7 +109,9 @@ class IndexCashierSessionRepository extends BaseRepository
                 "status" => $cashierSession->status,
                 "userFullName" => $cashierSession->user->full_name,
                 "userId" => $cashierSession->user->id,
-                "payments" => $cashierSession->computed_payments
+                "payments" => $cashierSession->computed_payments,
+                "refunded" => $cashierSession->totalRefund,
+                "voided" => $cashierSession->totalVoid,
             ];
         });
 

@@ -6,7 +6,7 @@ use App\Models\Amenity\BookingAddon;
 use App\Models\Guest\Guest;
 use App\Models\Room\Room;
 use App\Models\User;
-
+use App\Models\Transaction\VoidRefund;
 use App\Models\Transaction\Payment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -86,6 +86,11 @@ class Transaction extends Model
     public function bookingAddOn()
     {
         return $this->hasMany(BookingAddon::class);
+    }
+
+    public function voidRefund()
+    {
+        return $this->hasMany(VoidRefund::class);
     }
 
     public function user()

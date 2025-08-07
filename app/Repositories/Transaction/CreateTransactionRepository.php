@@ -183,6 +183,10 @@ class CreateTransactionRepository extends BaseRepository
                     $transaction->update([
                         'payment_status' => 'PAID',
                     ]);
+                } elseif ($payment->amount_received !== 0) {
+                    $transaction->update([
+                        'payment_status' => 'PARTIAL',
+                    ]);
                 }
 
                 $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
@@ -202,6 +206,13 @@ class CreateTransactionRepository extends BaseRepository
                             ]);
                         }
                         $addonsPayment -= $addon->total_price;
+                    } elseif ($addonsPayment > 0) {
+                        if ($addon->payment_status === 'PENDING'){
+                            $addon->update([
+                                'payment_status' => 'PARTIAL',
+                            ]);
+                        }
+                        $addonsPayment = 0;
                     }
                 }
                 

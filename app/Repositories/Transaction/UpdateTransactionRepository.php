@@ -19,6 +19,7 @@ use App\Models\Discount\SeniorPwdDiscount;
 use App\Models\PaymentType\CreditCardPayment;
 use App\Models\Transaction\TransactionHistory;
 use App\Models\CashierSession\CashierSession;
+use App\Models\Transaction\VoidRefund;
 use App\Models\Guest\Guest;
 use Illuminate\Support\Facades\Validator;
 
@@ -87,6 +88,19 @@ class UpdateTransactionRepository extends BaseRepository
                             $transaction->update([
                                 'payment_status' => 'PAID',
                             ]);
+                        } elseif ($payment->amount_received !== 0) {
+                            $transaction->update([
+                                'payment_status' => 'PARTIAL',
+                            ]);
+                        }
+                    } elseif ($transaction->payment_status === 'PARTIAL') {
+                        $totalReceived = Payment::where('transaction_id', $transaction->id)
+                            ->sum('amount_received');
+
+                        if ($totalReceived >= $transaction->room_total) {
+                            $transaction->update([
+                                'payment_status' => 'PAID',
+                            ]);
                         }
                     }
 
@@ -124,6 +138,13 @@ class UpdateTransactionRepository extends BaseRepository
                                 ]);
                             }
                             $addonsPayment -= $addon->total_price;
+                        } elseif ($addonsPayment > 0) {
+                            if ($addon->payment_status === 'PENDING'){
+                                $addon->update([
+                                    'payment_status' => 'PARTIAL',
+                                ]);
+                            }
+                            $addonsPayment = 0;
                         }
                     }
 
@@ -259,13 +280,15 @@ class UpdateTransactionRepository extends BaseRepository
                     }
 
                     if (isset($request->paymentStatus)) {
-                        if ($transaction->status !== 'CHECKED-IN' && $transaction->status !== 'CHECKED-OUT') {
+                        if ($transaction->status !== 'CHECKED-OUT') {
                             $response = $this->voidRefundTransaction($transaction, $request);
-                            if ($response) {
+                            if ($response !== null) {
                                 return $response;
                             } else {
                                 return $this->error('Action unavailable for this item');
                             }
+                        } else {
+                            return $this->error('Cannot void or refund room');
                         }
                     }
 
@@ -277,6 +300,8 @@ class UpdateTransactionRepository extends BaseRepository
                             } else {
                                 return $this->error('Action unavailable for this item');
                             }
+                        } else {
+                            return $this->error('Cannot void or refund item');
                         }
                     }
 
@@ -337,23 +362,41 @@ class UpdateTransactionRepository extends BaseRepository
             if ($totalReceived !== 0) {
                 return null;
             } else {
-                foreach ($fullAddons as $addon) {
-                    if ($addon->payment_status !== 'REFUNDED' && $addon->payment_status !== 'VOIDED') {
-                        $addon->update([
-                            'payment_status' => 'VOIDED',
-                            'voided_at' => now(),
-                        ]);
-                    } else {
-                        continue;
+                if ($transaction->status === 'PENDING') {
+                    foreach ($fullAddons as $addon) {
+                        if ($addon->payment_status !== 'VOIDED') {
+                            $addon->update([
+                                'payment_status' => 'VOIDED',
+                                'voided_at' => now(),
+                            ]);
+                        }
                     }
-                }
 
-                $transaction->update([
-                    'payment_status' => 'VOIDED',
-                    'voided_at' => now(),
-                ]);
+                    $transaction->update([
+                        'payment_status' => 'VOIDED',
+                        'voided_at' => now(),
+                    ]);
+                } else {
+                    return null;
+                }
             }
-            return $this->success('Transaction voided successfully');
+
+            $cashierSession = CashierSession::where('user_id', $request->cashierId)
+                ->where('status', 'ACTIVE')
+                ->latest()
+                ->first();
+            if ($cashierSession) {
+                $voided = VoidRefund::create([
+                    'type' => 'VOID',
+                    'item' => 'ROOM',
+                    'transaction_id' => $transaction->id,
+                    'cashier_session_id' => $cashierSession->id,
+                    'amount' => number_format((float) ($transaction->room_total + $fullAddons->sum('total_price')), 2, '.', ''),
+                ]);
+                return $this->success('Transaction voided successfully', $voided);
+            } else {
+                return $this->error('Cashier is inactive');
+            }
 
         } elseif ($request->paymentStatus === 'REFUNDED') {
             $totalReceived = Payment::where('transaction_id', $transaction->id)
@@ -361,15 +404,39 @@ class UpdateTransactionRepository extends BaseRepository
             if ($totalReceived === 0) {
                 return null;
             } else {
-                foreach ($fullAddons as $addon) {
-                    if ($addon->payment_status !== 'REFUNDED' && $addon->payment_status !== 'VOIDED') {
-                        $addon->update([
-                            'payment_status' => 'REFUNDED',
-                            'voided_at' => now(),
-                        ]);
-                    } else {
-                        continue;
+                if ($transaction->payment_status === 'PARTIAL') {
+                    $roomPaid = $totalReceived;
+                    $addonsPaid = 0;
+                } elseif ($transaction->payment_status === 'PAID') {
+                    $roomPaid = $transaction->room_total;
+                    $addonsPaid = 0;
+                    $addonsPayment = $totalReceived - $transaction->room_total;
+                    foreach ($fullAddons as $addon) {
+                        if ($addon->payment_status !== 'REFUNDED' && $addon->payment_status !== 'VOIDED') {
+                            if ($addon->payment_status === 'PENDING') {
+                                $addon->update([
+                                    'payment_status' => 'REFUNDED',
+                                    'refunded_at' => now(),
+                                ]);
+                            } elseif ($addon->payment_status === 'PAID') {
+                                $addon->update([
+                                    'payment_status' => 'REFUNDED',
+                                    'refunded_at' => now(),
+                                ]);
+                                $addonsPayment -= $addon->total_price;
+                                $addonsPaid += $addon->total_price;
+                            } elseif ($addon->payment_status === 'PARTIAL') {
+                                $addon->update([
+                                    'payment_status' => 'REFUNDED',
+                                    'refunded_at' => now(),
+                                ]);
+                                $addonsPaid += $addonsPayment;
+                                $addonsPayment = 0;
+                            }
+                        }
                     }
+                } else {
+                    return null;
                 }
 
                 $transaction->update([
@@ -377,7 +444,23 @@ class UpdateTransactionRepository extends BaseRepository
                     'refunded_at' => now(),
                 ]);
             }
-            return $this->success('Transaction refunded successfully');
+
+            $cashierSession = CashierSession::where('user_id', $request->cashierId)
+                ->where('status', 'ACTIVE')
+                ->latest()
+                ->first();
+            if ($cashierSession) {
+                $refunded = VoidRefund::create([
+                    'type' => 'REFUND',
+                    'item' => 'ROOM',
+                    'transaction_id' => $transaction->id,
+                    'cashier_session_id' => $cashierSession->id,
+                    'amount' => number_format((float) ($roomPaid + $addonsPaid), 2, '.', ''),
+                ]);
+                return $this->success('Transaction refunded successfully', $refunded);
+            } else {
+                return $this->error('Cashier is inactive');
+            }
         }
     }
 
@@ -398,18 +481,67 @@ class UpdateTransactionRepository extends BaseRepository
             } else {
                 return null;
             }
-            return $this->success('Addon voided successfully');
+
+            $cashierSession = CashierSession::where('user_id', $request->cashierId)
+                ->where('status', 'ACTIVE')
+                ->latest()
+                ->first();
+
+            if ($cashierSession) {
+                $voided = VoidRefund::create([
+                    'type' => 'VOID',
+                    'item' => 'ADDON',
+                    'transaction_id' => $transaction->id,
+                    'addon_id' => $addon->id,
+                    'cashier_session_id' => $cashierSession->id,
+                    'amount' => number_format((float) $addon->total_price, 2, '.', ''),
+                ]);
+                return $this->success('Addon voided successfully', $voided);
+            } else {
+                return $this->error('Cashier is inactive');
+            }
 
         } elseif ($request->addonsPaymentStatus === 'REFUNDED') {
+            $addonAmount = 0;
             if ($addon->payment_status === 'PAID') {
                 $addon->update([
                     'payment_status' => 'REFUNDED',
                     'refunded_at' => now(),
                 ]);
+                $addonAmount = $addon->total_price;
+            } elseif ($addon->payment_status === 'PARTIAL') {
+                $addonsPaid = BookingAddon::where('payment_status', 'PAID')
+                    ->orWhere('payment_status', 'REFUNDED')
+                    ->orWhere('payment_status', 'VOIDED')
+                    ->sum('total_price');
+                $totalReceived = Payment::where('transaction_id', $transaction->id)
+                    ->sum('amount_received');
+                $addon->update([
+                    'payment_status' => 'REFUNDED',
+                    'refunded_at' => now(),
+                ]);
+                $addonAmount = ($totalReceived - $transaction->room_total) - $addonsPaid;
             } else {
                 return null;
             }
-            return $this->success('Addon refunded successfully');
+            
+            $cashierSession = CashierSession::where('user_id', $request->cashierId)
+                ->where('status', 'ACTIVE')
+                ->latest()
+                ->first();
+            if ($cashierSession) {
+                $refunded = VoidRefund::create([
+                    'type' => 'REFUND',
+                    'item' => 'ADDON',
+                    'transaction_id' => $transaction->id,
+                    'addon_id' => $addon->id,
+                    'cashier_session_id' => $cashierSession->id,
+                    'amount' => number_format((float) $addonAmount, 2, '.', ''),
+                ]);
+                return $this->success('Addon refunded successfully', $refunded);
+            } else {
+                return $this->error('Cashier is inactive');
+            }
         }
     }
 }

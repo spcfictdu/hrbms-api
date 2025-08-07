@@ -3,6 +3,7 @@
 namespace App\Models\CashierSession;
 
 use App\Models\Transaction\Payment;
+use App\Models\Transaction\VoidRefund;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,5 +43,10 @@ class CashierSession extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function voidRefund()
+    {
+        return $this->hasMany(VoidRefund::class);
     }
 }

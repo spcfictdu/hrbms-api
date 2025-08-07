@@ -4,6 +4,7 @@ namespace App\Models\Amenity;
 
 use App\Models\Amenity\Addon;
 use App\Models\Transaction\Transaction;
+use App\Models\Transaction\VoidRefund;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,6 +37,10 @@ class BookingAddOn extends Model
 
     public function transaction(){
         return $this->belongsTo(Transaction::class, 'transaction_id');
+    }
+
+    public function voidRefund() {
+        return $this->hasOne(VoidRefund::class);
     }
                                                                                                                
 }
