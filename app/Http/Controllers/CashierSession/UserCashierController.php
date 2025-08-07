@@ -224,6 +224,24 @@ class UserCashierController extends Controller
                 $roomTotal = $transaction?->room_total ?? 0;
                 $discountRate = $payment->voucherDiscount->value ?? $payment->seniorPwdDiscount->value ?? 0;
                 $discount = $roomTotal * $discountRate;
+                $roomRefund = Transaction::where('id', $transaction->id)
+                    ->where('payment_status', 'REFUNDED')
+                    ->first();
+                $addonRefund = BookingAddon::where('transaction_id', $transaction->id)
+                    ->where('payment_status', 'REFUNDED')
+                    ->sum('total_price');
+                $totalRefund = ($roomRefund->room_total ?? 0) + ($addonRefund ?? 0);
+                $roomVoided = Transaction::where('id', $transaction->id)
+                    ->where('payment_status', 'VOIDED')
+                    ->first();
+                $addonVoided = BookingAddon::where('transaction_id', $transaction->id)
+                    ->where('payment_status', 'VOIDED')
+                    ->sum('total_price');
+                $totalVoided = ($roomVoided->room_total ?? 0) + ($addonVoided ?? 0);
+                $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+                    ->sum('total_price');
+                $totalPayments = Payment::where('transaction_id', $transaction->id)
+                    ->sum('amount_received');
 
                 return [
                     'referenceNumber' => $transaction->reference_number,
@@ -235,6 +253,10 @@ class UserCashierController extends Controller
                     'addOnTotal' => number_format((float) $transaction?->bookingAddon->sum('total_price'), 2, '.', '') ?? 0,
                     'discount' => number_format((float) $discount, 2, '.', ''),
                     'createdAt' => $payment->created_at,
+                    'total' => number_format((float) ($transaction->room_total + $fullAddons), 2, '.', ''),
+                    'totalReceived' => $totalPayments,
+                    'refunded' => number_format((float) $totalRefund, 2, '.', ''),
+                    'voided' => number_format((float) $totalVoided, 2, '.', ''),
                 ];
             });
 
