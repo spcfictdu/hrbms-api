@@ -356,6 +356,15 @@ class UpdateTransactionRepository extends BaseRepository
         $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
             ->get();
         
+        $cashierSession = CashierSession::where('user_id', $request->cashierId)
+            ->where('status', 'ACTIVE')
+            ->latest()
+            ->first();
+        
+        if (!$cashierSession) {
+            return $this->error('Cashier is inactive');
+        }
+        
         if ($request->paymentStatus === 'VOIDED') {
             $totalReceived = Payment::where('transaction_id', $transaction->id)
                 ->sum('amount_received');
@@ -381,22 +390,14 @@ class UpdateTransactionRepository extends BaseRepository
                 }
             }
 
-            $cashierSession = CashierSession::where('user_id', $request->cashierId)
-                ->where('status', 'ACTIVE')
-                ->latest()
-                ->first();
-            if ($cashierSession) {
-                $voided = VoidRefund::create([
-                    'type' => 'VOID',
-                    'item' => 'ROOM',
-                    'transaction_id' => $transaction->id,
-                    'cashier_session_id' => $cashierSession->id,
-                    'amount' => number_format((float) ($transaction->room_total + $fullAddons->sum('total_price')), 2, '.', ''),
-                ]);
-                return $this->success('Transaction voided successfully', $voided);
-            } else {
-                return $this->error('Cashier is inactive');
-            }
+            $voided = VoidRefund::create([
+                'type' => 'VOID',
+                'item' => 'ROOM',
+                'transaction_id' => $transaction->id,
+                'cashier_session_id' => $cashierSession->id,
+                'amount' => number_format((float) ($transaction->room_total + $fullAddons->sum('total_price')), 2, '.', ''),
+            ]);
+            return $this->success('Transaction voided successfully', $voided);
 
         } elseif ($request->paymentStatus === 'REFUNDED') {
             $totalReceived = Payment::where('transaction_id', $transaction->id)
@@ -415,9 +416,18 @@ class UpdateTransactionRepository extends BaseRepository
                         if ($addon->payment_status !== 'REFUNDED' && $addon->payment_status !== 'VOIDED') {
                             if ($addon->payment_status === 'PENDING') {
                                 $addon->update([
-                                    'payment_status' => 'REFUNDED',
-                                    'refunded_at' => now(),
+                                    'payment_status' => 'VOIDED',
+                                    'voided_at' => now(),
                                 ]);
+                                VoidRefund::create([
+                                    'type' => 'VOID',
+                                    'item' => 'ADDON',
+                                    'transaction_id' => $transaction->id,
+                                    'addon_id' => $addon->id,
+                                    'cashier_session_id' => $cashierSession->id,
+                                    'amount' => number_format((float) $addon->total_price, 2, '.', ''),
+                                ]);
+
                             } elseif ($addon->payment_status === 'PAID') {
                                 $addon->update([
                                     'payment_status' => 'REFUNDED',
@@ -425,11 +435,31 @@ class UpdateTransactionRepository extends BaseRepository
                                 ]);
                                 $addonsPayment -= $addon->total_price;
                                 $addonsPaid += $addon->total_price;
+
+                                VoidRefund::create([
+                                    'type' => 'REFUND',
+                                    'item' => 'ADDON',
+                                    'transaction_id' => $transaction->id,
+                                    'addon_id' => $addon->id,
+                                    'cashier_session_id' => $cashierSession->id,
+                                    'amount' => number_format((float) $addon->total_price, 2, '.', ''),
+                                ]);
+
                             } elseif ($addon->payment_status === 'PARTIAL') {
                                 $addon->update([
                                     'payment_status' => 'REFUNDED',
                                     'refunded_at' => now(),
                                 ]);
+
+                                VoidRefund::create([
+                                    'type' => 'REFUND',
+                                    'item' => 'ADDON',
+                                    'transaction_id' => $transaction->id,
+                                    'addon_id' => $addon->id,
+                                    'cashier_session_id' => $cashierSession->id,
+                                    'amount' => number_format((float) $addonsPayment, 2, '.', ''),
+                                ]);
+
                                 $addonsPaid += $addonsPayment;
                                 $addonsPayment = 0;
                             }
@@ -445,28 +475,29 @@ class UpdateTransactionRepository extends BaseRepository
                 ]);
             }
 
-            $cashierSession = CashierSession::where('user_id', $request->cashierId)
-                ->where('status', 'ACTIVE')
-                ->latest()
-                ->first();
-            if ($cashierSession) {
-                $refunded = VoidRefund::create([
-                    'type' => 'REFUND',
-                    'item' => 'ROOM',
-                    'transaction_id' => $transaction->id,
-                    'cashier_session_id' => $cashierSession->id,
-                    'amount' => number_format((float) ($roomPaid + $addonsPaid), 2, '.', ''),
-                ]);
-                return $this->success('Transaction refunded successfully', $refunded);
-            } else {
-                return $this->error('Cashier is inactive');
-            }
+            $refunded = VoidRefund::create([
+                'type' => 'REFUND',
+                'item' => 'ROOM',
+                'transaction_id' => $transaction->id,
+                'cashier_session_id' => $cashierSession->id,
+                'amount' => number_format((float) $roomPaid, 2, '.', ''),
+            ]);
+            return $this->success('Transaction refunded successfully', $refunded);
         }
     }
 
     private function voidRefundAddons($transaction, $request)
     {
         $addon = BookingAddon::where('id', $request->addonId)->first();
+
+        $cashierSession = CashierSession::where('user_id', $request->cashierId)
+            ->where('status', 'ACTIVE')
+            ->latest()
+            ->first();
+        
+        if (!$cashierSession) {
+            return $this->error('Cashier is inactive');
+        }
 
         if (!$addon) {
             return $this->error('Addon not found');
@@ -482,24 +513,15 @@ class UpdateTransactionRepository extends BaseRepository
                 return null;
             }
 
-            $cashierSession = CashierSession::where('user_id', $request->cashierId)
-                ->where('status', 'ACTIVE')
-                ->latest()
-                ->first();
-
-            if ($cashierSession) {
-                $voided = VoidRefund::create([
-                    'type' => 'VOID',
-                    'item' => 'ADDON',
-                    'transaction_id' => $transaction->id,
-                    'addon_id' => $addon->id,
-                    'cashier_session_id' => $cashierSession->id,
-                    'amount' => number_format((float) $addon->total_price, 2, '.', ''),
-                ]);
-                return $this->success('Addon voided successfully', $voided);
-            } else {
-                return $this->error('Cashier is inactive');
-            }
+            $voided = VoidRefund::create([
+                'type' => 'VOID',
+                'item' => 'ADDON',
+                'transaction_id' => $transaction->id,
+                'addon_id' => $addon->id,
+                'cashier_session_id' => $cashierSession->id,
+                'amount' => number_format((float) $addon->total_price, 2, '.', ''),
+            ]);
+            return $this->success('Addon voided successfully', $voided);
 
         } elseif ($request->addonsPaymentStatus === 'REFUNDED') {
             $addonAmount = 0;
@@ -525,23 +547,15 @@ class UpdateTransactionRepository extends BaseRepository
                 return null;
             }
             
-            $cashierSession = CashierSession::where('user_id', $request->cashierId)
-                ->where('status', 'ACTIVE')
-                ->latest()
-                ->first();
-            if ($cashierSession) {
-                $refunded = VoidRefund::create([
-                    'type' => 'REFUND',
-                    'item' => 'ADDON',
-                    'transaction_id' => $transaction->id,
-                    'addon_id' => $addon->id,
-                    'cashier_session_id' => $cashierSession->id,
-                    'amount' => number_format((float) $addonAmount, 2, '.', ''),
-                ]);
-                return $this->success('Addon refunded successfully', $refunded);
-            } else {
-                return $this->error('Cashier is inactive');
-            }
+            $refunded = VoidRefund::create([
+                'type' => 'REFUND',
+                'item' => 'ADDON',
+                'transaction_id' => $transaction->id,
+                'addon_id' => $addon->id,
+                'cashier_session_id' => $cashierSession->id,
+                'amount' => number_format((float) $addonAmount, 2, '.', ''),
+            ]);
+            return $this->success('Addon refunded successfully', $refunded);
         }
     }
 }
