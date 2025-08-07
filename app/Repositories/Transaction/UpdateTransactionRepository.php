@@ -123,6 +123,7 @@ class UpdateTransactionRepository extends BaseRepository
                                     'payment_status' => 'PAID',
                                 ]);
                             }
+                            $addonsPayment -= $addon->total_price;
                         }
                     }
 
@@ -259,13 +260,23 @@ class UpdateTransactionRepository extends BaseRepository
 
                     if (isset($request->paymentStatus)) {
                         if ($transaction->status !== 'CHECKED-IN' && $transaction->status !== 'CHECKED-OUT') {
-                            $this->voidRefundTransaction($transaction, $request);
+                            $response = $this->voidRefundTransaction($transaction, $request);
+                            if ($response) {
+                                return $response;
+                            } else {
+                                return $this->error('Action unavailable for this item');
+                            }
                         }
                     }
 
                     if (isset($request->addonsPaymentStatus)) {
                         if ($transaction->status !== 'CHECKED-OUT') {
-                            $this->voidRefundAddons($transaction, $request);
+                            $response = $this->voidRefundAddons($transaction, $request);
+                            if ($response) {
+                                return $response;
+                            } else {
+                                return $this->error('Action unavailable for this item');
+                            }
                         }
                     }
 
@@ -324,7 +335,7 @@ class UpdateTransactionRepository extends BaseRepository
             $totalReceived = Payment::where('transaction_id', $transaction->id)
                 ->sum('amount_received');
             if ($totalReceived !== 0) {
-                return $this->error('Voiding is unavailable for this transaction');
+                return null;
             } else {
                 foreach ($fullAddons as $addon) {
                     if ($addon->payment_status !== 'REFUNDED' && $addon->payment_status !== 'VOIDED') {
@@ -342,12 +353,13 @@ class UpdateTransactionRepository extends BaseRepository
                     'voided_at' => now(),
                 ]);
             }
+            return $this->success('Transaction voided successfully');
 
         } elseif ($request->paymentStatus === 'REFUNDED') {
             $totalReceived = Payment::where('transaction_id', $transaction->id)
                 ->sum('amount_received');
             if ($totalReceived === 0) {
-                return $this->error('Refunding is unavailable for this transaction');
+                return null;
             } else {
                 foreach ($fullAddons as $addon) {
                     if ($addon->payment_status !== 'REFUNDED' && $addon->payment_status !== 'VOIDED') {
@@ -365,6 +377,7 @@ class UpdateTransactionRepository extends BaseRepository
                     'refunded_at' => now(),
                 ]);
             }
+            return $this->success('Transaction refunded successfully');
         }
     }
 
@@ -383,8 +396,9 @@ class UpdateTransactionRepository extends BaseRepository
                     'voided_at' => now(),
                 ]);
             } else {
-                return $this->error('Voiding is unavailable for this addon');
+                return null;
             }
+            return $this->success('Addon voided successfully');
 
         } elseif ($request->addonsPaymentStatus === 'REFUNDED') {
             if ($addon->payment_status === 'PAID') {
@@ -393,9 +407,9 @@ class UpdateTransactionRepository extends BaseRepository
                     'refunded_at' => now(),
                 ]);
             } else {
-                return $this->error('Refunding is unavailable for this addon');
+                return null;
             }
-
+            return $this->success('Addon refunded successfully');
         }
     }
 }

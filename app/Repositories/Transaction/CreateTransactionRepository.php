@@ -201,6 +201,7 @@ class CreateTransactionRepository extends BaseRepository
                                 'payment_status' => 'PAID',
                             ]);
                         }
+                        $addonsPayment -= $addon->total_price;
                     }
                 }
                 
