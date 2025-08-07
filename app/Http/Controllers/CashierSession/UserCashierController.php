@@ -224,22 +224,9 @@ class UserCashierController extends Controller
                 $roomTotal = $transaction?->room_total ?? 0;
                 $discountRate = $payment->voucherDiscount->value ?? $payment->seniorPwdDiscount->value ?? 0;
                 $discount = $roomTotal * $discountRate;
-                $roomRefund = Transaction::where('id', $transaction->id)
-                    ->where('payment_status', 'REFUNDED')
-                    ->first();
-                $addonRefund = BookingAddon::where('transaction_id', $transaction->id)
-                    ->where('payment_status', 'REFUNDED')
-                    ->sum('total_price');
-                $totalRefund = ($roomRefund->room_total ?? 0) + ($addonRefund ?? 0);
-                $roomVoided = Transaction::where('id', $transaction->id)
-                    ->where('payment_status', 'VOIDED')
-                    ->first();
-                $addonVoided = BookingAddon::where('transaction_id', $transaction->id)
-                    ->where('payment_status', 'VOIDED')
-                    ->sum('total_price');
-                $totalVoided = ($roomVoided->room_total ?? 0) + ($addonVoided ?? 0);
 
                 return [
+                    'referenceNumber' => $transaction->reference_number,
                     'paymentId' => $payment->id,
                     'guestName' => optional($transaction?->guest)->full_name,
                     'paymentType' => $payment->payment_type,
@@ -247,8 +234,6 @@ class UserCashierController extends Controller
                     'roomTotal' => number_format((float) $roomTotal, 2, '.', ''),
                     'addOnTotal' => number_format((float) $transaction?->bookingAddon->sum('total_price'), 2, '.', '') ?? 0,
                     'discount' => number_format((float) $discount, 2, '.', ''),
-                    'refunded' => number_format((float) $totalRefund, 2, '.', ''),
-                    'voided' => number_format((float) $totalVoided, 2, '.', ''),
                     'createdAt' => $payment->created_at,
                 ];
             });

@@ -5,6 +5,8 @@ namespace App\Repositories\Transaction;
 use App\Repositories\BaseRepository;
 
 use App\Models\Transaction\Transaction;
+use App\Models\Transaction\Payment;
+use App\Models\Amenity\BookingAddon;
 
 class IndexTransactionRepository extends BaseRepository
 {
@@ -21,7 +23,7 @@ class IndexTransactionRepository extends BaseRepository
         $page = $request->input('page', 1);
         $perPage = $request->input('perPage', 10);
         $sortBy = $request->input('sortBy', 'id');
-        $sortOrder = $request->input('sortOrder', 'asc');
+        $sortOrder = $request->input('sortOrder', 'desc');
 
 
         // Query
@@ -70,6 +72,25 @@ class IndexTransactionRepository extends BaseRepository
         });
 
         $transformedTransactions = $filteredTransactions->map(function ($transaction) {
+            $roomRefund = Transaction::where('id', $transaction->id)
+                ->where('payment_status', 'REFUNDED')
+                ->first();
+            $addonRefund = BookingAddon::where('transaction_id', $transaction->id)
+                ->where('payment_status', 'REFUNDED')
+                ->sum('total_price');
+            $totalRefund = ($roomRefund->room_total ?? 0) + ($addonRefund ?? 0);
+            $roomVoided = Transaction::where('id', $transaction->id)
+                ->where('payment_status', 'VOIDED')
+                ->first();
+            $addonVoided = BookingAddon::where('transaction_id', $transaction->id)
+                ->where('payment_status', 'VOIDED')
+                ->sum('total_price');
+            $totalVoided = ($roomVoided->room_total ?? 0) + ($addonVoided ?? 0);
+            $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+                ->sum('total_price');
+            $totalPayments = Payment::where('transaction_id', $transaction->id)
+                ->sum('amount_received');
+
             return [
                 "fullName" => $transaction->guest->full_name,
                 "guestId" => $transaction->guest->id,
@@ -85,7 +106,10 @@ class IndexTransactionRepository extends BaseRepository
                     "name" => $transaction->room->roomType->name,
                     "capacity" => $transaction->room->roomType->capacity,
                 ],
-                "total" => $transaction->payment?->amount_received,
+                'total' => number_format((float) ($transaction->room_total + $fullAddons), 2, '.', ''),
+                'totalReceived' => $totalPayments,
+                'refunded' => number_format((float) $totalRefund, 2, '.', ''),
+                'voided' => number_format((float) $totalVoided, 2, '.', ''),
             ];
         });
 
