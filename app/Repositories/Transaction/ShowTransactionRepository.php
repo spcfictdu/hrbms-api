@@ -64,6 +64,7 @@ class ShowTransactionRepository extends BaseRepository
                     // 'total' => $totalPrice,
                     'total' => (float)number_format($totalPrice, 2),
                     'paymentStatus' => $addon->payment_status,
+                    'createdAt' => $addon->created_at,
                 ];
             }
         }
@@ -120,6 +121,7 @@ class ShowTransactionRepository extends BaseRepository
                     "checkInTime" => $transaction->check_in_time,
                     "checkOutDate" => $transaction->check_out_date,
                     "checkOutTime" => $transaction->check_out_time,
+                    "createdAt" => $transaction->created_at,
                 ],
                 "transactionHistory" => [
                     "checkInDate" => $transactionHistory?->check_in_date,
