@@ -159,8 +159,8 @@ class UserCashierController extends Controller
                     'closingAdjustment' => $userLatestCashierSession->closing_adjustment,
                     'closingBalance' => $userLatestCashierSession->closing_balance,
                     'payments' => $payments,
-                    'refunded' => $totalRefund,
-                    'voided' => $totalVoid,
+                    'refunded' => number_format((float) $totalRefund, 2, '.', ''),
+                    'voided' => number_format((float) $totalVoid, 2, '.', ''),
                 ];
             }
         } elseif (auth()->user()->hasRole('FRONT DESK')) {
@@ -211,8 +211,8 @@ class UserCashierController extends Controller
                 'closingAdjustment' => $userLatestCashierSession->closing_adjustment,
                 'closingBalance' => $userLatestCashierSession->closing_balance,
                 'payments' => $payments,
-                'refunded' => $totalRefund,
-                'voided' => $totalVoid,
+                'refunded' => number_format((float) $totalRefund, 2, '.', ''),
+                'voided' => number_format((float) $totalVoid, 2, '.', ''),
             ];
         }
 

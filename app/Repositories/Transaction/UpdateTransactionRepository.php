@@ -280,7 +280,7 @@ class UpdateTransactionRepository extends BaseRepository
                     }
 
                     if (isset($request->paymentStatus)) {
-                        if ($transaction->status !== 'CHECKED-OUT') {
+                        if ($transaction->status !== 'CHECKED-OUT' || $transaction->status !== 'CHECKED-IN') {
                             $response = $this->voidRefundTransaction($transaction, $request);
                             if ($response !== null) {
                                 return $response;
