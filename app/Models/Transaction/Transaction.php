@@ -25,8 +25,6 @@ class Transaction extends Model
         'status',
         'payment_type',
         'payment_status',
-        'voided_at',
-        'refunded_at',
         'check_in_date',
         'check_in_time',
         'check_out_date',

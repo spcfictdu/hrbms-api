@@ -19,8 +19,6 @@ return new class extends Migration
          
             $table->enum('status', ['RESERVED', 'CONFIRMED', 'CHECKED-IN', 'CHECKED-OUT']);
             $table->enum('payment_status', ['PENDING', 'PARTIAL', 'PAID', 'VOIDED', 'REFUNDED'])->default('PENDING');
-            $table->date('voided_at')->nullable();
-            $table->date('refunded_at')->nullable();
             $table->decimal('room_total', 65, 2);
             $table->date('check_in_date')->nullable();
             $table->time('check_in_time')->nullable();

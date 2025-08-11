@@ -22,8 +22,6 @@ class BookingAddOn extends Model
         'quantity',
         'total_price',
         'payment_status',
-        'voided_at',
-        'refunded_at',
     ];
 
     protected $hidden = [
