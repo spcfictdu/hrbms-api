@@ -220,92 +220,96 @@ class UpdateTransactionRepository extends BaseRepository
                         "status" => strtoupper("OCCUPIED")
                     ]);
                 } elseif (!isset($request->status)) {
-                    if ($transactionHistory) {
-                        if ($request->checkInDate && $request->checkInTime) {
-                            $transactionHistory->update([
+                    if ($transaction->payment_status !== 'VOIDED' && $transaction->payment_status !== 'REFUNDED') {
+                        if ($transactionHistory) {
+                            if ($request->checkInDate && $request->checkInTime) {
+                                $transactionHistory->update([
+                                    "check_in_date" => $request->checkInDate ?? null,
+                                    "check_in_time" => $request->checkInTime ?? null,
+                                ]);
+                                $transaction->update([
+                                    "check_in_date" => $request->checkInDate ?? null,
+                                    "check_in_time" => $request->checkInTime ?? null,
+                                ]);
+                            }
+
+                            if ($request->checkOutDate && $request->checkOutTime) {
+                                $transactionHistory->update([
+                                    "check_out_date" => $request->checkOutDate ?? null,
+                                    "check_out_time" => $request->checkOutTime ?? null,
+                                ]);
+                                $transaction->update([
+                                    "check_out_date" => $request->checkOutDate ?? null,
+                                    "check_out_time" => $request->checkOutTime ?? null,
+                                ]);
+                            }
+
+                        } else {
+                            $transactionHistory = TransactionHistory::create([
                                 "check_in_date" => $request->checkInDate ?? null,
                                 "check_in_time" => $request->checkInTime ?? null,
+                                "check_out_date" => $request->checkOutDate ?? null,
+                                "check_out_time" => $request->checkOutTime ?? null
                             ]);
+
                             $transaction->update([
-                                "check_in_date" => $request->checkInDate ?? null,
-                                "check_in_time" => $request->checkInTime ?? null,
+                                "transaction_history_id" => $transactionHistory->id
                             ]);
                         }
 
-                        if ($request->checkOutDate && $request->checkOutTime) {
-                            $transactionHistory->update([
-                                "check_out_date" => $request->checkOutDate ?? null,
-                                "check_out_time" => $request->checkOutTime ?? null,
-                            ]);
-                            $transaction->update([
-                                "check_out_date" => $request->checkOutDate ?? null,
-                                "check_out_time" => $request->checkOutTime ?? null,
-                            ]);
+                        $guestDetails = null;
+
+                        $guestDetails = [
+                            'reference_number' => $this->guestReferenceNumber(),
+                            'first_name' => strtoupper($request->guest['firstName'] ?? $transaction->guest->first_name),
+                            'middle_name' => strtoupper($request->guest['middleName'] ?? $transaction->guest->middle_name),
+                            'last_name' => strtoupper($request->guest['lastName'] ?? $transaction->guest->last_name),
+                            'province' => strtoupper($request->guest['address']['province'] ?? $transaction->guest->province),
+                            'city' => strtoupper($request->guest['address']['city'] ?? $transaction->guest->city),
+                            'phone_number' => $request->guest['contact']['phoneNum'] ?? $transaction->guest->phone_number,
+                            'email' => $request->guest['contact']['email'] ?? $transaction->guest->email,
+                            'id_type' => strtoupper($request->guest['id']['type'] ?? $transaction->guest->id_type),
+                            'id_number' => $request->guest['id']['number'] ?? $transaction->guest->id_number,
+                        ];
+
+                        if ($guestDetails) {
+                                $transaction->guest->update($guestDetails);
+
+                                $transaction->update([
+                                    'number_of_guest' => $request->guest['extraPerson'] ?? $transaction->number_of_guest,
+                                ]);
                         }
 
+                        if (isset($request->paymentStatus)) {
+                            if ($transaction->status !== 'CHECKED-OUT' || $transaction->status !== 'CHECKED-IN') {
+                                $response = $this->voidRefundTransaction($transaction, $request);
+                                if ($response !== null) {
+                                    return $response;
+                                } else {
+                                    return $this->error('Cannot void or refund room');
+                                }
+                            } else {
+                                return $this->error('Cannot void or refund room');
+                            }
+                        }
+
+                        if (isset($request->addonsPaymentStatus)) {
+                            if ($transaction->status !== 'CHECKED-OUT') {
+                                $response = $this->voidRefundAddons($transaction, $request);
+                                if ($response) {
+                                    return $response;
+                                } else {
+                                    return $this->error('Cannot void or refund item');
+                                }
+                            } else {
+                                return $this->error('Cannot void or refund item');
+                            }
+                        }
+
+                        $this->updateTransactionAndRoomStatus($transaction, $request);
                     } else {
-                        $transactionHistory = TransactionHistory::create([
-                            "check_in_date" => $request->checkInDate ?? null,
-                            "check_in_time" => $request->checkInTime ?? null,
-                            "check_out_date" => $request->checkOutDate ?? null,
-                            "check_out_time" => $request->checkOutTime ?? null
-                        ]);
-
-                        $transaction->update([
-                            "transaction_history_id" => $transactionHistory->id
-                        ]);
+                        return $this->error('Transaction already voided or refunded');
                     }
-
-                    $guestDetails = null;
-
-                    $guestDetails = [
-                        'reference_number' => $this->guestReferenceNumber(),
-                        'first_name' => strtoupper($request->guest['firstName'] ?? $transaction->guest->first_name),
-                        'middle_name' => strtoupper($request->guest['middleName'] ?? $transaction->guest->middle_name),
-                        'last_name' => strtoupper($request->guest['lastName'] ?? $transaction->guest->last_name),
-                        'province' => strtoupper($request->guest['address']['province'] ?? $transaction->guest->province),
-                        'city' => strtoupper($request->guest['address']['city'] ?? $transaction->guest->city),
-                        'phone_number' => $request->guest['contact']['phoneNum'] ?? $transaction->guest->phone_number,
-                        'email' => $request->guest['contact']['email'] ?? $transaction->guest->email,
-                        'id_type' => strtoupper($request->guest['id']['type'] ?? $transaction->guest->id_type),
-                        'id_number' => $request->guest['id']['number'] ?? $transaction->guest->id_number,
-                    ];
-
-                    if ($guestDetails) {
-                            $transaction->guest->update($guestDetails);
-
-                            $transaction->update([
-                                'number_of_guest' => $request->guest['extraPerson'] ?? $transaction->number_of_guest,
-                            ]);
-                    }
-
-                    if (isset($request->paymentStatus)) {
-                        if ($transaction->status !== 'CHECKED-OUT' || $transaction->status !== 'CHECKED-IN') {
-                            $response = $this->voidRefundTransaction($transaction, $request);
-                            if ($response !== null) {
-                                return $response;
-                            } else {
-                                return $this->error('Action unavailable for this item');
-                            }
-                        } else {
-                            return $this->error('Cannot void or refund room');
-                        }
-                    }
-
-                    if (isset($request->addonsPaymentStatus)) {
-                        if ($transaction->status !== 'CHECKED-OUT') {
-                            $response = $this->voidRefundAddons($transaction, $request);
-                            if ($response) {
-                                return $response;
-                            } else {
-                                return $this->error('Action unavailable for this item');
-                            }
-                        } else {
-                            return $this->error('Cannot void or refund item');
-                        }
-                    }
-
-                    $this->updateTransactionAndRoomStatus($transaction, $request);
 
                 } else {
                     return $this->error('Invalid status provided.');
