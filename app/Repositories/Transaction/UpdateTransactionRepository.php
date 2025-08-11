@@ -40,7 +40,10 @@ class UpdateTransactionRepository extends BaseRepository
         try {
             // DB::beginTransaction();
 
-            $transaction = Transaction::where('reference_number', $request->referenceNumber)->first();
+            $transaction = Transaction::where('reference_number', $request->referenceNumber)
+                ->whereNot('payment_status', 'VOIDED')
+                ->whereNot('payment_status', 'REFUNDED')
+                ->first();
 
             $user = auth()->user();
             
