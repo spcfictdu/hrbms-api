@@ -376,14 +376,12 @@ class UpdateTransactionRepository extends BaseRepository
                         if ($addon->payment_status !== 'VOIDED') {
                             $addon->update([
                                 'payment_status' => 'VOIDED',
-                                'voided_at' => now(),
                             ]);
                         }
                     }
 
                     $transaction->update([
                         'payment_status' => 'VOIDED',
-                        'voided_at' => now(),
                     ]);
                 } else {
                     return null;
@@ -417,7 +415,6 @@ class UpdateTransactionRepository extends BaseRepository
                             if ($addon->payment_status === 'PENDING') {
                                 $addon->update([
                                     'payment_status' => 'VOIDED',
-                                    'voided_at' => now(),
                                 ]);
                                 VoidRefund::create([
                                     'type' => 'VOID',
@@ -431,7 +428,6 @@ class UpdateTransactionRepository extends BaseRepository
                             } elseif ($addon->payment_status === 'PAID') {
                                 $addon->update([
                                     'payment_status' => 'REFUNDED',
-                                    'refunded_at' => now(),
                                 ]);
                                 $addonsPayment -= $addon->total_price;
                                 $addonsPaid += $addon->total_price;
@@ -448,7 +444,6 @@ class UpdateTransactionRepository extends BaseRepository
                             } elseif ($addon->payment_status === 'PARTIAL') {
                                 $addon->update([
                                     'payment_status' => 'REFUNDED',
-                                    'refunded_at' => now(),
                                 ]);
 
                                 VoidRefund::create([
@@ -471,7 +466,6 @@ class UpdateTransactionRepository extends BaseRepository
 
                 $transaction->update([
                     'payment_status' => 'REFUNDED',
-                    'refunded_at' => now(),
                 ]);
             }
 
@@ -507,7 +501,6 @@ class UpdateTransactionRepository extends BaseRepository
             if ($addon->payment_status === 'PENDING') {
                 $addon->update([
                     'payment_status' => 'VOIDED',
-                    'voided_at' => now(),
                 ]);
             } else {
                 return null;
@@ -528,7 +521,6 @@ class UpdateTransactionRepository extends BaseRepository
             if ($addon->payment_status === 'PAID') {
                 $addon->update([
                     'payment_status' => 'REFUNDED',
-                    'refunded_at' => now(),
                 ]);
                 $addonAmount = $addon->total_price;
             } elseif ($addon->payment_status === 'PARTIAL') {
@@ -540,7 +532,6 @@ class UpdateTransactionRepository extends BaseRepository
                     ->sum('amount_received');
                 $addon->update([
                     'payment_status' => 'REFUNDED',
-                    'refunded_at' => now(),
                 ]);
                 $addonAmount = ($totalReceived - $transaction->room_total) - $addonsPaid;
             } else {
