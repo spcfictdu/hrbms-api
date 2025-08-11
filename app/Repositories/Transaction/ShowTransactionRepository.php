@@ -59,6 +59,7 @@ class ShowTransactionRepository extends BaseRepository
                 $addonsTotal += $totalPrice;
                 $fullAddons[] = [
                     'name' => $addon['name'],
+                    'addonId' => $addon['id'],
                     'quantity' => $addon['quantity'],
                     'unit_price' => $addonModel->price,
                     // 'total' => $totalPrice,
