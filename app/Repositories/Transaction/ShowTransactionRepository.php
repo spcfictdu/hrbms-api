@@ -7,6 +7,7 @@ use App\Models\Transaction\{
     Transaction,
     Payment,
 };
+use App\Models\Transaction\VoidRefund;
 use App\Models\Discount\Voucher;
 use App\Models\amenity\Addon;
 use Carbon\Carbon;
@@ -54,6 +55,9 @@ class ShowTransactionRepository extends BaseRepository
         $fullAddons = [];
         foreach ($addons as $addon) {
             $addonModel = Addon::where('name', $addon['name'])->first();
+            $refundedAddon = VoidRefund::where('addon_id', $addon->id)
+                ->where('type', 'REFUND')
+                ->first();
             if ($addonModel) {
                 $totalPrice = $addonModel->price * $addon['quantity'];
                 $addonsTotal += $totalPrice;
@@ -65,6 +69,7 @@ class ShowTransactionRepository extends BaseRepository
                     // 'total' => $totalPrice,
                     'total' => (float)number_format($totalPrice, 2),
                     'paymentStatus' => $addon->payment_status,
+                    'amountRefunded' => $refundedAddon->amount ?? null,
                     'createdAt' => $addon->created_at,
                 ];
             }
@@ -105,6 +110,10 @@ class ShowTransactionRepository extends BaseRepository
 
         // Calculate room total with discount and add-ons
         $finalRoomTotal =$roomTotal * (1 - $discountValue);
+        $refundedRoom = VoidRefund::where('item', 'ROOM')
+            ->where('type', 'REFUND')
+            ->where('transaction_id', $transaction->id)
+            ->first();
         
         return $this->success("Transaction Info", [
             "bookingHistory" => [
@@ -117,6 +126,7 @@ class ShowTransactionRepository extends BaseRepository
                     "referenceNumber" => $transaction->reference_number,
                     "status" => $transaction->status,
                     "paymentStatus" => $transaction->payment_status,
+                    "amountRefunded" => $refundedRoom->amount ?? null,
                     "extraPerson" => $transaction->number_of_guest,
                     "checkInDate" => $transaction->check_in_date,
                     "checkInTime" => $transaction->check_in_time,
