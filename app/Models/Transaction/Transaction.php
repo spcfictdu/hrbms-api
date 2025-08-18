@@ -8,6 +8,8 @@ use App\Models\Room\Room;
 use App\Models\User;
 use App\Models\Transaction\VoidRefund;
 use App\Models\Transaction\Payment;
+use App\Models\Discount\SeniorPwdDiscount;
+use App\Models\Discount\VoucherDiscount;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -94,5 +96,15 @@ class Transaction extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function voucherDiscount()
+    {
+        return $this->hasOne(VoucherDiscount::class);
+    }
+
+    public function seniorPwdDiscount()
+    {
+        return $this->hasOne(SeniorPwdDiscount::class);
     }
 }
