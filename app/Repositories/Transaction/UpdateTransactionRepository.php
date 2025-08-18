@@ -138,7 +138,7 @@ class UpdateTransactionRepository extends BaseRepository
 
                     foreach ($fullAddons as $addon) {
                         if (($addonsPayment - $addon->total_price) >= 0) {
-                            if ($addon->payment_status === 'PENDING'){
+                            if ($addon->payment_status === 'PENDING' || $addon->payment_status === 'PENDING'){
                                 $addon->update([
                                     'payment_status' => 'PAID',
                                 ]);
