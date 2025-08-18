@@ -61,7 +61,7 @@ class ShowTransactionRepository extends BaseRepository
                     'name' => $addon['name'],
                     'addonId' => $addon['id'],
                     'quantity' => $addon['quantity'],
-                    'unit_price' => $addonModel->price,
+                    'unitPrice' => $addonModel->price,
                     // 'total' => $totalPrice,
                     'total' => (float)number_format($totalPrice, 2),
                     'paymentStatus' => $addon->payment_status,

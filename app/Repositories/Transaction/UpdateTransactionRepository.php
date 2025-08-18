@@ -237,14 +237,20 @@ class UpdateTransactionRepository extends BaseRepository
                             }
 
                             if ($request->checkOutDate && $request->checkOutTime) {
-                                $transactionHistory->update([
-                                    "check_out_date" => $request->checkOutDate ?? null,
-                                    "check_out_time" => $request->checkOutTime ?? null,
-                                ]);
-                                $transaction->update([
-                                    "check_out_date" => $request->checkOutDate ?? null,
-                                    "check_out_time" => $request->checkOutTime ?? null,
-                                ]);
+                                $totalReceived = Payment::where('transaction_id', $transaction->id)->sum('amount_received');
+                                $transactionTotal = $totalReceived + $fullAddons->sum('total_price');
+                                if ($totalReceived >= $transactionTotal) {
+                                    $transactionHistory->update([
+                                        "check_out_date" => $request->checkOutDate ?? null,
+                                        "check_out_time" => $request->checkOutTime ?? null,
+                                    ]);
+                                    $transaction->update([
+                                        "check_out_date" => $request->checkOutDate ?? null,
+                                        "check_out_time" => $request->checkOutTime ?? null,
+                                    ]);
+                                } else {
+                                    return $this->error('Transaction not fully paid');
+                                }
                             }
 
                         } else {
@@ -309,7 +315,12 @@ class UpdateTransactionRepository extends BaseRepository
                             }
                         }
 
-                        $this->updateTransactionAndRoomStatus($transaction, $request);
+                        $response = $this->updateTransactionAndRoomStatus($transaction, $request);
+                        if ($response === NULL) {
+                            return $this->error('Transaction not fully paid');
+                        } else {
+                            return $response;
+                        }
                     } else {
                         return $this->error('Transaction already voided or refunded');
                     }
@@ -350,11 +361,24 @@ class UpdateTransactionRepository extends BaseRepository
 
             $room = $transaction->room;
             $room->update(["status" => "OCCUPIED"]);
-        } elseif ($request->checkOutDate && $request->checkOutTime) {
-            $transaction->update(["status" => "CHECKED-OUT"]);
 
-            $room = $transaction->room;
-            $room->update(["status" => "UNCLEAN"]);
+            return $this->success('Check-in successful');
+        } elseif ($request->checkOutDate && $request->checkOutTime) {
+            $totalReceived = Payment::where('transaction_id', $transaction->id)
+                ->sum('amount_received');
+            $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+                ->sum('total_price');
+            $transactionTotal = $transaction->room_total + $fullAddons;
+            if ($totalReceived >= $transactionTotal) {
+                $transaction->update(["status" => "CHECKED-OUT"]);
+
+                $room = $transaction->room;
+                $room->update(["status" => "UNCLEAN"]);
+
+                return $this->success('Check-out successful');
+            } else {
+                return null;
+            }
         }
     }
 
@@ -385,6 +409,13 @@ class UpdateTransactionRepository extends BaseRepository
                                 'payment_status' => 'VOIDED',
                             ]);
                         }
+                        VoidRefund::create([
+                            'type' => 'VOID',
+                            'item' => 'ADDON',
+                            'transaction_id' => $transaction->id,
+                            'cashier_session_id' => $cashierSession->id,
+                            'amount' => number_format((float) $addon->total_price, 2, '.', ''),
+                        ]);
                     }
 
                     $transaction->update([
@@ -413,6 +444,19 @@ class UpdateTransactionRepository extends BaseRepository
                 if ($transaction->payment_status === 'PARTIAL') {
                     $roomPaid = $totalReceived;
                     $addonsPaid = 0;
+                    
+                    foreach ($fullAddons as $addon) {
+                        $addon->update([
+                            'payment_status' => 'VOIDED',
+                        ]);
+                        VoidRefund::create([
+                            'type' => 'VOID',
+                            'item' => 'ADDON',
+                            'transaction_id' => $transaction->id,
+                            'cashier_session_id' => $cashierSession->id,
+                            'amount' => number_format((float) $addon->total_price, 2, '.', ''),
+                        ]);
+                    }
                 } elseif ($transaction->payment_status === 'PAID') {
                     $roomPaid = $transaction->room_total;
                     $addonsPaid = 0;
