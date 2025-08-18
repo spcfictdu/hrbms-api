@@ -91,7 +91,7 @@ class UpdateTransactionRepository extends BaseRepository
                             $transaction->update([
                                 'payment_status' => 'PAID',
                             ]);
-                        } elseif ($payment->amount_received !== 0) {
+                        } elseif ($payment->amount_received > 0) {
                             $transaction->update([
                                 'payment_status' => 'PARTIAL',
                             ]);
@@ -238,7 +238,8 @@ class UpdateTransactionRepository extends BaseRepository
 
                             if ($request->checkOutDate && $request->checkOutTime) {
                                 $totalReceived = Payment::where('transaction_id', $transaction->id)->sum('amount_received');
-                                $transactionTotal = $totalReceived + $fullAddons->sum('total_price');
+                                $fullAddons = BookingAddon::where('transaction_id', $transaction->id)->sum('total_price');
+                                $transactionTotal = $totalReceived + $fullAddons;
                                 if ($totalReceived >= $transactionTotal) {
                                     $transactionHistory->update([
                                         "check_out_date" => $request->checkOutDate ?? null,
