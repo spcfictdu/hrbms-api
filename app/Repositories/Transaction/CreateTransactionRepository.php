@@ -178,43 +178,6 @@ class CreateTransactionRepository extends BaseRepository
                     "payment_type" => strtoupper($request->payment['paymentType']),
                     "amount_received" => $request->payment['amountReceived']
                 ]);
-
-                if ($payment->amount_received >= $transaction->room_total) {
-                    $transaction->update([
-                        'payment_status' => 'PAID',
-                    ]);
-                } elseif ($payment->amount_received > 0) {
-                    $transaction->update([
-                        'payment_status' => 'PARTIAL',
-                    ]);
-                }
-
-                $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
-                    ->whereNot('payment_status', 'VOIDED')
-                    ->orderBy('id', 'asc')
-                    ->get();
-
-                $totalReceived = Payment::where('transaction_id', $transaction->id)
-                    ->sum('amount_received');
-                $addonsPayment = $totalReceived - $transaction->room_total;
-
-                foreach ($fullAddons as $addon) {
-                    if (($addonsPayment - $addon->total_price) >= 0) {
-                        if ($addon->payment_status === 'PENDING'){
-                            $addon->update([
-                                'payment_status' => 'PAID',
-                            ]);
-                        }
-                        $addonsPayment -= $addon->total_price;
-                    } elseif ($addonsPayment > 0) {
-                        if ($addon->payment_status === 'PENDING'){
-                            $addon->update([
-                                'payment_status' => 'PARTIAL',
-                            ]);
-                        }
-                        $addonsPayment = 0;
-                    }
-                }
                 
                 $room->update([
                     "status" => strtoupper("OCCUPIED")
@@ -233,6 +196,7 @@ class CreateTransactionRepository extends BaseRepository
                             $voucherCode = Voucher::where('code', $request->voucherCode)->first('id');
                             VoucherDiscount::create([
                                 "payment_id" => $payment->id,
+                                "transaction_id" => $transaction->id,
                                 "voucher_id" => $voucherCode->id,
                                 "discount" => $discountName,
                                 "value" => $voucher->value,
@@ -254,6 +218,7 @@ class CreateTransactionRepository extends BaseRepository
 
                         SeniorPwdDiscount::create([
                             "payment_id" => $payment->id,
+                            "transaction_id" => $transaction->id,
                             "discount" => $discount->name,
                             "id_number" => $request->idNumber,
                             "value" => $discount->value,
@@ -277,6 +242,46 @@ class CreateTransactionRepository extends BaseRepository
                         "expiration_date" => $request->expiration_date,
                         "cvc" => $request->cvc,
 
+                    ]);
+                }
+                
+                $discount = VoucherDiscount::where('transaction_id', $transaction->id)->first() ?? SeniorPwdDiscount::where('transaction_id', $transaction->id)->first() ?? null;
+                $discountValue = $discount->value ?? 0;
+
+                $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+                    ->whereNot('payment_status', 'VOIDED')
+                    ->orderBy('id', 'asc')
+                    ->get();
+
+                $totalReceived = Payment::where('transaction_id', $transaction->id)
+                    ->sum('amount_received');
+                $addonsPayment = $totalReceived - ($transaction->room_total - ($transaction->room_total * $discountValue));
+
+                foreach ($fullAddons as $addon) {
+                    if (($addonsPayment - $addon->total_price) >= 0) {
+                        if ($addon->payment_status === 'PENDING'){
+                            $addon->update([
+                                'payment_status' => 'PAID',
+                            ]);
+                        }
+                        $addonsPayment -= $addon->total_price;
+                    } elseif ($addonsPayment > 0) {
+                        if ($addon->payment_status === 'PENDING'){
+                            $addon->update([
+                                'payment_status' => 'PARTIAL',
+                            ]);
+                        }
+                        $addonsPayment = 0;
+                    }
+                }
+
+                if ($payment->amount_received >= ($transaction->room_total - ($transaction->room_total * $discountValue))) {
+                    $transaction->update([
+                        'payment_status' => 'PAID',
+                    ]);
+                } elseif ($payment->amount_received > 0) {
+                    $transaction->update([
+                        'payment_status' => 'PARTIAL',
                     ]);
                 }
             }
