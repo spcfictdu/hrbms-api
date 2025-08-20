@@ -134,11 +134,12 @@ class UpdateTransactionRepository extends BaseRepository
 
                     $totalReceived = Payment::where('transaction_id', $transaction->id)
                         ->sum('amount_received');
-                    $addonsPayment = $totalReceived - ($transaction->room_total - ($transaction->room_total * $discountValue));
+                    $discountedRoom = $transaction->room_total - ($transaction->room_total * $discountValue);
+                    $addonsPayment = $totalReceived - $discountedRoom;
 
                     foreach ($fullAddons as $addon) {
                         if (($addonsPayment - $addon->total_price) >= 0) {
-                            if ($addon->payment_status === 'PENDING' || $addon->payment_status === 'PENDING'){
+                            if ($addon->payment_status === 'PENDING' || $addon->payment_status === 'PARTIAL'){
                                 $addon->update([
                                     'payment_status' => 'PAID',
                                 ]);
@@ -241,8 +242,14 @@ class UpdateTransactionRepository extends BaseRepository
                             }
 
                             if ($request->checkOutDate && $request->checkOutTime) {
-                                $fullAddons = BookingAddon::where('transaction_id', $transaction->id)->get();
-                                if ($transaction->payment_status === 'PAID') {
+                                $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+                                    ->whereNot('payment_status', 'VOIDED')
+                                    ->whereNot('payment_status', 'REFUNDED')
+                                    ->get();
+
+                                if ($transaction->payment_status !== 'PAID') {
+                                    return $this->error('Transaction not fully paid');
+                                } else {
                                     foreach ($fullAddons as $addon) {
                                         if ($addon->payment_status === 'PENDING' || $addon->payment_status === 'PARTIAL') {
                                             return $this->error('Transaction not fully paid');
@@ -256,8 +263,6 @@ class UpdateTransactionRepository extends BaseRepository
                                         "check_out_date" => $request->checkOutDate ?? null,
                                         "check_out_time" => $request->checkOutTime ?? null,
                                     ]);
-                                } else {
-                                    return $this->error('Transaction not fully paid');
                                 }
                             }
 
@@ -324,9 +329,7 @@ class UpdateTransactionRepository extends BaseRepository
                         }
 
                         $response = $this->updateTransactionAndRoomStatus($transaction, $request);
-                        if ($response === NULL) {
-                            return $this->error('Transaction not fully paid');
-                        } else {
+                        if ($response) {
                             return $response;
                         }
                     } else {
@@ -372,11 +375,14 @@ class UpdateTransactionRepository extends BaseRepository
 
             return $this->success('Check-in successful');
         } elseif ($request->checkOutDate && $request->checkOutTime) {
-            $fullAddons = BookingAddon::where('transaction_id', $transaction->id)->get();
+            $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+                ->whereNot('payment_status', 'VOIDED')
+                ->whereNot('payment_status', 'REFUNDED')
+                ->get();
             if ($transaction->payment_status === 'PAID') {
                 foreach ($fullAddons as $addon) {
                     if ($addon->payment_status === 'PENDING' || $addon->payment_status === 'PARTIAL') {
-                        return null;
+                        return $this->error('Transaction not fully paid');
                     }
                 }
                 $transaction->update(["status" => "CHECKED-OUT"]);
@@ -386,7 +392,7 @@ class UpdateTransactionRepository extends BaseRepository
 
                 return $this->success('Check-out successful');
             } else {
-                return null;
+                return $this->error('Transaction not fully paid');
             }
         }
     }
