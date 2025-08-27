@@ -22,6 +22,8 @@ use App\Models\CashierSession\CashierSession;
 use App\Models\Transaction\VoidRefund;
 use App\Models\Guest\Guest;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class UpdateTransactionRepository extends BaseRepository
 {
@@ -229,53 +231,90 @@ class UpdateTransactionRepository extends BaseRepository
                     ]);
                 } elseif (!isset($request->status)) {
                     if ($transaction->payment_status !== 'VOIDED' && $transaction->payment_status !== 'REFUNDED') {
-                        if ($transactionHistory) {
-                            if ($request->checkInDate && $request->checkInTime) {
-                                $transactionHistory->update([
-                                    "check_in_date" => $request->checkInDate ?? null,
-                                    "check_in_time" => $request->checkInTime ?? null,
-                                ]);
-                                $transaction->update([
-                                    "check_in_date" => $request->checkInDate ?? null,
-                                    "check_in_time" => $request->checkInTime ?? null,
-                                ]);
-                            }
-
-                            if ($request->checkOutDate && $request->checkOutTime) {
-                                $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
-                                    ->whereNot('payment_status', 'VOIDED')
-                                    ->whereNot('payment_status', 'REFUNDED')
-                                    ->get();
-
-                                if ($transaction->payment_status !== 'PAID') {
-                                    return $this->error('Transaction not fully paid');
-                                } else {
-                                    foreach ($fullAddons as $addon) {
-                                        if ($addon->payment_status === 'PENDING' || $addon->payment_status === 'PARTIAL') {
-                                            return $this->error('Transaction not fully paid');
-                                        }
-                                    }
+                        if (isset($request->checkInOut)) {
+                            if ($transactionHistory) {
+                                if ($request->checkInDate && $request->checkInTime) {
                                     $transactionHistory->update([
-                                        "check_out_date" => $request->checkOutDate ?? null,
-                                        "check_out_time" => $request->checkOutTime ?? null,
+                                        "check_in_date" => $request->checkInDate ?? null,
+                                        "check_in_time" => $request->checkInTime ?? null,
                                     ]);
                                     $transaction->update([
-                                        "check_out_date" => $request->checkOutDate ?? null,
-                                        "check_out_time" => $request->checkOutTime ?? null,
+                                        "check_in_date" => $request->checkInDate ?? null,
+                                        "check_in_time" => $request->checkInTime ?? null,
                                     ]);
+                                }
+
+                                if ($request->checkOutDate && $request->checkOutTime) {
+                                    $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+                                        ->whereNot('payment_status', 'VOIDED')
+                                        ->whereNot('payment_status', 'REFUNDED')
+                                        ->get();
+
+                                    if ($transaction->payment_status !== 'PAID') {
+                                        return $this->error('Transaction not fully paid');
+                                    } else {
+                                        foreach ($fullAddons as $addon) {
+                                            if ($addon->payment_status === 'PENDING' || $addon->payment_status === 'PARTIAL') {
+                                                return $this->error('Transaction not fully paid');
+                                            }
+                                        }
+                                        $transactionHistory->update([
+                                            "check_out_date" => $request->checkOutDate ?? null,
+                                            "check_out_time" => $request->checkOutTime ?? null,
+                                        ]);
+                                        $transaction->update([
+                                            "check_out_date" => $request->checkOutDate ?? null,
+                                            "check_out_time" => $request->checkOutTime ?? null,
+                                        ]);
+                                    }
+                                }
+
+                            } else {
+                                $transactionHistory = TransactionHistory::create([
+                                    "check_in_date" => $request->checkInDate ?? null,
+                                    "check_in_time" => $request->checkInTime ?? null,
+                                    "check_out_date" => $request->checkOutDate ?? null,
+                                    "check_out_time" => $request->checkOutTime ?? null
+                                ]);
+
+                                $transaction->update([
+                                    "transaction_history_id" => $transactionHistory->id
+                                ]);
+                            }
+                            $response = $this->updateTransactionAndRoomStatus($transaction, $request);
+                            if ($response) {
+                                return $response;
+                            }
+                        } else {
+                            $transaction->update([
+                                "check_in_date" => $request->checkInDate ?? $transaction->check_in_date,
+                                "check_in_time" => $request->checkInTime ?? $transaction->check_in_time,
+                                "check_out_date" => $request->checkOutDate ?? $transaction->check_out_date,
+                                "check_out_time" => $request->checkOutTime ?? $transaction->check_out_time
+                            ]);
+                            $checkIn = Carbon::parse($request->check_in_date ?? $transaction->check_in_date);
+                            $checkOut = Carbon::parse($request->check_out_date ?? $transaction->check_out_date);
+
+                            $period = CarbonPeriod::create($checkIn, $checkOut->subDay()); 
+
+                            $roomTypeRates = $transaction->room->roomType->rates;
+
+                            $total = 0;
+                            foreach ($period as $date) {
+                                $day = strtolower($date->format('l'));
+                                $rate = $roomTypeRates
+                                    ->first(function ($r) use ($date) {
+                                        return (!$r->start_date || $date->gte(Carbon::parse($r->start_date)))
+                                            && (!$r->end_date || $date->lte(Carbon::parse($r->end_date)));
+                                    });
+
+                                if ($rate) {
+                                    $total += $rate->{$day};
                                 }
                             }
 
-                        } else {
-                            $transactionHistory = TransactionHistory::create([
-                                "check_in_date" => $request->checkInDate ?? null,
-                                "check_in_time" => $request->checkInTime ?? null,
-                                "check_out_date" => $request->checkOutDate ?? null,
-                                "check_out_time" => $request->checkOutTime ?? null
-                            ]);
-
                             $transaction->update([
-                                "transaction_history_id" => $transactionHistory->id
+                                'room_total' =>  $total
                             ]);
                         }
 
@@ -328,10 +367,6 @@ class UpdateTransactionRepository extends BaseRepository
                             }
                         }
 
-                        $response = $this->updateTransactionAndRoomStatus($transaction, $request);
-                        if ($response) {
-                            return $response;
-                        }
                     } else {
                         return $this->error('Transaction already voided or refunded');
                     }
