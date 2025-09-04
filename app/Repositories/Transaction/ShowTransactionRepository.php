@@ -50,30 +50,56 @@ class ShowTransactionRepository extends BaseRepository
         }
 
         // Calculate add-ons total
-        $addons = $transaction->bookingAddon ?? [];
-        $addonsTotal = 0;
-        $fullAddons = [];
-        foreach ($addons as $addon) {
-            $addonModel = Addon::where('name', $addon['name'])->first();
+        // $addons = $transaction->bookingAddon ?? [];
+        // $addonsTotal = 0;
+        // $fullAddons = [];
+        // foreach ($addons as $addon) {
+        //     $addonModel = Addon::where('name', $addon['name'])->first();
+        //     $refundedAddon = VoidRefund::where('addon_id', $addon->id)
+        //         ->where('type', 'REFUND')
+        //         ->first();
+        //     if ($addonModel) {
+        //         $totalPrice = $addonModel->price * $addon['quantity'];
+        //         $addonsTotal += $totalPrice;
+        //         $fullAddons[] = [
+        //             'name' => $addon['name'],
+        //             'addonId' => $addon['id'],
+        //             'quantity' => $addon['quantity'],
+        //             'unitPrice' => $addonModel->price,
+        //             // 'total' => $totalPrice,
+        //             'total' => (float)number_format($totalPrice, 2),
+        //             'paymentStatus' => $addon->payment_status,
+        //             'amountRefunded' => $refundedAddon->amount ?? null,
+        //             'createdAt' => $addon->created_at,
+        //         ];
+        //     }
+        // }
+
+        $addons = BookingAddon::where('transaction_id', $transaction->id)
+            ->orderBy('purchase_batch')
+            ->get();
+        $addonsTotal = $addons->sum('total_price');
+
+        $fullAddons = $addons->map(function ($addon) {
+
             $refundedAddon = VoidRefund::where('addon_id', $addon->id)
                 ->where('type', 'REFUND')
                 ->first();
-            if ($addonModel) {
-                $totalPrice = $addonModel->price * $addon['quantity'];
-                $addonsTotal += $totalPrice;
-                $fullAddons[] = [
-                    'name' => $addon['name'],
-                    'addonId' => $addon['id'],
-                    'quantity' => $addon['quantity'],
-                    'unitPrice' => $addonModel->price,
-                    // 'total' => $totalPrice,
-                    'total' => (float)number_format($totalPrice, 2),
-                    'paymentStatus' => $addon->payment_status,
-                    'amountRefunded' => $refundedAddon->amount ?? null,
-                    'createdAt' => $addon->created_at,
-                ];
-            }
-        }
+            $addonModel = Addon::where('name', $addon->name)->first();
+            $addonPrice = $addonModel->price;
+
+            return [
+                'name' => $addon['name'],
+                'addonId' => $addon['id'],
+                'quantity' => $addon['quantity'],
+                'unitPrice' => $addonPrice,
+                'total' => (float)number_format($addon['total_price'], 2),
+                'paymentStatus' => $addon->payment_status,
+                'amountRefunded' => $refundedAddon->amount ?? null,
+                'purchaseBatch' => $addon->purchase_batch,
+                'createdAt' => $addon->created_at,
+            ];
+        });
 
 
         // $fullAddons = BookingAddOn::where('transaction_id', $transaction->id)->get() ?? null;

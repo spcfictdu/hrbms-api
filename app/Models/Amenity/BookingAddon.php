@@ -17,6 +17,7 @@ class BookingAddOn extends Model
 
     protected $fillable = [
         'transaction_id',
+        'purchase_batch',
         'addon_id',
         'name',
         'quantity',
