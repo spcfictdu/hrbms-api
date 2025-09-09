@@ -66,6 +66,10 @@ class IndexCashierSessionRepository extends BaseRepository
 
         $query = CashierSession::query();
 
+        if (auth()->user()->hasRole('FRONT DESK')) {
+            $query->where('user_id', auth()->user()->id);
+        }
+
         $cashierSessions = $this->applyQueryModifications($query, $request, $filterableFields, $searchableFields, $sortableFields, '', 'desc');
 
         $allPaymentTypes = ['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD'];
