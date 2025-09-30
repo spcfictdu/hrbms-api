@@ -372,13 +372,12 @@ class UpdateTransactionRepository extends BaseRepository
                         }
 
                         if (isset($request->paymentStatus)) {
-                            if ($transaction->status !== 'CHECKED-OUT' && $transaction->status !== 'CHECKED-IN') {
-                                $response = $this->voidRefundTransaction($transaction, $request);
-                                if ($response !== null) {
-                                    return $response;
-                                } else {
-                                    return $this->error('Cannot void or refund room');
-                                }
+                            $response = $this->voidRefundTransaction($transaction, $request);
+                            if ($response !== null) {
+                                $transaction->room->update([
+                                    'status' => 'UNCLEAN',
+                                ]);
+                                return $response;
                             } else {
                                 return $this->error('Cannot void or refund room');
                             }
@@ -476,9 +475,7 @@ class UpdateTransactionRepository extends BaseRepository
         }
         
         if ($request->paymentStatus === 'VOIDED') {
-            $totalReceived = Payment::where('transaction_id', $transaction->id)
-                ->sum('amount_received');
-            if ($totalReceived > 0) {
+            if ($transaction->payment_status === 'PAID') {
                 return null;
             } else {
                 foreach ($fullAddons as $addon) {
@@ -511,12 +508,12 @@ class UpdateTransactionRepository extends BaseRepository
             return $this->success('Transaction voided successfully', $voided);
 
         } elseif ($request->paymentStatus === 'REFUNDED') {
-            $totalReceived = Payment::where('transaction_id', $transaction->id)
-                ->sum('amount_received');
+            // $totalReceived = Payment::where('transaction_id', $transaction->id)
+            //     ->sum('amount_received');
             $roomPaid = $transaction->room_total - ($transaction->room_total * $discountValue);
-            // $addonsPaid = 0;
-            $addonsPayment = $totalReceived - $roomPaid;
-            if ($totalReceived === 0) {
+            // // $addonsPaid = 0;
+            // $addonsPayment = $totalReceived - $roomPaid;
+            if ($transaction->payment_status !== 'PAID') {
                 return null;
             } else {
                 // if ($transaction->payment_status === 'PARTIAL') {
@@ -535,11 +532,10 @@ class UpdateTransactionRepository extends BaseRepository
                 //             'amount' => number_format((float) $addon->total_price, 2, '.', ''),
                 //         ]);
                 //     }
-                // } else
-                if ($transaction->payment_status === 'PAID' || $transaction->payment_status === 'PENDING') {
+                // } elseif ($transaction->payment_status === 'PAID' || $transaction->payment_status === 'PENDING') {
                     foreach ($fullAddons as $addon) {
                         if ($addon->payment_status !== 'REFUNDED' && $addon->payment_status !== 'VOIDED') {
-                            if ($addonsPayment <= 0) {
+                            if ($addon->payment_status === 'PENDING') {
                                 $addon->update([
                                     'payment_status' => 'VOIDED',
                                 ]);
@@ -552,7 +548,7 @@ class UpdateTransactionRepository extends BaseRepository
                                     'amount' => number_format((float) $addon->total_price, 2, '.', ''),
                                 ]);
 
-                            } elseif (($addonsPayment - $addon->total_price) >= 0) {
+                            } elseif ($addon->payment_status === 'PAID') {
                                 $addon->update([
                                     'payment_status' => 'REFUNDED',
                                 ]);
@@ -568,29 +564,30 @@ class UpdateTransactionRepository extends BaseRepository
                                     'amount' => number_format((float) $addon->total_price, 2, '.', ''),
                                 ]);
 
-                                $addonsPayment -= $addon->total_price;
+                                // $addonsPayment -= $addon->total_price;
 
-                            } elseif (($addonsPayment - $addon->total_price) < 0) {
-                                $addon->update([
-                                    'payment_status' => 'REFUNDED',
-                                ]);
+                            } 
+                            // elseif (($addonsPayment - $addon->total_price) < 0) {
+                            //     $addon->update([
+                            //         'payment_status' => 'REFUNDED',
+                            //     ]);
 
-                                VoidRefund::create([
-                                    'type' => 'REFUND',
-                                    'item' => 'ADDON',
-                                    'transaction_id' => $transaction->id,
-                                    'addon_id' => $addon->id,
-                                    'cashier_session_id' => $cashierSession->id,
-                                    'amount' => number_format((float) $addonsPayment, 2, '.', ''),
-                                ]);
+                            //     VoidRefund::create([
+                            //         'type' => 'REFUND',
+                            //         'item' => 'ADDON',
+                            //         'transaction_id' => $transaction->id,
+                            //         'addon_id' => $addon->id,
+                            //         'cashier_session_id' => $cashierSession->id,
+                            //         'amount' => number_format((float) $addonsPayment, 2, '.', ''),
+                            //     ]);
 
-                                $addonsPayment -= $addon->total_price;
-                            }
+                            //     $addonsPayment -= $addon->total_price;
+                            // }
                         }
                     }
-                } else {
-                    return null;
-                }
+                // } else {
+                //     return null;
+                // }
 
                 $transaction->update([
                     'payment_status' => 'REFUNDED',
@@ -651,18 +648,20 @@ class UpdateTransactionRepository extends BaseRepository
                     'payment_status' => 'REFUNDED',
                 ]);
                 $addonAmount = $addon->total_price;
-            } elseif ($addon->payment_status === 'PARTIAL') {
-                $addonsPaid = BookingAddon::where('payment_status', 'PAID')
-                    ->orWhere('payment_status', 'REFUNDED')
-                    ->orWhere('payment_status', 'VOIDED')
-                    ->sum('total_price');
-                $totalReceived = Payment::where('transaction_id', $transaction->id)
-                    ->sum('amount_received');
-                $addon->update([
-                    'payment_status' => 'REFUNDED',
-                ]);
-                $addonAmount = ($totalReceived - $transaction->room_total) - $addonsPaid;
-            } else {
+            }
+            // elseif ($addon->payment_status === 'PARTIAL') {
+            //     $addonsPaid = BookingAddon::where('payment_status', 'PAID')
+            //         ->orWhere('payment_status', 'REFUNDED')
+            //         ->orWhere('payment_status', 'VOIDED')
+            //         ->sum('total_price');
+            //     $totalReceived = Payment::where('transaction_id', $transaction->id)
+            //         ->sum('amount_received');
+            //     $addon->update([
+            //         'payment_status' => 'REFUNDED',
+            //     ]);
+            //     $addonAmount = ($totalReceived - $transaction->room_total) - $addonsPaid;
+            // } 
+            else {
                 return null;
             }
             
