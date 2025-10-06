@@ -77,10 +77,10 @@ class UserSeeder extends Seeder
         ];
 
         $additonalUsers = User::factory()->count(60)->create();
-        $randomRole = fake()->randomElement(['ADMIN', 'FRONT DESK', 'GUEST']);
-        $role = Role::findByName($randomRole);
+        // $randomRole = fake()->randomElement(['ADMIN', 'FRONT DESK', 'GUEST']);
+        // $role = Role::findByName($randomRole);
         foreach ($additonalUsers as $user) {
-            $user->assignRole($role);
+            $user->assignRole('GUEST');
         }
 
         // Create 60 front desk users
