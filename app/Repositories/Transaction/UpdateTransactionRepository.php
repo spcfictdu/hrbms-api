@@ -80,6 +80,7 @@ class UpdateTransactionRepository extends BaseRepository
                     
                     $payment = Payment::create([
                         "transaction_id" => $transaction->id,
+                        "user_id" => $user->id,
                         "cashier_session_id" => $cashierSession->id,
                         "payment_type" => $request->paymentType ,
                         "amount_received" => $request->amountReceived,
@@ -116,13 +117,14 @@ class UpdateTransactionRepository extends BaseRepository
                     $lastPurchaseBatch = $fullAddons->max('purchase_batch');
 
                     if (isset($request->addons) && isset($transaction->id)) {
-                        $sample = array_map(function ($addon) use ($request, $transaction, $lastPurchaseBatch) {
+                        $sample = array_map(function ($addon) use ($request, $transaction, $lastPurchaseBatch, $payment) {
                             $checkPrice = Addon::where('name', $addon['name'])->first();
                             if ($checkPrice->price) {
                                 $totalPrice = $checkPrice->price * $addon['quantity'];
 
                                 $addons = BookingAddon::create([
                                     "transaction_id" => $transaction->id,
+                                    "payment_id" => $payment->id,
                                     "name" => $addon['name'],
                                     "quantity" => $addon['quantity'],
                                     "total_price" => $totalPrice,

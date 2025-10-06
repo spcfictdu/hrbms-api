@@ -265,6 +265,7 @@ class UserCashierController extends Controller
                 return [
                     'referenceNumber' => $transaction->reference_number,
                     'paymentId' => $payment->id,
+                    'userId' => $payment->user_id,
                     'guestName' => optional($transaction?->guest)->full_name,
                     'paymentType' => $payment->payment_type,
                     'amountReceived' => number_format((float) $payment->amount_received, 2, '.', ''),

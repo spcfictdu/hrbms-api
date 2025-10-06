@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id();
             // $table->foreignIdFor(Transaction::class)->constrained()->cascadeOnDelete();
             $table->unsignedBigInteger('transaction_id');
+            $table->unsignedBigInteger('payment_id')->nullable();
+            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
             $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
             $table->unsignedBigInteger('purchase_batch')->default(1);
             $table->enum('payment_status', ['PENDING', 'PAID', 'VOIDED', 'REFUNDED'])->default('PENDING');

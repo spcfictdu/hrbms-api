@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Models\CashierSession\CashierSession;
 use App\Models\Guest\Guest;
+use App\Models\Transaction\Payment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -63,5 +64,9 @@ class User extends Authenticatable
     public function cashierSessions()
     {
         return $this->hasMany(CashierSession::class);
+    }
+    public function payment()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

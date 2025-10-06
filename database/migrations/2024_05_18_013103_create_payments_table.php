@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Models\Discount\Voucher;
 use App\Models\Discount\Discount;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,7 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('transaction_id')->nullable();
+            $table->foreignIdFor(User::class)->cascadeOnDelete();
             $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
             $table->foreignId('cashier_session_id');
             $table->enum('payment_type', ['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD']);

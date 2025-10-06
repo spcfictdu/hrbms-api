@@ -174,6 +174,7 @@ class CreateTransactionRepository extends BaseRepository
 
                 $payment = Payment::create([
                     "transaction_id" => $transaction->id,
+                    "user_id" => $user->id,
                     "cashier_session_id" => $cashierSession->id,
                     "payment_type" => strtoupper($request->payment['paymentType']),
                     "amount_received" => $request->payment['amountReceived']
@@ -183,7 +184,17 @@ class CreateTransactionRepository extends BaseRepository
                     "status" => strtoupper("OCCUPIED")
                 ]);
                 
+                $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
+                    ->whereNot('payment_status', 'VOIDED')
+                    ->orderBy('id', 'asc')
+                    ->get();
                     
+                foreach ($fullAddons as $addon) {
+                    $addon->update([
+                        'payment_id' => $payment->id,
+                    ]);
+                }
+
                 // verify if discount exists and create it to database
                 if ($request->discount) {
 

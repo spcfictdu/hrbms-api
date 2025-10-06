@@ -2,17 +2,19 @@
 
 namespace App\Models\Transaction;
 
-use App\Models\CashierSession\CashierSession;
+use App\Models\User;
 use App\Models\Discount\Voucher;
 use App\Models\PaymentType\Cash;
 use App\Models\Discount\Discount;
-use App\Models\Discount\PaymentDiscount;
-use App\Models\Discount\SeniorPwdDiscount;
-use App\Models\Discount\VoucherDiscount;
-use App\Models\PaymentType\ChequePayment;
-use App\Models\PaymentType\CreditCardPayment;
-use App\Models\PaymentType\GcashPayment;
+use App\Models\Amenity\BookingAddOn;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Discount\PaymentDiscount;
+use App\Models\Discount\VoucherDiscount;
+use App\Models\PaymentType\GcashPayment;
+use App\Models\PaymentType\ChequePayment;
+use App\Models\Discount\SeniorPwdDiscount;
+use App\Models\CashierSession\CashierSession;
+use App\Models\PaymentType\CreditCardPayment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Payment extends Model
@@ -23,6 +25,7 @@ class Payment extends Model
 
     protected $fillable = [
         "transaction_id",
+        "user_id",
         "cashier_session_id",
         "payment_type",
         "amount_received",
@@ -85,5 +88,14 @@ class Payment extends Model
     public function cashierSession()
     {
         return $this->belongsTo(CashierSession::class);
+    }
+
+    public function bookingAddon()
+    {
+        return $this->hasMany(BookingAddOn::class);
+    }
+     public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

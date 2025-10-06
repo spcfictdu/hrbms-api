@@ -7,6 +7,7 @@ use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VoidRefund;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Transaction\Payment;
 
 class BookingAddOn extends Model
 {
@@ -17,6 +18,7 @@ class BookingAddOn extends Model
 
     protected $fillable = [
         'transaction_id',
+        'payment_id',        
         'purchase_batch',
         'addon_id',
         'name',
@@ -41,5 +43,8 @@ class BookingAddOn extends Model
     public function voidRefund() {
         return $this->hasOne(VoidRefund::class);
     }
-                                                                                                               
+    
+    public function payment(){
+        return $this->belongsTo(Payment::class, 'payment_id');
+    }
 }
