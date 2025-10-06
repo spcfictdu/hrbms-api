@@ -23,6 +23,6 @@ class GenerateFlightArrivalsReportRepository extends BaseRepository
                 ];
             });
         
-        return $this->success('Today\'s flight arrivals: ', $expectedFlightArrivals);
+        return $this->success('Flight arrivals for: ' . $date, $expectedFlightArrivals);
     }
 }
