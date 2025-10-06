@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('transaction_id')->nullable();
-            $table->foreign('transaction_id')->references('id')->on('transactions');
+            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
             $table->foreignId('cashier_session_id');
             $table->enum('payment_type', ['CASH', 'GCASH', 'CHEQUE', 'CREDIT_CARD']);
             // $table->foreignIdFor(PaymentDiscount::class)->nullable()->constrained();

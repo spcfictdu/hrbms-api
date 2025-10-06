@@ -16,7 +16,7 @@ return new class extends Migration
             $table->enum('type', ['VOID', 'REFUND']);
             $table->enum('item', ['ROOM', 'ADDON']);
             $table->unsignedBigInteger('transaction_id');
-            $table->foreign('transaction_id')->references('id')->on('transactions');
+            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
             $table->unsignedBigInteger('addon_id')->nullable();
             $table->foreign('addon_id')->references('id')->on('booking_addons');
             $table->unsignedBigInteger('cashier_session_id');
