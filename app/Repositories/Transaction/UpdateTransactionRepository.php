@@ -225,7 +225,7 @@ class UpdateTransactionRepository extends BaseRepository
                         ]);
                     }
 
-                    if ($request->status === "RESERVED") {
+                    if ($transaction->status === "RESERVED") {
                         $transaction->update([
                             "status" => "CONFIRMED",
                             "payment_id" => $payment->id

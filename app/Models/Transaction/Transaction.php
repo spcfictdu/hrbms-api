@@ -6,6 +6,7 @@ use App\Models\Amenity\BookingAddon;
 use App\Models\Guest\Guest;
 use App\Models\Room\Room;
 use App\Models\User;
+use App\Models\Transaction\Flight;
 use App\Models\Transaction\VoidRefund;
 use App\Models\Transaction\Payment;
 use App\Models\Discount\SeniorPwdDiscount;
@@ -106,5 +107,10 @@ class Transaction extends Model
     public function seniorPwdDiscount()
     {
         return $this->hasOne(SeniorPwdDiscount::class);
+    }
+
+    public function flight()
+    {
+        return $this->hasMany(Flight::class);
     }
 }

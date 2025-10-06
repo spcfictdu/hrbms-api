@@ -15,7 +15,9 @@ use App\Http\Requests\Transaction\{
     CreateTransactionRequest,
     ShowTransactionRequest,
     ShowGuestTransactionRequest,
-    UpdateTransactionRequest
+    UpdateTransactionRequest,
+    Flight\CreateFlightRequest,
+    Flight\UpdateFlightRequest,
 };
 use App\Models\Guest\Guest;
 // * REPOSITORY
@@ -32,13 +34,18 @@ use App\Repositories\Transaction\{
     Guest\CreateGuestTransactionRepository,
     UpdateTransactionRepository,
     Miscellaneous\DeleteReservationRepository,
-    Miscellaneous\ShowFormTransactionRepository
+    Miscellaneous\ShowFormTransactionRepository,
+    Flight\CreateFlightRepository,
+    Flight\IndexFlightRepository,
+    Flight\ShowFlightRepository,
+    Flight\UpdateFlightRepository,
+    Flight\DeleteFlightRepository,
 };
 
 class TransactionController extends Controller
 {
     // $bookEdit, $bookIndex, $bookShow, $bookUpdate
-    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction, $guestIndex, $guestTransactionShow, $guestTransactionCreate;
+    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction, $guestIndex, $guestTransactionShow, $guestTransactionCreate, $indexFlight, $createFlight, $showFlight, $updateFlight, $deleteFlight;
 
     public function __construct(
         // IndexBookingRepository $bookIndex,
@@ -53,7 +60,12 @@ class TransactionController extends Controller
         ShowGuestTransactionRepository $guestTransactionShow,
         UpdateTransactionRepository $update,
         DeleteReservationRepository $deleteReservation,
-        ShowFormTransactionRepository $showFormTransaction
+        ShowFormTransactionRepository $showFormTransaction,
+        IndexFlightRepository $indexFlight,
+        CreateFlightRepository $createFlight,
+        ShowFlightRepository $showFlight,
+        UpdateFlightRepository $updateFlight,
+        DeleteFlightRepository $deleteFlight,
     ) {
         // $this->bookIndex = $bookIndex;
         // $this->bookShow = $bookShow;
@@ -68,6 +80,11 @@ class TransactionController extends Controller
         $this->update = $update;
         $this->deleteReservation = $deleteReservation;
         $this->showFormTransaction = $showFormTransaction;
+        $this->indexFlight = $indexFlight;
+        $this->createFlight = $createFlight;
+        $this->showFlight = $showFlight;
+        $this->updateFlight = $updateFlight;
+        $this->deleteFlight = $deleteFlight;
     }
 
     // protected function bookIndex(IndexBookingRequest $request)
@@ -133,5 +150,30 @@ class TransactionController extends Controller
     protected function showFormTransaction($referenceNumber)
     {
         return $this->showFormTransaction->execute($referenceNumber);
+    }
+
+    protected function indexFlight($referenceNumber)
+    {
+        return $this->indexFlight->execute($referenceNumber);
+    }
+
+    protected function createFlight(CreateFlightRequest $request, $referenceNumber)
+    {
+        return $this->createFlight->execute($request, $referenceNumber);
+    }
+
+    protected function showFlight(Request $request)
+    {
+        return $this->showFlight->execute($request);
+    }
+
+    protected function updateFlight(UpdateFlightRequest $request)
+    {
+        return $this->updateFlight->execute($request);
+    }
+
+    protected function deleteFlight(Request $request)
+    {
+        return $this->deleteFlight->execute($request);
     }
 }
