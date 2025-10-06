@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\DB;
 
 class RoomAvailable implements ValidationRule
 {
-    protected $checkInDate;
-    protected $checkOutDate;
+    protected $checkInTime;
+    protected $checkOutTime;
 
-    public function __construct($checkInDate, $checkOutDate)
+    public function __construct($checkInTime, $checkOutTime)
     {
-        $this->checkInDate = $checkInDate;
-        $this->checkOutDate = $checkOutDate;
+        $this->checkInTime = $checkInTime;
+        $this->checkOutTime = $checkOutTime;
     }
 
     /**
@@ -35,19 +35,19 @@ class RoomAvailable implements ValidationRule
             ->whereNull('deleted_at')
             ->where(function ($query) {
                 $query->where(function ($q) {
-                    $q->whereBetween('check_in_date', [$this->checkInDate, $this->checkOutDate])
-                        ->orWhereBetween('check_out_date', [$this->checkInDate, $this->checkOutDate]);
+                    $q->whereBetween('check_in_time', [$this->checkInTime, $this->checkOutTime])
+                        ->orWhereBetween('check_out_time', [$this->checkInTime, $this->checkOutTime]);
                 })
                     ->orWhere(function ($q) {
-                        $q->where('check_in_date', '<=', $this->checkInDate)
-                            ->where('check_out_date', '>=', $this->checkOutDate);
+                        $q->where('check_in_time', '<=', $this->checkInTime)
+                            ->where('check_out_time', '>=', $this->checkOutTime);
                     });
             })
             ->exists();
 
         // return !$overlap; // If there's an overlap, the rule fails
         if ($overlap) {
-            $fail("The room is not available for the given dates.");
+            $fail("The room is not available for the given dates and times.");
         }
     }
 }
