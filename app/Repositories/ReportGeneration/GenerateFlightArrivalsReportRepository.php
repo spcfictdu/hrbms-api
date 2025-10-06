@@ -12,7 +12,6 @@ class GenerateFlightArrivalsReportRepository extends BaseRepository
         $date = $request->query('date', now()->toDateString());
 
         $expectedFlightArrivals = Flight::whereDate('arrival_date', $date)
-            ->whereNull('deleted_at')
             ->get()
             ->map(function ($flight) {
                 return [
