@@ -17,7 +17,7 @@ class GenerateDailyReservationsReportRepository
 
         $date = $request->query('date', now()->toDateString());
 
-        $checkIns = Transaction::with(['guest', 'room'])
+        $expectedCheckIns = Transaction::with(['guest', 'room'])
             ->whereDate('check_in_date', $date)
             ->whereNull('deleted_at')
             ->get()
@@ -28,8 +28,22 @@ class GenerateDailyReservationsReportRepository
                     'checkInDate' => $transaction->check_in_date,
                 ];
             });
+        
+        $actualCheckIns = Transaction::with(['guest', 'room'])
+            ->whereDate('check_in_date', $date)
+            ->where('status', 'CHECKED-IN')
+            ->whereNull('deleted_at')
+            ->get()
+            ->map(function ($transaction) {
+                return [
+                    'guestName' => optional($transaction->guest)->full_name,
+                    'roomNumber' => optional($transaction->room)->room_number,
+                    'checkInDate' => $transaction->check_in_date,
+                    'checkInTime' => $transaction->transactionHistory->check_in_time
+                ];
+            });
 
-        $checkOuts = Transaction::with(['guest', 'room'])
+        $expectedCheckOuts = Transaction::with(['guest', 'room'])
             ->whereDate('check_out_date', $date)
             ->whereNull('deleted_at')
             ->get()
@@ -38,6 +52,20 @@ class GenerateDailyReservationsReportRepository
                     'guestName' => optional($transaction->guest)->full_name,
                     'roomNumber' => optional($transaction->room)->room_number,
                     'checkOutDate' => $transaction->check_out_date,
+                ];
+            });
+
+        $actualCheckOuts = Transaction::with(['guest', 'room'])
+            ->whereDate('check_out_date', $date)
+            ->where('status', 'CHECKED-OUT')
+            ->whereNull('deleted_at')
+            ->get()
+            ->map(function ($transaction) {
+                return [
+                    'guestName' => optional($transaction->guest)->full_name,
+                    'roomNumber' => optional($transaction->room)->room_number,
+                    'checkOutDate' => $transaction->check_out_date,
+                    'checkOutTime' => $transaction->transactionHistory->check_out_time
                 ];
             });
 
@@ -59,8 +87,10 @@ class GenerateDailyReservationsReportRepository
             'message' => 'Daily hotel activity summary retrieved successfully.',
             'data' => [
                 'date' => $date,
-                'checkIns' => $checkIns,
-                'checkOuts' => $checkOuts,
+                'expectedCheckIns' => $expectedCheckIns,
+                'actualCheckIns' => $actualCheckIns,
+                'expectedCheckOuts' => $expectedCheckOuts,
+                'actualCheckOuts' => $actualCheckOuts,
                 'inHouse' => $inHouse,
             ]
         ]);
