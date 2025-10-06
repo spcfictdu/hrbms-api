@@ -242,6 +242,7 @@ Route::group([
     $route->get('/top-guests',   [ReportGenerationController::class, 'topGuests']);
     $route->get('/guest-frequency',   [ReportGenerationController::class, 'guestFrequency']);
     $route->get('/guest-demographics',   [ReportGenerationController::class, 'guestDemographics']);
+    $route->get('/flight-arrivals', [ReportGenerationController::class, 'flightArrivals']);
 });
 
 Route::group([

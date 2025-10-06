@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Repositories\ReportGeneration;
+
+use App\Repositories\BaseRepository;
+use App\Models\Transaction\Flight;
+use Carbon\Carbon;
+
+class GenerateFlightArrivalsReportRepository extends BaseRepository
+{
+    public function execute($request){
+        $date = $request->query('date', now()->toDateString());
+
+        $expectedFlightArrivals = Flight::whereDate('arrival_date', $date)
+            ->whereNull('deleted_at')
+            ->get()
+            ->map(function ($flight) {
+                return [
+                    'guestName' => $flight->guest_name,
+                    'arrivalDate' => $flight->arrival_date,
+                    'arrivalTime' => $flight->arrival_time
+                ];
+            });
+    }
+}

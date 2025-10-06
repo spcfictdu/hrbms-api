@@ -24,12 +24,13 @@ use App\Repositories\ReportGeneration\{
     GenerateGuestHistoryReportRepository,
     GenerateTopGuestsReportRepository,
     GenerateGuestBookingFrequencyReportRepository,
-    GenerateGuestDemographicsReportRepository
+    GenerateGuestDemographicsReportRepository,
+    GenerateFlightArrivalsReportRepository
 };
 
 class ReportGenerationController extends Controller
 {
-    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests, $guestFrequency, $guestDemographics;
+    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests, $guestFrequency, $guestDemographics, $flightArrivals;
 
     public function __construct(
         GenerateRevenueReportRepository $revenueReport,
@@ -42,7 +43,8 @@ class ReportGenerationController extends Controller
         GenerateGuestHistoryReportRepository $guestHistory,
         GenerateTopGuestsReportRepository $topGuests,
         GenerateGuestBookingFrequencyReportRepository $guestFrequency,
-        GenerateGuestDemographicsReportRepository $guestDemographics
+        GenerateGuestDemographicsReportRepository $guestDemographics,
+        GenerateFlightArrivalsReportRepository $flightArrivals,
     ) {
         $this->revenueReport = $revenueReport;
         $this->paymentReport = $paymentReport;
@@ -55,6 +57,7 @@ class ReportGenerationController extends Controller
         $this->topGuests = $topGuests;
         $this->guestFrequency = $guestFrequency;
         $this->guestDemographics = $guestDemographics;
+        $this->flightArrivals = $flightArrivals;
     }
 
     protected function revenueReport(GenerateRevenueReportRequest $request)
@@ -110,5 +113,10 @@ class ReportGenerationController extends Controller
     protected function guestDemographics(Request $request)
     {
         return $this->guestDemographics->execute($request);
+    }
+
+    protected function flightArrivals(Request $request)
+    {
+        return $this->flightArrivals->execute($request);
     }
 }
