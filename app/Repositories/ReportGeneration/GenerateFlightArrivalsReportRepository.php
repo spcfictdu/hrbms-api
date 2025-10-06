@@ -15,10 +15,14 @@ class GenerateFlightArrivalsReportRepository extends BaseRepository
             ->get()
             ->map(function ($flight) {
                 return [
+                    'transaction' => $flight->transaction->reference_number,
+                    'roomNumber' => $flight->transaction->room->room_number,
                     'guestName' => $flight->guest_name,
                     'arrivalDate' => $flight->arrival_date,
                     'arrivalTime' => $flight->arrival_time
                 ];
             });
+        
+        return $this->success('Today\'s flight arrivals: ', $expectedFlightArrivals);
     }
 }
