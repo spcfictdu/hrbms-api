@@ -149,7 +149,7 @@
             <p><strong>Room Name:</strong> {{ $transaction->room->roomType->name }}</p>
             <p><strong>Check-in Date and Time:</strong> {{ $transaction->check_in_date }}  /  {{ date('h:i A', strtotime($transaction->check_in_time)) }}</p>
             <p><strong>Check-out Date and Time:</strong> {{ $transaction->check_out_date }}  /  {{ date('h:i A', strtotime($transaction->check_out_time)) }}</p>
-            <p><strong>Room Total:</strong> ₱{{ $transaction->room_total }}</p>
+            <p><strong>Room Total:</strong> ₱{{ $totalRoomRate }}</p>
             <p><strong>Extra Person Charge:</strong> ₱{{ $extraGuestTotal }}</p>
             <p><strong>Addon Total:</strong> ₱{{ $addonsTotal }}</p>
             <p><strong>Grand Total:</strong> ₱{{ $grandTotal }}</p>
