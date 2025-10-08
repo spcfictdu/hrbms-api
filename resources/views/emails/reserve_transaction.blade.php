@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Reserve Transaction Confirmation</title>
+    <title>Reserve Transaction</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -95,18 +95,67 @@
             <p>Guest Contact Number: {{ $transaction->guest->phone_number }}</p>
         </div>
         <div class="details">
+            @php
+                use Carbon\Carbon;
+                use Illuminate\Support\Str;
+
+                $rate = $transaction->room->roomType->rates->firstWhere('type', 'REGULAR');
+
+                $today = now()->toDateString();
+                $specialRate = $transaction->room->roomType->rates->first(function ($rate) use ($today) {
+                    return $rate->type === 'SPECIAL'
+                        && (!$rate->start_date || $rate->start_date <= $today)
+                        && (!$rate->end_date || $rate->end_date >= $today);
+                });
+
+                if ($specialRate) {
+                    $rate = $specialRate;
+                }
+
+                $checkIn = \Carbon\Carbon::parse($transaction->check_in_date);
+                $checkOut = \Carbon\Carbon::parse($transaction->check_out_date);
+                $days = $checkIn->diffInDays($checkOut) ?: 1;
+
+                // Room rates per day
+                $totalRoomRate = 0;
+                for ($date = $checkIn->copy(); $date->lt($checkOut); $date->addDay()) {
+                    $day = strtolower($date->format('l'));
+                    $totalRoomRate += $rate->$day ?? 0;
+                }
+
+                // Extras
+                $roomCapacity = $transaction->room->roomType->capacity ?? 1;
+                $extraPersonCount = max(($transaction->number_of_guest ?? 1) - $roomCapacity, 0);
+
+                // Use current day's rate for extra person calculation
+                $dayOfWeek = strtolower(now()->format('l'));
+                $todayRate = $rate->$dayOfWeek ?? 0;
+
+                $extraPersonRate = ($todayRate / $roomCapacity) / 2;
+                $extraGuestTotal = $extraPersonCount * $extraPersonRate * $days;
+
+                // Add-ons
+                $addons = $transaction->bookingAddon ?? collect();
+                $addonsTotal = $addons->sum('total_price');
+
+                // Totals
+                $grandTotal = $totalRoomRate + $extraGuestTotal + $addonsTotal;
+                $paymentReceived = $transaction->payment->sum('amount_received');
+                $balance = max($grandTotal - $paymentReceived, 0);
+            @endphp
             <p><strong>Hotel Name:</strong> HRBMS</p>
             <p><strong>Room Number:</strong> {{ $transaction->room->room_number }}</p>
             <p><strong>Room Floor:</strong> {{ $transaction->room->room_floor }}</p>
             <p><strong>Room Name:</strong> {{ $transaction->room->roomType->name }}</p>
             <p><strong>Check-in Date and Time:</strong> {{ $transaction->check_in_date }}  /  {{ date('h:i A', strtotime($transaction->check_in_time)) }}</p>
             <p><strong>Check-out Date and Time:</strong> {{ $transaction->check_out_date }}  /  {{ date('h:i A', strtotime($transaction->check_out_time)) }}</p>
-        </div>
-        <div class="cta">
-            <a href="#" style="background-color: #ee4d2d;">Full Transaction Details</a>
+            <p><strong>Room Total:</strong> ₱{{ $transaction->room_total }}</p>
+            <p><strong>Extra Person Charge:</strong> ₱{{ $extraGuestTotal }}</p>
+            <p><strong>Addon Total:</strong> ₱{{ $addonsTotal }}</p>
+            <p><strong>Grand Total:</strong> ₱{{ $grandTotal }}</p>
         </div>
         <div class="footer">
-            <p>Thank you for booking with us!</p>
+            <p>Thank you for reserving with us!</p>
             <p>This email was sent automatically. Please do not reply.</p>
         </div>
     </div>
