@@ -29,27 +29,30 @@ class RoomAvailable implements ValidationRule
         $roomId = DB::table('rooms')->where('reference_number', $value)->value('id');
 
         // Check for any transactions that overlap with the given dates for this room
-        $overlap = DB::table('transactions')
+        $existingBookings = DB::table('transactions')
             ->where('room_id', $roomId)
-            // ->where('status', 'RESERVED')
             ->whereNull('deleted_at')
-            ->where(function ($query) {
-                $query->where(function ($q) {
-                    $q->whereDate('check_out_date', '>', $this->checkInDate)
-                        ->whereBetween('check_in_time', [$this->checkInTime, $this->checkOutTime])
-                        ->orWhereBetween('check_out_time', [$this->checkInTime, $this->checkOutTime]);
-                })
-                    ->orWhere(function ($q) {
-                        $q->whereDate('check_out_date', '>', $this->checkInDate)
-                            ->where('check_in_time', '<=', $this->checkInTime)
-                            ->where('check_out_time', '>=', $this->checkOutTime);
-                    });
-            })
-            ->exists();
+            ->whereDate('check_in_date', '<=', $this->checkInDate)
+            ->whereDate('check_out_date', '>=', $this->checkInDate)
+            ->get(['check_in_time', 'check_out_time']);
 
-        // return !$overlap; // If there's an overlap, the rule fails
-        if ($overlap) {
-            $fail("The room is not available for the given dates and times.");
+        // Check time overlap only if date overlaps
+        foreach ($existingBookings as $booking) {
+            $overlaps = (
+                ($this->checkInTime >= $booking->check_in_time && $this->checkInTime < $booking->check_out_time) ||
+                ($this->checkOutTime > $booking->check_in_time && $this->checkOutTime <= $booking->check_out_time) ||
+                ($this->checkInTime <= $booking->check_in_time && $this->checkOutTime >= $booking->check_out_time)
+            );
+
+            if ($overlaps) {
+                $fail("The room is not available for the given time slot on this date.");
+                return;
+            }
         }
+
+        // // return !$overlap; // If there's an overlap, the rule fails
+        // if ($overlap) {
+        //     $fail("The room is not available for the given dates and times.");
+        // }
     }
 }
