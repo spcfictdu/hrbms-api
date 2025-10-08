@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\DB;
 
 class RoomAvailable implements ValidationRule
 {
-    protected $checkInTime;
-    protected $checkOutTime;
+    protected $checkInTime, $checkOutTime, $checkInDate;
 
-    public function __construct($checkInTime, $checkOutTime)
+    public function __construct($checkInTime, $checkOutTime, $checkInDate)
     {
         $this->checkInTime = $checkInTime;
         $this->checkOutTime = $checkOutTime;
+        $this->checkInDate = $checkInDate;
     }
 
     /**
@@ -35,11 +35,13 @@ class RoomAvailable implements ValidationRule
             ->whereNull('deleted_at')
             ->where(function ($query) {
                 $query->where(function ($q) {
-                    $q->whereBetween('check_in_time', [$this->checkInTime, $this->checkOutTime])
+                    $q->whereDate('check_out_date', '>', $this->checkInDate)
+                        ->whereBetween('check_in_time', [$this->checkInTime, $this->checkOutTime])
                         ->orWhereBetween('check_out_time', [$this->checkInTime, $this->checkOutTime]);
                 })
                     ->orWhere(function ($q) {
-                        $q->where('check_in_time', '<=', $this->checkInTime)
+                        $q->whereDate('check_out_date', '>', $this->checkInDate)
+                            ->where('check_in_time', '<=', $this->checkInTime)
                             ->where('check_out_time', '>=', $this->checkOutTime);
                     });
             })
