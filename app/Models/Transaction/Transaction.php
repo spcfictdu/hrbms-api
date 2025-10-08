@@ -60,7 +60,7 @@ class Transaction extends Model
 
     public function payment()
     {
-        return $this->hasOne(Payment::class, 'transaction_id');
+        return $this->hasMany(Payment::class, 'transaction_id');
     }
 
     public function transactionHistory()

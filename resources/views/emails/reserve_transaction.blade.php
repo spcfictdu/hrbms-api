@@ -87,11 +87,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Reserve Confirmation</h1>
+            <h1>Reserve Transaction</h1>
         </div>
         <div class="welcome-message">
-            <p>Dear {{ $transaction->guest }},</p>
-            <p>We have received your reservation. Below are the details of your booking:</p>
+            <p>Dear {{ $transaction->guest->full_name }},</p>
+            <p>We have received your reservation. Below are the details of your reservation:</p>
             <p>Guest Contact Number: {{ $transaction->guest->phone_number }}</p>
         </div>
         <div class="details">

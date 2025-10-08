@@ -24,6 +24,8 @@ use App\Models\Guest\Guest;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReserveConfirmationMail;
 
 class UpdateTransactionRepository extends BaseRepository
 {
@@ -230,6 +232,15 @@ class UpdateTransactionRepository extends BaseRepository
                             "status" => "CONFIRMED",
                             "payment_id" => $payment->id
                         ]);
+
+                        $guest = $transaction->guest;
+
+                        Mail::to($guest->email)->send(new ReserveConfirmationMail($transaction));
+                        return $this->success("Reservation Confirmed Successfully.", Arr::collapse([
+                            $this->getCamelCase($guest->toArray()),
+                            $this->getCamelCase($transaction->toArray()),
+                            $this->getCamelCase($payment->toArray())
+                        ]));
                     }
 
                     $transaction->room->update([

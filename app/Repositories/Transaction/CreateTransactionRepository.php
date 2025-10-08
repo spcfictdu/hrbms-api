@@ -302,6 +302,10 @@ class CreateTransactionRepository extends BaseRepository
             if (app()->environment('production')) {
                 if ($guest) {
                     if ($payment) {
+                        $transaction->load('bookingAddon');
+                        $transaction->load('payment');
+                        $transaction->load('seniorPwdDiscount');
+                        $transaction->load('voucherDiscount');
                         Mail::to($guest->email)->send(new BookTransactionMail($transaction));
                         return $this->success("Book Transaction Created Successfully.", Arr::collapse([
                             $this->getCamelCase($guest->toArray()),
@@ -309,6 +313,10 @@ class CreateTransactionRepository extends BaseRepository
                             $this->getCamelCase($payment->toArray())
                         ]));
                     } else {
+                        $transaction->load('bookingAddon');
+                        $transaction->load('payment');
+                        $transaction->load('seniorPwdDiscount');
+                        $transaction->load('voucherDiscount');
                         Mail::to($guest->email)->send(new ReserveTransactionMail($transaction));
                         return $this->success("Reservation Transaction Created Successfully.", Arr::collapse([
                             $this->getCamelCase($guest->toArray()),

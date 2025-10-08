@@ -9,15 +9,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ReserveTransactionMail extends Mailable
+class ReserveConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $transaction;
+
     /**
      * Create a new message instance.
-     *
-     * @param $transaction
      */
     public function __construct($transaction)
     {
@@ -30,7 +29,7 @@ class ReserveTransactionMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reserve Transaction Mail',
+            subject: 'Reserve Confirmation Mail',
         );
     }
 
@@ -40,7 +39,7 @@ class ReserveTransactionMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.reserve_transaction',
+            view: 'emails.reserve_confirmation',
             with: ['transaction' => $this->transaction],
         );
     }
