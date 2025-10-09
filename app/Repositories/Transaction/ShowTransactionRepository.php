@@ -2,14 +2,14 @@
 
 namespace App\Repositories\Transaction;
 
-use App\Models\Amenity\BookingAddOn;
+use App\Models\Amenity\BookingAddon;
 use App\Models\Transaction\{
     Transaction,
     Payment,
 };
 use App\Models\Transaction\VoidRefund;
 use App\Models\Discount\Voucher;
-use App\Models\amenity\Addon;
+use App\Models\Amenity\Addon;
 use Carbon\Carbon;
 use Illuminate\Support\{Str, Arr};
 use App\Repositories\BaseRepository;
