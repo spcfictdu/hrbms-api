@@ -39,8 +39,6 @@ class GenerateGuestBillingReportRepository extends BaseRepository
 
             $grandTotal = ((float)$transaction->room_total - (float)$discountValue) + (float)$addonsTotal;
 
-            $totalBalance = $grandTotal;
-
             $transformedAddons = $fullAddons->map(function ($addon) {
                 return [
                     'item' => $addon->name,
@@ -66,6 +64,22 @@ class GenerateGuestBillingReportRepository extends BaseRepository
             });
 
             $mergedTransactions = $transformedAddons->merge($transformedPayments);
+
+            $mergedTransactions = $mergedTransactions->sortBy(function ($item) {
+                return $item['paymentId'] === null || $item['paymentId'] === 'UNPAID'
+                    ? PHP_INT_MAX
+                    : (int) $item['paymentId'];
+            })->values();
+
+            $totalBalance = $grandTotal;
+
+            $mergedTransactions = $mergedTransactions->map(function ($item) use (&$totalBalance) {
+                if ($item['item'] === 'PAYMENT') {
+                    $totalBalance -= (float) $item['payment'];
+                }
+                $item['balance'] = number_format((float) $totalBalance, 2, '.', '');
+                return $item;
+            });
 
             $groupedTransactions = $mergedTransactions->groupBy(function ($item) {
                 return $item['paymentId'] ?? 'UNPAID';
