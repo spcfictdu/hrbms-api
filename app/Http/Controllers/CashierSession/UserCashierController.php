@@ -104,20 +104,28 @@ class UserCashierController extends Controller
     public function showCashiers()
     {
         if (auth()->user()->hasRole('ADMIN')) {
-            $users = User::Role('FRONT DESK')->get();
+            $users = User::Role('FRONT DESK')
+                ->sortBy('id', 'asc')
+                ->get();
 
+            $cashierIds = [];
             $data = [];
+            $id = 1;
 
             foreach($users as $user) {
 
                 $userLatestCashierSession = $user->cashierSessions()->latest()->first();
+                $cashierIds[$user->id] = $id;
                 if (!$userLatestCashierSession) {
                     $data[] = [
                         'userId' => $user->id,
+                        'cashierId' => $cashierIds[$user->id],
                         'message' => 'User has no cashier sessions',
                     ];
+                    $id += 1;
                     continue;
                 }
+                $id += 1;
 
                 // data = { drawerCash: $$$, payments: [{name: gcash, amount: $$$}, {name: cash, amount: $$$}...]}
                 // $allPaymentTypes = DB::table('payment_methods')->pluck('name')->toArray();
@@ -151,6 +159,7 @@ class UserCashierController extends Controller
 
                 $data[] = [
                     'userId' => $user->id,
+                    'cashierId' => $cashierIds[$user->id],
                     'fullName' => $user->full_name,
                     'status' => $userLatestCashierSession->status,
                     'openingBalance' => $userLatestCashierSession->opening_balance,
@@ -158,7 +167,7 @@ class UserCashierController extends Controller
                     'beginningBalance' => $userLatestCashierSession->beginning_balance,
                     'closingAdjustment' => $userLatestCashierSession->closing_adjustment,
                     'closingBalance' => $userLatestCashierSession->closing_balance,
-                    'payments' => $payments,
+                    'payments' => $payments ?? null,
                     'refunded' => number_format((float) $totalRefund, 2, '.', ''),
                     'voided' => number_format((float) $totalVoid, 2, '.', ''),
                 ];
@@ -168,10 +177,26 @@ class UserCashierController extends Controller
 
             $data = [];
 
+            $cashiers = User::Role('FRONT DESK')
+                ->orderBy('id', 'asc')
+                ->get();
+            $cashierIds = [];
+            $id = 1;
+
+            foreach ($cashiers as $cashier) {
+                if ($cashier->username !== $user->username) {
+                    $id += 1;
+                    continue;
+                }
+                $cashierIds[$cashier->id] = $id;
+            }
+            $cashierId = $cashierIds[$user->id];
+
             $userLatestCashierSession = $user->cashierSessions()->latest()->first();
             if (!$userLatestCashierSession) {
                 $data[] = [
                     'userId' => $user->id,
+                    'cashierId' => $cashierId,
                     'message' => 'User has no cashier sessions',
                 ];
             }
@@ -203,6 +228,7 @@ class UserCashierController extends Controller
 
             $data[] = [
                 'userId' => $user->id,
+                'cashierId' => $cashierId,
                 'fullName' => $user->full_name,
                 'status' => $userLatestCashierSession->status,
                 'openingBalance' => $userLatestCashierSession->opening_balance,
@@ -210,7 +236,7 @@ class UserCashierController extends Controller
                 'beginningBalance' => $userLatestCashierSession->beginning_balance,
                 'closingAdjustment' => $userLatestCashierSession->closing_adjustment,
                 'closingBalance' => $userLatestCashierSession->closing_balance,
-                'payments' => $payments,
+                'payments' => $payments ?? null,
                 'refunded' => number_format((float) $totalRefund, 2, '.', ''),
                 'voided' => number_format((float) $totalVoid, 2, '.', ''),
             ];
