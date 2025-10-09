@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('flight_number');
             $table->string('guest_name');
             $table->foreignIdFor(Transaction::class)->constrained()->cascadeOnDelete();
-            $table->date('departure_date');
-            $table->time('departure_time');
-            $table->date('arrival_date');
-            $table->time('arrival_time');
+            $table->date('departure_date')->nullable();
+            $table->time('departure_time')->nullable();
+            $table->date('arrival_date')->nullable();
+            $table->time('arrival_time')->nullable();
             $table->timestamps();
         });
     }

@@ -26,10 +26,10 @@ class CreateFlightRequest extends ResponseRequest
         return [
             'guestName' => 'required|string',
             'flightNumber' => 'required|string',
-            'departureDate' => 'required|date',
-            'departureTime' => ['required', 'date_format:H:i'],
-            'arrivalDate' => 'required|date',
-            'arrivalTime' => ['required', 'date_format:H:i'],
+            'departureDate' => 'sometimes|date',
+            'departureTime' => ['required_if:departureDate', 'date_format:H:i'],
+            'arrivalDate' => 'sometimes|date',
+            'arrivalTime' => ['required_if:arrivalDate', 'date_format:H:i'],
         ];
     }
 }
