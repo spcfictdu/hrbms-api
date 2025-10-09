@@ -239,7 +239,7 @@ Route::group([
     // $route->get('/top-guests',   [ReportGenerationController::class, 'topGuests']);
     // $route->get('/guest-frequency',   [ReportGenerationController::class, 'guestFrequency']);
     // $route->get('/guest-demographics',   [ReportGenerationController::class, 'guestDemographics']);
-    $route->get('/flight-arrivals', [ReportGenerationController::class, 'flightArrivals']);
+    $route->get('/flights-report', [ReportGenerationController::class, 'flightsReport']);
     $route->get('/daily-reservations',   [ReportGenerationController::class, 'dailyReservations']);
     $route->get('/room-occupancy',   [ReportGenerationController::class, 'roomOccupancy']);
     $route->get('/daily-cashier',   [ReportGenerationController::class, 'dailyCashier']);

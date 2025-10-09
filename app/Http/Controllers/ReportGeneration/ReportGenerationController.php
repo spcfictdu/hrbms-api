@@ -25,13 +25,13 @@ use App\Repositories\ReportGeneration\{
     GenerateTopGuestsReportRepository,
     GenerateGuestBookingFrequencyReportRepository,
     GenerateGuestDemographicsReportRepository,
-    GenerateFlightArrivalsReportRepository,
+    GenerateFlightsReportRepository,
     GenerateGuestBillingReportRepository
 };
 
 class ReportGenerationController extends Controller
 {
-    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests, $guestFrequency, $guestDemographics, $flightArrivals, $guestBilling;
+    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests, $guestFrequency, $guestDemographics, $flightsReport, $guestBilling;
 
     public function __construct(
         GenerateRevenueReportRepository $revenueReport,
@@ -45,7 +45,7 @@ class ReportGenerationController extends Controller
         GenerateTopGuestsReportRepository $topGuests,
         GenerateGuestBookingFrequencyReportRepository $guestFrequency,
         GenerateGuestDemographicsReportRepository $guestDemographics,
-        GenerateFlightArrivalsReportRepository $flightArrivals,
+        GenerateFlightsReportRepository $flightsReport,
         GenerateGuestBillingReportRepository $guestBilling,
     ) {
         $this->revenueReport = $revenueReport;
@@ -59,7 +59,7 @@ class ReportGenerationController extends Controller
         $this->topGuests = $topGuests;
         $this->guestFrequency = $guestFrequency;
         $this->guestDemographics = $guestDemographics;
-        $this->flightArrivals = $flightArrivals;
+        $this->flightsReport = $flightsReport;
         $this->guestBilling = $guestBilling;
     }
 
@@ -118,9 +118,9 @@ class ReportGenerationController extends Controller
         return $this->guestDemographics->execute($request);
     }
 
-    protected function flightArrivals(Request $request)
+    protected function flightsReport(Request $request)
     {
-        return $this->flightArrivals->execute($request);
+        return $this->flightsReport->execute($request);
     }
 
     protected function guestBilling(Request $request, $referenceNumber)
