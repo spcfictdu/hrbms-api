@@ -105,7 +105,7 @@ class UserCashierController extends Controller
     {
         if (auth()->user()->hasRole('ADMIN')) {
             $users = User::Role('FRONT DESK')
-                ->sortBy('id', 'asc')
+                ->orderBy('id', 'asc')
                 ->get();
 
             $cashierIds = [];
