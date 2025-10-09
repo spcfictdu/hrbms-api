@@ -231,18 +231,19 @@ Route::group([
     'middleware' => 'auth:sanctum',
     'prefix' => 'report'
 ], function ($route) {
-    $route->post('/revenue', [ReportGenerationController::class, 'revenueReport']);
-    $route->post('/payment', [ReportGenerationController::class, 'paymentReport']);
-    $route->post('/check',   [ReportGenerationController::class, 'checkInOutReport']);
+    // $route->post('/revenue', [ReportGenerationController::class, 'revenueReport']);
+    // $route->post('/payment', [ReportGenerationController::class, 'paymentReport']);
+    // $route->post('/check',   [ReportGenerationController::class, 'checkInOutReport']);
+    // $route->get('/payment-summary',   [ReportGenerationController::class, 'paymentSummary']);
+    // $route->get('/guest-history/{guest_id}',   [ReportGenerationController::class, 'guestHistory']);
+    // $route->get('/top-guests',   [ReportGenerationController::class, 'topGuests']);
+    // $route->get('/guest-frequency',   [ReportGenerationController::class, 'guestFrequency']);
+    // $route->get('/guest-demographics',   [ReportGenerationController::class, 'guestDemographics']);
+    $route->get('/flight-arrivals', [ReportGenerationController::class, 'flightArrivals']);
     $route->get('/daily-reservations',   [ReportGenerationController::class, 'dailyReservations']);
     $route->get('/room-occupancy',   [ReportGenerationController::class, 'roomOccupancy']);
     $route->get('/daily-cashier',   [ReportGenerationController::class, 'dailyCashier']);
-    $route->get('/payment-summary',   [ReportGenerationController::class, 'paymentSummary']);
-    $route->get('/guest-history/{guest_id}',   [ReportGenerationController::class, 'guestHistory']);
-    $route->get('/top-guests',   [ReportGenerationController::class, 'topGuests']);
-    $route->get('/guest-frequency',   [ReportGenerationController::class, 'guestFrequency']);
-    $route->get('/guest-demographics',   [ReportGenerationController::class, 'guestDemographics']);
-    $route->get('/flight-arrivals', [ReportGenerationController::class, 'flightArrivals']);
+    $route->get('/guest-billing/{referenceNumber}', [ReportGenerationController::class, 'guestBilling']);
 });
 
 Route::group([

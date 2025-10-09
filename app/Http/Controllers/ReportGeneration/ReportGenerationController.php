@@ -25,12 +25,13 @@ use App\Repositories\ReportGeneration\{
     GenerateTopGuestsReportRepository,
     GenerateGuestBookingFrequencyReportRepository,
     GenerateGuestDemographicsReportRepository,
-    GenerateFlightArrivalsReportRepository
+    GenerateFlightArrivalsReportRepository,
+    GenerateGuestBillingReportRepository
 };
 
 class ReportGenerationController extends Controller
 {
-    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests, $guestFrequency, $guestDemographics, $flightArrivals;
+    protected $revenueReport, $paymentReport, $checkInOutReport, $dailyReservations, $roomOccupancy, $dailyCashier, $paymentSummary, $guestHistory, $topGuests, $guestFrequency, $guestDemographics, $flightArrivals, $guestBilling;
 
     public function __construct(
         GenerateRevenueReportRepository $revenueReport,
@@ -45,6 +46,7 @@ class ReportGenerationController extends Controller
         GenerateGuestBookingFrequencyReportRepository $guestFrequency,
         GenerateGuestDemographicsReportRepository $guestDemographics,
         GenerateFlightArrivalsReportRepository $flightArrivals,
+        GenerateGuestBillingReportRepository $guestBilling,
     ) {
         $this->revenueReport = $revenueReport;
         $this->paymentReport = $paymentReport;
@@ -58,6 +60,7 @@ class ReportGenerationController extends Controller
         $this->guestFrequency = $guestFrequency;
         $this->guestDemographics = $guestDemographics;
         $this->flightArrivals = $flightArrivals;
+        $this->guestBilling = $guestBilling;
     }
 
     protected function revenueReport(GenerateRevenueReportRequest $request)
@@ -118,5 +121,10 @@ class ReportGenerationController extends Controller
     protected function flightArrivals(Request $request)
     {
         return $this->flightArrivals->execute($request);
+    }
+
+    protected function guestBilling(Request $request, $referenceNumber)
+    {
+        return $this->guestBilling->execute($request, $referenceNumber);
     }
 }

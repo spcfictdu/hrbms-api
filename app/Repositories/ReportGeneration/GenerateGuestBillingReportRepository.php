@@ -1,0 +1,104 @@
+<?php
+
+namespace App\Repositories\ReportGeneration;
+
+use App\Repositories\BaseRepository;
+use App\Models\Transaction\Transaction;
+use App\Models\Amenity\BookingAddon;
+use App\Models\Transaction\Payment;
+
+class GenerateGuestBillingReportRepository extends BaseRepository
+{
+    public function execute($request, $referenceNumber){
+        $transaction = Transaction::where('reference_number', $referenceNumber)->first();
+
+        if (!$transaction) {
+            return $this->error('Transaction not found');
+        }
+
+        $guest = $transaction->guest;
+
+        if ($guest) {
+            $discount = $transaction->voucherDiscount ?? $transaction->seniorPwdDiscount ?? null;
+            if ($discount) {
+                $discountValue = (float)$transaction->room_total * (float)$discount->value;
+            }
+
+            $payments = Payment::where('transaction_id', $transaction->id)
+                ->get();
+
+            $fullAddons = BookingAddon::with('payment')
+                ->where('transaction_id', $transaction->id)
+                ->get();
+
+            $addonsTotal = $fullAddons->whereNotIn('payment_status', ['VOIDED', 'REFUNDED'])
+                ->sum('total_price') ?? 0;
+
+            $grossTotal = $transaction->room_total + $addonsTotal;
+
+            $grandTotal = ((float)$transaction->room_total - (float)$discountValue) + (float)$addonsTotal;
+
+            $totalBalance = $grandTotal;
+
+            $transformedAddons = $fullAddons->map(function ($addon) {
+                return [
+                    'item' => $addon->name,
+                    'quantity' => $addon->quantity,
+                    'price' => number_format((float) $addon->total_price, 2, '.', ''),
+                    'paymentId' => $addon->payment_id ?? $addon->payment?->id,
+                    'paymentAmount' => number_format((float) ($addon->payment->amount_received ?? 0), 2, '.', ''),
+                    'user' => $addon->payment->user->username,
+                ];
+            });
+
+            $transformedPayments = $payments->map(function ($payment) {
+                return [
+                    'item' => 'PAYMENT',
+                    'quantity' => 1,
+                    'price' => 0,
+                    'paymentId' => $payment->id,
+                    'payment' => number_format((float) ($payment->amount_received ?? 0), 2, '.', ''),
+                    'user' => $payment->user->username,
+                ];
+            });
+
+            $mergedTransactions = $transformedAddons->merge($transformedPayments);
+
+            $groupedTransactions = $mergedTransactions->groupBy(function ($item) {
+                return $item['paymentId'] ?? 'UNPAID';
+            })->map(function ($group) {
+                return $group->values();
+            });
+
+            if ($transaction->transactionHistory) {
+                $checkIn = $transaction->transactionHistory->check_in_date && $transaction->transactionHistory->check_in_time
+                    ? $transaction->transactionHistory->check_in_date . ' ' . $transaction->transactionHistory->check_in_time
+                    : null;
+
+                $checkOut = $transaction->transactionHistory->check_out_date && $transaction->transactionHistory->check_out_time
+                    ? $transaction->transactionHistory->check_out_date . ' ' . $transaction->transactionHistory->check_out_time
+                    : null;
+            } else {
+                $checkIn = null;
+                $checkOut = null;
+            }
+
+            return [
+                'guestName' => $guest->full_name,
+                'referenceNumber' => $referenceNumber,
+                'roomNumber' => $transaction->room->room_number,
+                'roomType' => $transaction->room->roomType->name,
+                'totalGuests' => $transaction->number_of_guest + 1,
+                'checkIn' => $checkIn,
+                'checkOut' => $checkOut,
+                'roomTotal' => number_format((float) $transaction->room_total, 2, '.', ''),
+                'addonsTotal' => number_format((float) $addonsTotal, 2, '.', ''),
+                'grossTotal' => number_format((float) $grossTotal, 2, '.', ''),
+                'discount' => $discount->discount ?? null,
+                'discountedAmount' => number_format((float) $discountValue, 2, '.', ''),
+                'grandTotal' => number_format((float) $grandTotal, 2, '.', ''),
+                'transactions' => $groupedTransactions
+            ];
+        }
+    }
+}
