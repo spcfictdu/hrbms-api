@@ -17,20 +17,55 @@ class CreateFlightRepository extends BaseRepository
             return $this->error('Transaction not found');
         }
 
-        $newFlight = Flight::create([
-            'transaction_id' => $transaction->id,
-            'guest_name' => $request->guestName,
-            'flight_number' => $request->flightNumber,
-            'departure_date' => $request->departureDate,
-            'departure_time' => $request->departureTime,
-            'arrival_date' => $request->arrivalDate,
-            'arrival_time' => $request->arrivalTime,
-        ]);
+        $lastFlightGroup = Flight::latest()->first();
+        $flightGroup = ((int)$lastFlightGroup->flight_group ?? 0) + 1;
 
-        if ($newFlight) {
-            return $this->success('Flight detail created successfully', $newFlight);
-        } else {
-            return $this->error('Flight detail creation failed');
+        if (isset($request->arrivalFlightNumber) && isset($request->departureFlightNumber)) {
+            $arrivalFlight = Flight::create([
+                'flight_group' => $flightGroup,
+                'transaction_id' => $transaction->id,
+                'guest_name' => $request->guestName,
+                'flight_number' => $request->arrivalFlightNumber,
+                'arrival_date' => $request->arrivalDate,
+                'arrival_time' => $request->arrivalTime,
+            ]);
+
+            $departureFlight = Flight::create([
+                'flight_group' => $flightGroup,
+                'transaction_id' => $transaction->id,
+                'guest_name' => $request->guestName,
+                'flight_number' => $request->departureFlightNumber,
+                'departure_date' => $request->departureDate,
+                'departure_time' => $request->departureTime,
+            ]);
+
+            return $this->success('Flight detail created successfully', [$arrivalFlight, $departureFlight]);
+
+        } elseif (!isset($request->arrivalFlightNumber)) {
+
+            $departureFlight = Flight::create([
+                'flight_group' => $flightGroup,
+                'transaction_id' => $transaction->id,
+                'guest_name' => $request->guestName,
+                'flight_number' => $request->departureFlightNumber,
+                'departure_date' => $request->departureDate,
+                'departure_time' => $request->departureTime,
+            ]);
+
+            return $this->success('Flight detail created successfully', $departureFlight);
+
+        } elseif (!isset($request->departureFlightNumber)) {
+            $arrivalFlight = Flight::create([
+                'flight_group' => $flightGroup,
+                'transaction_id' => $transaction->id,
+                'guest_name' => $request->guestName,
+                'flight_number' => $request->arrivalFlightNumber,
+                'arrival_date' => $request->arrivalDate,
+                'arrival_time' => $request->arrivalTime,
+            ]);
+
+            return $this->success('Flight detail created successfully', $arrivalFlight);
+
         }
     }
 }

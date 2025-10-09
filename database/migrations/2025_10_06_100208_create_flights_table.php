@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('flights', function (Blueprint $table) {
             $table->id();
+            $table->integer('flight_group');
             $table->string('flight_number');
             $table->string('guest_name');
             $table->foreignIdFor(Transaction::class)->constrained()->cascadeOnDelete();
