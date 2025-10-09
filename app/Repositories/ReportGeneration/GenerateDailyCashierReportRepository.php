@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Transaction\Payment;
 use App\Models\CashierSession\CashierSession;
 use App\Models\User;
+use App\Models\Transaction\VoidRefund;
 use Carbon\Carbon;
 
 class GenerateDailyCashierReportRepository
@@ -50,10 +51,20 @@ class GenerateDailyCashierReportRepository
                 ];                
             }
 
+            $totalRefunded = VoidRefund::where('cashier_session_id', $session->id)
+                ->where('type', 'REFUND')
+                ->sum('amount');
+
+            $totalVoided = VoidRefund::where('cashier_session_id', $session->id)
+                ->where('type', 'VOID')
+                ->sum('amount');
+
             $userReports[] = [
                 'user' => $user->username,
                 'openingBalance' => $session->opening_balance,
                 'closingBalance' => $session->closing_balance,
+                'totalRefunded' => $totalRefunded,
+                'totalVoided' => $totalVoided,
                 'openedAt' => $session->opened_at,
                 'closedAt' => $session->closed_at,
                 'transactions' => $transactions,

@@ -45,7 +45,9 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                     'quantity' => $addon->quantity,
                     'price' => number_format((float) $addon->total_price, 2, '.', ''),
                     'paymentId' => $addon->payment_id ?? $addon->payment?->id,
+                    'paymentType' => $addon->payment->payment_type,
                     'paymentAmount' => number_format((float) ($addon->payment->amount_received ?? 0), 2, '.', ''),
+                    'paymentStatus' => $addon->payment_status,
                     'user' => $addon->payment->user->username,
                     'datetime' => Carbon::parse($addon->created_at)->format('Y-m-d H:i:s'),
                 ];
@@ -57,7 +59,9 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                     'quantity' => 1,
                     'price' => 0,
                     'paymentId' => $payment->id,
-                    'payment' => number_format((float) ($payment->amount_received ?? 0), 2, '.', ''),
+                    'paymentType' => $payment->payment_type,
+                    'paymentAmount' => number_format((float) ($payment->amount_received ?? 0), 2, '.', ''),
+                    'paymentStatus' => null,
                     'user' => $payment->user->username,
                     'datetime' => Carbon::parse($payment->created_at)->format('Y-m-d H:i:s'),
                 ];
@@ -66,26 +70,25 @@ class GenerateGuestBillingReportRepository extends BaseRepository
             $mergedTransactions = $transformedAddons->merge($transformedPayments);
 
             $mergedTransactions = $mergedTransactions->sortBy(function ($item) {
-                return $item['paymentId'] === null || $item['paymentId'] === 'UNPAID'
-                    ? PHP_INT_MAX
-                    : (int) $item['paymentId'];
+                return Carbon::parse($item['datetime'])->timestamp;
             })->values();
 
-            $totalBalance = $grandTotal;
+            $totalBalance = $transaction->room_total - $discountValue;
 
             $mergedTransactions = $mergedTransactions->map(function ($item) use (&$totalBalance) {
                 if ($item['item'] === 'PAYMENT') {
-                    $totalBalance -= (float) $item['payment'];
+                    $totalBalance -= (float) $item['paymentAmount'];
+                } else {
+                    if (!in_array($item['paymentStatus'], ['VOIDED', 'REFUNDED'])) {
+                        $totalBalance += (float) $item['price'];
+                    }
                 }
+
                 $item['balance'] = number_format((float) $totalBalance, 2, '.', '');
                 return $item;
             });
 
-            $groupedTransactions = $mergedTransactions->groupBy(function ($item) {
-                return $item['paymentId'] ?? 'UNPAID';
-            })->map(function ($group) {
-                return $group->values();
-            });
+            $orderedTransactions = $mergedTransactions->values();
 
             if ($transaction->transactionHistory) {
                 $checkIn = $transaction->transactionHistory->check_in_date && $transaction->transactionHistory->check_in_time
@@ -114,7 +117,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 'discount' => $discount->discount ?? null,
                 'discountedAmount' => number_format((float) $discountValue, 2, '.', ''),
                 'grandTotal' => number_format((float) $grandTotal, 2, '.', ''),
-                'transactions' => $groupedTransactions
+                'transactions' => $orderedTransactions
             ];
         }
     }
