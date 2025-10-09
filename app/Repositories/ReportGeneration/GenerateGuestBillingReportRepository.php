@@ -6,6 +6,7 @@ use App\Repositories\BaseRepository;
 use App\Models\Transaction\Transaction;
 use App\Models\Amenity\BookingAddon;
 use App\Models\Transaction\Payment;
+use Carbon\Carbon;
 
 class GenerateGuestBillingReportRepository extends BaseRepository
 {
@@ -48,6 +49,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                     'paymentId' => $addon->payment_id ?? $addon->payment?->id,
                     'paymentAmount' => number_format((float) ($addon->payment->amount_received ?? 0), 2, '.', ''),
                     'user' => $addon->payment->user->username,
+                    'datetime' => Carbon::parse($addon->created_at)->format('Y-m-d H:i:s'),
                 ];
             });
 
@@ -59,6 +61,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                     'paymentId' => $payment->id,
                     'payment' => number_format((float) ($payment->amount_received ?? 0), 2, '.', ''),
                     'user' => $payment->user->username,
+                    'datetime' => Carbon::parse($payment->created_at)->format('Y-m-d H:i:s'),
                 ];
             });
 
