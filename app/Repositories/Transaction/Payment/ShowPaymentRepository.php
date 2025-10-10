@@ -46,7 +46,7 @@ class ShowPaymentRepository extends BaseRepository
             ->orderBy('id', 'asc')
             ->get();
         
-        $fullAddons->map(function ($addon) {
+        $transformedAddons = $fullAddons->map(function ($addon) {
             $addonModel = Addon::where('name', $addon->name)->first();
             return [
                 'paymentStatus' => $addon->payment_status,
@@ -55,7 +55,7 @@ class ShowPaymentRepository extends BaseRepository
                 'unitPrice' => $addonModel->price,
                 'totalPrice' => $addon->total_price,
                 'discount' => 0,
-                'timestamp' => $addon->created_at,
+                'timestamp' => Carbon::parse($addon->created_at)->format('Y-m-d H:i:s'),
             ];
         });
 
@@ -83,7 +83,7 @@ class ShowPaymentRepository extends BaseRepository
                 'unitPrice' => $baseRates[$dayOfWeek],
                 'totalPrice' => $transaction->room_total,
                 'discount' => $discountValue,
-                'timestamp' => $payment->created_at,
+                'timestamp' => Carbon::parse($payment->created_at)->format('Y-m-d H:i:s'),
             ];
         }
         
@@ -93,10 +93,10 @@ class ShowPaymentRepository extends BaseRepository
             'checkIn' => $transaction->check_in_date . ' ' . $transaction->check_in_time,
             'checkOut' => $transaction->check_out_date . ' ' . $transaction->check_out_time,
             'room' => $room,
-            'addons' => $fullAddons ?? null,
+            'addons' => $transformedAddons ?? null,
             'payment' => $payment->amount_received,
             'paymentType' => $payment->payment_type,
-            'totalPurchase' => ((($room['totalPrice'] ?? 0) - ($room['discount'] ?? 0)) + ($fullAddons->sum('total_price') ?? 0))
+            'totalPurchase' => number_format((float)(((($room['totalPrice'] ?? 0) - ($room['discount'] ?? 0)) + ($fullAddons->sum('total_price') ?? 0))), 2, '.', '')
         ];
     }
 }
