@@ -273,6 +273,8 @@ Route::group([
     $route->delete('/flight/delete', [TransactionController::class, 'deleteFlight']);
 });
 
+Route::get('/transaction/payment/show', [TransactionController::class, 'showPayment'])->middleware('auth:sanctum');
+
 
 // This route has authentication check inside the controller
 // When I put the middleware (auth:sanctum), the roles.guard_name would be sanctum when I migrate:fresh and seed
