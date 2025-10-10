@@ -41,12 +41,13 @@ use App\Repositories\Transaction\{
     Flight\UpdateFlightRepository,
     Flight\DeleteFlightRepository,
     Payment\ShowPaymentRepository,
+    Folio\UpdateFolioRepository
 };
 
 class TransactionController extends Controller
 {
     // $bookEdit, $bookIndex, $bookShow, $bookUpdate
-    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction, $guestIndex, $guestTransactionShow, $guestTransactionCreate, $indexFlight, $createFlight, $showFlight, $updateFlight, $deleteFlight, $showPayment;
+    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction, $guestIndex, $guestTransactionShow, $guestTransactionCreate, $indexFlight, $createFlight, $showFlight, $updateFlight, $deleteFlight, $showPayment, $updateFolio;
 
     public function __construct(
         // IndexBookingRepository $bookIndex,
@@ -68,6 +69,7 @@ class TransactionController extends Controller
         UpdateFlightRepository $updateFlight,
         DeleteFlightRepository $deleteFlight,
         ShowPaymentRepository $showPayment,
+        UpdateFolioRepository $updateFolio,
     ) {
         // $this->bookIndex = $bookIndex;
         // $this->bookShow = $bookShow;
@@ -88,6 +90,7 @@ class TransactionController extends Controller
         $this->updateFlight = $updateFlight;
         $this->deleteFlight = $deleteFlight;
         $this->showPayment = $showPayment;
+        $this->updateFolio = $updateFolio;
     }
 
     // protected function bookIndex(IndexBookingRequest $request)
@@ -183,5 +186,10 @@ class TransactionController extends Controller
     protected function showPayment(Request $request)
     {
         return $this->showPayment->execute($request);
+    }
+
+    protected function updateFolio(Request $request)
+    {
+        return $this->updateFolio->execute($request);
     }
 }

@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Repositories\Transaction\Folio;
+
+use App\Repositories\BaseRepository;
+use App\Models\Transaction\{
+    Transaction,
+    Folio
+};
+
+class UpdateFolioRepository extends BaseRepository
+{
+    public function execute($request){
+        if (isset($request->transactionId)) {
+            $folio = Folio::where('transaction_id', $request->transactionId)
+                ->where('item', 'ROOM')
+                ->first();
+        } elseif (isset($request->bookingAddonId)) {
+            $folio = Folio::where('booking_addon_id', $request->bookingAddonId)
+                ->first();
+        }
+
+        if (!$folio) {
+            return $this->error('Folio record not found');
+        }
+
+        try {
+            if ($request->folioType === 'INDIVIDUAL') {
+                $folio->update([
+                    'type' => 'INDIVIDUAL',
+                    'folio_a_charge' => 1.00,
+                    'folio_b_name' => null,
+                    'folio_b_charge' => 0,
+                    'folio_c_name' => null,
+                    'folio_c_charge' => 0,
+                    'folio_d_name' => null,
+                    'folio_d_charge' => 0,
+                ]);
+            } elseif ($request->folioType === 'SPONSORED') {
+                $folio->update([
+                    'type' => $request->folioType ?? $folio->type,
+                    'folio_a_charge' => 1 - ($request->folioB['charge'] ?? 0) - ($request->folioC['charge'] ?? 0) - ($request->folioD['charge'] ?? 0),
+                    'folio_b_name' => $request->folioB['name'] ?? $folio->folio_b_name,
+                    'folio_b_charge' => $request->folioB['charge'] ?? $folio->folio_b_charge,
+                    'folio_c_name' => $request->folioC['name'] ?? $folio->folio_c_name,
+                    'folio_c_charge' => $request->folioC['charge'] ?? $folio->folio_c_charge,
+                    'folio_d_name' => $request->folioD['name'] ?? $folio->folio_d_name,
+                    'folio_d_charge' => $request->folioD['charge'] ?? $folio->folio_d_charge,
+                ]);
+            }
+            
+            return $this->success('Folio record updated successfully', $folio);
+        } catch (\Exception) {
+            return $this->error('Folio update failed');
+        }
+    }
+}

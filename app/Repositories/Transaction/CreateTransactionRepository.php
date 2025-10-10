@@ -12,6 +12,7 @@ use App\Models\Discount\Discount;
 use App\Models\CashierSession\CashierSession;
 use Illuminate\Support\Facades\DB;
 use App\Models\Transaction\Payment;
+use App\Models\Transaction\Folio;
 use App\Mail\ReserveTransactionMail;
 use App\Models\Amenity\BookingAddon;
 use App\Repositories\BaseRepository;
@@ -130,21 +131,90 @@ class CreateTransactionRepository extends BaseRepository
                 "guest_id" => $guest->id,
             ]);
 
-            if (isset($request->addons) && isset($transaction->id)) {
-                $sample = array_map(function ($addon) use ($request, $transaction) {
-                    $checkPrice = Addon::where('name', $addon['name'])->first();
-                    if ($checkPrice->price) {
-                        $totalPrice = $checkPrice->price * $addon['quantity'];
+            $roomCharge = Folio::create([
+                'item' => 'ROOM',
+                'type' => $request->room['folio']['type'] ?? 'INDIVIDUAL',
+                'transaction_id' => $transaction->id,
+                'folio_a_name' => $transaction->guest->full_name,
+                'folio_a_charge' => 1 - ($request->room['folio']['folioB']['charge'] ?? 0) - ($request->room['folio']['folioC']['charge'] ?? 0) - ($request->room['folio']['folioD']['charge'] ?? 0),
+                'folio_b_name' => $request->room['folio']['folioB']['name'] ?? null,
+                'folio_b_charge' => $request->room['folio']['folioB']['charge'] ?? 0,
+                'folio_c_name' => $request->room['folio']['folioC']['name'] ?? null,
+                'folio_c_charge' => $request->room['folio']['folioC']['charge'] ?? 0,
+                'folio_d_name' => $request->room['folio']['folioD']['name'] ?? null,
+                'folio_d_charge' => $request->room['folio']['folioD']['charge'] ?? 0
+            ]);
 
-                        $addons = BookingAddon::create([
-                            "transaction_id" => $transaction->id,
-                            "name" => $addon['name'],
-                            "quantity" => $addon['quantity'],
-                            "total_price" => $totalPrice
-                        ]);
+            // if (isset($request->addons) && isset($transaction->id)) {
+            //     $sample = array_map(function ($addon) use ($request, $transaction) {
+            //         $checkPrice = Addon::where('name', $addon['name'])->first();
+            //         if ($checkPrice->price) {
+            //             $totalPrice = $checkPrice->price * $addon['quantity'];
+
+            //             $addons = BookingAddon::create([
+            //                 "transaction_id" => $transaction->id,
+            //                 "name" => $addon['name'],
+            //                 "quantity" => $addon['quantity'],
+            //                 "total_price" => $totalPrice
+            //             ]);
+            //         }
+
+            //         $folio = $addon['folio'] ?? [];
+            //         Folio::create([
+            //             'item' => 'ADDON',
+            //             'type' => $request->folioType ?? 'INDIVIDUAL',
+            //             'transaction_id' => $transaction->id,
+            //             'booking_addon_id' => $addons->id,
+            //             'folio_a_name' => $transaction->guest->full_name,
+            //             'folio_a_charge' => 1 - ($folio['folioB']['charge'] ?? 0) - ($folio['folioC']['charge'] ?? 0) - ($folio['folioD']['charge'] ?? 0),
+            //             'folio_b_name' => $folio['folioB']['name'] ?? null,
+            //             'folio_b_charge' => $folio['folioB']['charge'] ?? 0,
+            //             'folio_c_name' => $folio['folioC']['name'] ?? null,
+            //             'folio_c_charge' => $folio['folioC']['charge'] ?? 0,
+            //             'folio_d_name' => $folio['folioD']['name'] ?? null,
+            //             'folio_d_charge' => $folio['folioD']['charge'] ?? 0
+            //         ]);
+            //         return $addon;
+            //     }, $request->addons);
+            // }
+
+            $createdAddons = collect();
+            if (isset($request->addons) && is_array($request->addons) && $transaction->id) {
+                foreach ($request->addons as $addonData) {
+                    $addonModel = Addon::where('name', $addonData['name'])->first();
+                    if (!$addonModel) {
+                        continue;
                     }
-                    return $addon;
-                }, $request->addons);
+
+                    $quantity = (int) ($addonData['quantity'] ?? 1);
+                    $totalPrice = round($addonModel->price * $quantity, 2);
+
+                    $bookingAddon = BookingAddon::create([
+                        "transaction_id" => $transaction->id,
+                        "name" => $addonData['name'],
+                        "quantity" => $quantity,
+                        "total_price" => $totalPrice
+                    ]);
+
+                    $folio = $addonData['folio'] ?? [];
+
+                    Folio::create([
+                        'item' => 'ADDON',
+                        'type' => $folio['type'] ?? 'INDIVIDUAL',
+                        'transaction_id' => $transaction->id,
+                        'booking_addon_id' => $bookingAddon->id,
+                        'folio_a_name' => $transaction->guest?->full_name ?? null,
+                        'folio_a_charge' => 1 - ($folio['folioB']['charge'] ?? 0) - ($folio['folioC']['charge'] ?? 0) - ($folio['folioD']['charge'] ?? 0),
+                        'folio_b_name' => $folio['folioB']['name'] ?? null,
+                        'folio_b_charge' => $folio['folioB']['charge'] ?? 0,
+                        'folio_c_name' => $folio['folioC']['name'] ?? null,
+                        'folio_c_charge' => $folio['folioC']['charge'] ?? 0,
+                        'folio_d_name' => $folio['folioD']['name'] ?? null,
+                        'folio_d_charge' => $folio['folioD']['charge'] ?? 0
+                    ]);
+
+                    $createdAddons->push($bookingAddon);
+                }
             }
 
             $payment = null;

@@ -6,6 +6,7 @@ use App\Repositories\BaseRepository;
 use App\Models\Transaction\Transaction;
 use App\Models\Amenity\BookingAddon;
 use App\Models\Transaction\Payment;
+use App\Models\Transaction\Folio;
 use Carbon\Carbon;
 
 class GenerateGuestBillingReportRepository extends BaseRepository
@@ -21,8 +22,10 @@ class GenerateGuestBillingReportRepository extends BaseRepository
 
         if ($guest) {
             $discount = $transaction->voucherDiscount ?? $transaction->seniorPwdDiscount ?? null;
-            if ($discount) {
-                $discountValue = (float)$transaction->room_total * (float)$discount->value;
+            if ($discount !== null) {
+                $discountValue = (float)$transaction->room_total * ((float)$discount->value);
+            } else {
+                $discountValue = 0;
             }
 
             $payments = Payment::where('transaction_id', $transaction->id)
@@ -31,6 +34,14 @@ class GenerateGuestBillingReportRepository extends BaseRepository
             $fullAddons = BookingAddon::with('payment')
                 ->where('transaction_id', $transaction->id)
                 ->get();
+
+            // $addonsCharges = $chargeDistribution->where('item', 'ADDON')
+            //     ->get();
+            // $transformedAddonsCharges = $addonsCharges->map(function ($charge) {
+            //     return [
+                    
+            //     ];
+            // });
 
             $addonsTotal = $fullAddons->whereNotIn('payment_status', ['VOIDED', 'REFUNDED'])
                 ->sum('total_price') ?? 0;
@@ -48,6 +59,25 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                     'paymentType' => $addon->payment->payment_type,
                     'paymentAmount' => number_format((float) ($addon->payment->amount_received ?? 0), 2, '.', ''),
                     'paymentStatus' => $addon->payment_status,
+                    'folio' => [
+                        'folioType' => $addon->folio->type,
+                        'folioA' => [
+                            'name' => $addon->folio->folio_a_name,
+                            'charge' => $addon->folio->folio_a_charge * $addon->total_price,
+                        ] ?? null,
+                        'folioB' => [
+                            'name' => $addon->folio->folio_b_name,
+                            'charge' => $addon->folio->folio_b_charge * $addon->total_price,
+                        ] ?? null,
+                        'folioC' => [
+                            'name' => $addon->folio->folio_c_name,
+                            'charge' => $addon->folio->folio_c_charge * $addon->total_price,
+                        ] ?? null,
+                        'folioD' => [
+                            'name' => $addon->folio->folio_d_name,
+                            'charge' => $addon->folio->folio_d_charge * $addon->total_price,
+                        ] ?? null,
+                    ],
                     'user' => $addon->payment->user->username,
                     'datetime' => Carbon::parse($addon->created_at)->format('Y-m-d H:i:s'),
                 ];
@@ -66,6 +96,30 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                     'datetime' => Carbon::parse($payment->created_at)->format('Y-m-d H:i:s'),
                 ];
             });
+
+            $chargeDistribution = Folio::where('transaction_id', $transaction->id)
+                ->get();
+            $roomCharges = $chargeDistribution->where('item', 'ROOM')
+                ->first();
+            $transformedRoomCharges = [
+                'folioType' => $roomCharges->type,
+                'folioA' => [
+                    'name' => $roomCharges->folio_a_name,
+                    'charge' => $roomCharges->folio_a_charge * ($transaction->room_total - $discountValue)
+                ],
+                'folioB' => [
+                    'name' => $roomCharges->folio_b_name,
+                    'charge' => $roomCharges->folio_b_charge * ($transaction->room_total - $discountValue)
+                ] ?? null,
+                'folioC' => [
+                    'name' => $roomCharges->folio_c_name,
+                    'charge' => $roomCharges->folio_c_charge * ($transaction->room_total - $discountValue)
+                ] ?? null,
+                'folioD' => [
+                    'name' => $roomCharges->folio_d_name,
+                    'charge' => $roomCharges->folio_d_charge * ($transaction->room_total - $discountValue)
+                ] ?? null,
+            ];
 
             $mergedTransactions = $transformedAddons->merge($transformedPayments);
 
@@ -112,6 +166,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 'checkIn' => $checkIn,
                 'checkOut' => $checkOut,
                 'roomTotal' => number_format((float) $transaction->room_total, 2, '.', ''),
+                'roomCharges' => $transformedRoomCharges,
                 'addonsTotal' => number_format((float) $addonsTotal, 2, '.', ''),
                 'grossTotal' => number_format((float) $grossTotal, 2, '.', ''),
                 'discount' => $discount->discount ?? null,

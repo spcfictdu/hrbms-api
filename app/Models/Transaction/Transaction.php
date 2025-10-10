@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Transaction\Flight;
 use App\Models\Transaction\VoidRefund;
 use App\Models\Transaction\Payment;
+use App\Models\Transaction\Folio;
 use App\Models\Discount\SeniorPwdDiscount;
 use App\Models\Discount\VoucherDiscount;
 use Illuminate\Database\Eloquent\Model;
@@ -112,5 +113,10 @@ class Transaction extends Model
     public function flight()
     {
         return $this->hasMany(Flight::class);
+    }
+
+    public function folio()
+    {
+        return $this->hasOne(Folio::class);
     }
 }

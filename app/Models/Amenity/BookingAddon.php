@@ -8,6 +8,7 @@ use App\Models\Transaction\VoidRefund;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Transaction\Payment;
+use App\Models\Transaction\Folio;
 
 class BookingAddOn extends Model
 {
@@ -46,5 +47,9 @@ class BookingAddOn extends Model
     
     public function payment(){
         return $this->belongsTo(Payment::class, 'payment_id');
+    }
+
+    public function folio() {
+        return $this->hasOne(Folio::class, 'booking_addon_id');
     }
 }
