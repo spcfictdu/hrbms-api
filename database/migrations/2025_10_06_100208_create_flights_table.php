@@ -16,7 +16,9 @@ return new class extends Migration
             $table->id();
             $table->integer('flight_group');
             $table->string('flight_number');
-            $table->string('guest_name');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('full_name');
             $table->foreignIdFor(Transaction::class)->constrained()->cascadeOnDelete();
             $table->date('departure_date')->nullable();
             $table->time('departure_time')->nullable();

@@ -24,7 +24,8 @@ class CreateFlightRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'guestName' => 'required|string',
+            'firstName' => 'required|string',
+            'lastName' => 'required|string',
             'flightGroup' => 'sometimes',
             'arrivalFlightNumber' => 'sometimes|string',
             'departureFlightNumber' => 'sometimes|string',

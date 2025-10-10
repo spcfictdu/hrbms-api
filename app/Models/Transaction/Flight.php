@@ -12,7 +12,9 @@ class Flight extends Model
 
     protected $fillable = [
         'transaction_id',
-        'guest_name',
+        'first_name',
+        'last_name',
+        'full_name',
         'flight_group',
         'flight_number',
         'departure_date',

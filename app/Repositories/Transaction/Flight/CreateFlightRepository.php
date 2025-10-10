@@ -28,7 +28,9 @@ class CreateFlightRepository extends BaseRepository
             $arrivalFlight = Flight::create([
                 'flight_group' => $flightGroup,
                 'transaction_id' => $transaction->id,
-                'guest_name' => $request->guestName,
+                'first_name' => $request->firstName,
+                'last_name' => $request->lastName,
+                'full_name' => $request->lastName . ', ' . $request->firstName,
                 'flight_number' => $request->arrivalFlightNumber,
                 'arrival_date' => $request->arrivalDate,
                 'arrival_time' => $request->arrivalTime,
