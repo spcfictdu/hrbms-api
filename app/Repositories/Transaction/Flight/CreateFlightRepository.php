@@ -17,8 +17,12 @@ class CreateFlightRepository extends BaseRepository
             return $this->error('Transaction not found');
         }
 
-        $lastFlightGroup = Flight::latest()->first();
-        $flightGroup = ((int)$lastFlightGroup->flight_group ?? 0) + 1;
+        if (!isset($request->flightGroup)) {
+            $lastFlightGroup = Flight::latest()->first();
+            $flightGroup = ((int)$lastFlightGroup->flight_group ?? 0) + 1;
+        } else {
+            $flightGroup = $request->flightGroup;
+        }
 
         if (isset($request->arrivalFlightNumber) && isset($request->departureFlightNumber)) {
             $arrivalFlight = Flight::create([
