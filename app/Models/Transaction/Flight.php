@@ -11,6 +11,7 @@ class Flight extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'transaction_id',
         'first_name',
         'last_name',
@@ -24,7 +25,6 @@ class Flight extends Model
     ];
 
     protected $hidden = [
-        'id',
         'created_at',
         'updated_at',
     ];

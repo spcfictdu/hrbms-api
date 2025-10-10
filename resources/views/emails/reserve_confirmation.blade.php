@@ -160,7 +160,7 @@
 
                     //Discount
                     $discount = $transaction->seniorPwdDiscount ?? $transaction->voucherDiscount ?? null;
-                    $discountRate = $discount->value;
+                    $discountRate = $discount->value ?? 0;
 
                     // Totals
                     $grandTotal = (1 - $discountRate) * ($totalRoomRate + $extraGuestTotal) + $addonsTotal;

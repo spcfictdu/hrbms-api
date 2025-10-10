@@ -24,7 +24,8 @@ class UpdateFlightRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'flightNumber' => 'required|string',
+            'flightId' => 'required',
+            'flightNumber' => 'sometimes|string',
             'firstName' => 'sometimes|string',
             'lastName' => 'sometimes|string',
             'departureDate' => 'sometimes|date',

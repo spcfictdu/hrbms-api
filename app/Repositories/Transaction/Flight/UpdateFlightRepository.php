@@ -11,7 +11,7 @@ use App\Models\Transaction\{
 class UpdateFlightRepository extends BaseRepository
 {
     public function execute($request){
-        $flight = Flight::where('flight_number', $request->flightNumber)
+        $flight = Flight::where('id', $request->flightId)
             ->first();
 
         if (!$flight) {
