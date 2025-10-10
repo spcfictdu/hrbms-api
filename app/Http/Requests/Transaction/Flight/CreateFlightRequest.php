@@ -29,9 +29,9 @@ class CreateFlightRequest extends ResponseRequest
             'flightGroup' => 'sometimes',
             'arrivalFlightNumber' => 'sometimes|string',
             'departureFlightNumber' => 'sometimes|string',
-            'departureDate' => 'sometimes|date',
+            'departureDate' => ['required_with:departureFlightNumber', 'date'],
             'departureTime' => ['required_with:departureDate', 'date_format:H:i'],
-            'arrivalDate' => 'sometimes|date',
+            'arrivalDate' => ['required_with:arrivalFlightNumber', 'date'],
             'arrivalTime' => ['required_with:arrivalDate', 'date_format:H:i'],
         ];
     }
