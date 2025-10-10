@@ -18,8 +18,8 @@ class CreateFlightRepository extends BaseRepository
         }
 
         if (!isset($request->flightGroup)) {
-            $lastFlightGroup = Flight::latest()->first();
-            $flightGroup = ((int)$lastFlightGroup->flight_group ?? 0) + 1;
+            $lastFlightGroup = Flight::latest()->first() ?? null;
+            $flightGroup = ($lastFlightGroup->flight_group ?? 0) + 1;
         } else {
             $flightGroup = $request->flightGroup;
         }
