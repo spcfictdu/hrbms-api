@@ -19,7 +19,9 @@ class UpdateFlightRepository extends BaseRepository
         }
 
         $flight->update([
-            'guest_name' => $request->guestName ?? $flight->guest_name,
+            'first_name' => $request->firstName ?? $flight->first_name,
+            'last_name' => $request->lastName ?? $flight->last_name,
+            'full_name' => ($request->lastName ?? $flight->last_name) . ', ' . ($request->firstName ?? $flight->first_name),
             'flight_number' => $request->flightNumber ?? $flight->flight_number,
             'departure_date' => $request->departureDate ?? $flight->departure_date,
             'departure_time' => $request->departureTime ?? $flight->departure_time,

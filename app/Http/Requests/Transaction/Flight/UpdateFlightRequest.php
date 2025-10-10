@@ -25,7 +25,8 @@ class UpdateFlightRequest extends ResponseRequest
     {
         return [
             'flightNumber' => 'required|string',
-            'guestName' => 'sometimes|string',
+            'firstName' => 'sometimes|string',
+            'lastName' => 'sometimes|string',
             'departureDate' => 'sometimes|date',
             'departureTime' => ['sometimes', 'date_format:H:i'],
             'arrivalDate' => 'sometimes|date',
