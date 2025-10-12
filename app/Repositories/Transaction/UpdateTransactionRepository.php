@@ -214,6 +214,7 @@ class UpdateTransactionRepository extends BaseRepository
                             "payment_id" => $payment->id,
                             "cheque_number" => $request->chequeNumber,
                             "bank_name" => $request->chequeBankName,
+                            "bank_id" => $request->bankId,
                         ]);
                     } elseif ($request->paymentType === 'CREDIT_CARD') {
 
@@ -223,7 +224,7 @@ class UpdateTransactionRepository extends BaseRepository
                             "card_holder_name" => $request->cardHolderName,
                             "expiration_date" => $request->expiration_date,
                             "cvc" => $request->cvc,
-
+                            "bank_id" => $request->bankId,
                         ]);
                     }
 

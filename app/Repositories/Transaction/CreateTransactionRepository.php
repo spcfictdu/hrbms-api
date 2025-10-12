@@ -307,22 +307,23 @@ class CreateTransactionRepository extends BaseRepository
                     }
                 }
 
-                if ($request->paymentType === 'CHEQUE') {
+                if ($request->payment['paymentType'] === 'CHEQUE') {
 
                     ChequePayment::create([
                         "payment_id" => $payment->id,
-                        "cheque_number" => $request->chequeNumber,
-                        "bank_name" => $request->chequeBankName,
+                        "cheque_number" => $request->payment['chequeNumber'],
+                        "bank_name" => $request->payment['chequeBankName'],
+                        "bank_id" => $request->payment['bankId']
                     ]);
-                } elseif ($request->paymentType === 'CREDIT_CARD') {
+                } elseif ($request->payment['paymentType'] === 'CREDIT_CARD') {
 
                     CreditCardPayment::create([
                         "payment_id" => $payment->id,
-                        "card_number" => $request->cardNumber,
-                        "card_holder_name" => $request->cardHolderName,
-                        "expiration_date" => $request->expiration_date,
-                        "cvc" => $request->cvc,
-
+                        "card_number" => $request->payment['cardNumber'],
+                        "card_holder_name" => $request->payment['cardHolderName'],
+                        "expiration_date" => $request->payment['expirationDate'],
+                        "cvc" => $request->payment['cvc'],
+                        "bank_id" => $request->payment['bankId']
                     ]);
                 }
                 
