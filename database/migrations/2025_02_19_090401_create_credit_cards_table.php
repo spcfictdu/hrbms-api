@@ -4,6 +4,7 @@ use App\Models\Transaction\Payment;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\Models\PaymentType\Bank;
 
 return new class extends Migration
 {
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->string('card_holder_name');
             $table->string('expiration_date', 5);
             $table->string('cvc');
+            $table->foreignIdFor(Bank::class)->constrained()->cascadeOnDelete();
             // $table->mediumInteger('amount_received'); 
             $table->timestamps();
         });

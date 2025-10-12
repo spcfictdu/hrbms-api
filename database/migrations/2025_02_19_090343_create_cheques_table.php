@@ -4,6 +4,7 @@ use App\Models\Transaction\Payment;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\Models\PaymentType\Bank;
 
 return new class extends Migration
 {
@@ -17,6 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(Payment::class)->constrained()->cascadeOnDelete();
             $table->string('cheque_number')->unique();
             $table->string('bank_name');
+            $table->foreignIdFor(Bank::class)->constrained()->cascadeOnDelete();
             // $table->mediumInteger('amount_received');
             $table->timestamps();
         });
