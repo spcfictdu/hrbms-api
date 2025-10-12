@@ -4,6 +4,7 @@ namespace App\Repositories\Guest;
 
 use App\Models\Guest\Guest;
 use App\Repositories\BaseRepository;
+use App\Models\Transaction\Payment;
 
 class ShowGuestRepository extends BaseRepository
 {
@@ -41,6 +42,8 @@ class ShowGuestRepository extends BaseRepository
             'province' => $guest->province,
             'city' => $guest->city,
             'transactions' => $filteredTransactions->transform(function ($transaction) {
+                $payment = Payment::where('transaction_id', $transaction->id)
+                    ->sum('amount_received');
                 return [
                     'status' => $transaction->status,
                     'reference' => $transaction->reference_number,
@@ -49,7 +52,7 @@ class ShowGuestRepository extends BaseRepository
                     'checkOut' => $transaction->check_out_date,
                     'booked' => $transaction->created_at,
                     'room' => $transaction->room->room_number,
-                    'total' => $transaction->payment?->amount_received,
+                    'total' => $payment,
                 ];
             }),
         ];

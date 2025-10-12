@@ -2,7 +2,10 @@
 
 namespace App\Repositories\Guest\Miscellaneous;
 
-use App\Models\Transaction\Transaction;
+use App\Models\Transaction\{
+    Transaction,
+    Payment
+};
 use App\Repositories\BaseRepository;
 
 use App\Models\Guest\Guest;
@@ -16,13 +19,15 @@ class AccountInfoRepository extends BaseRepository
             $guest = Guest::where('user_id', $this->user()->id)->first();
 
             $bookings = Transaction::where('guest_id', $guest->id)->where('status', 'CONFIRMED')->get()->map(function ($booking) {
+                $payment = Payment::where('transaction_id', $booking->id)
+                    ->sum('amount_received');
                 return [
                     'referenceNumber' => $booking->reference_number,
                     'status' => $booking->status,
                     'roomName' => $booking->room->roomType->name,
                     'checkInDate' => $booking->check_in_date,
                     'checkOutDate' => $booking->check_out_date,
-                    'amountReceived' => $booking->payment->amount_received,
+                    'amountReceived' => $payment,
                     'roomDescription' => $booking->room->roomType->description,
                     'amenities' => $booking->room->roomType->amenities->map(function ($amenity) {
                         return [
