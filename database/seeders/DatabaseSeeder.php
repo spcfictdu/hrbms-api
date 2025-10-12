@@ -32,11 +32,12 @@ class DatabaseSeeder extends Seeder
             RoomTypeSeeder::class,
             RoomSeeder::class,
             CashierSessionSeeder::class,
+            BankSeeder::class,
             TransactionSeeder::class,
             AvailabilityCalendarSeeder::class,
             RoomTypeRateSeeder::class,
             VoucherSeeder::class,
-
+            FlightSeeder::class,
         ]);
     }
 }
