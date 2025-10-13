@@ -26,6 +26,7 @@ class GenerateDailyReservationsReportRepository
                     'guestName' => optional($transaction->guest)->full_name,
                     'roomNumber' => optional($transaction->room)->room_number,
                     'checkInDate' => $transaction->check_in_date,
+                    'checkInTime' => $transaction->check_in_time,
                 ];
             });
         
@@ -52,6 +53,7 @@ class GenerateDailyReservationsReportRepository
                     'guestName' => optional($transaction->guest)->full_name,
                     'roomNumber' => optional($transaction->room)->room_number,
                     'checkOutDate' => $transaction->check_out_date,
+                    'checkOutTime' => $transaction->check_out_time,
                 ];
             });
 
@@ -79,7 +81,9 @@ class GenerateDailyReservationsReportRepository
                     'guestName' => optional($transaction->guest)->full_name,
                     'roomNumber' => optional($transaction->room)->room_number,
                     'checkInDate' => $transaction->check_in_date,
+                    'checkInTime' => $transaction->check_in_time,
                     'checkOutDate' => $transaction->check_out_date,
+                    'checkOutTime' => $transaction->check_out_time,
                 ];
             });
 

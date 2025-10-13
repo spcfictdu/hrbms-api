@@ -16,10 +16,11 @@ class GenerateFlightsReportRepository extends BaseRepository
             ->map(function ($flight) {
                 return [
                     'transaction' => $flight->transaction->reference_number,
+                    'flightNumber' => $flight->flight_number,
                     'roomNumber' => $flight->transaction->room->room_number,
                     'guestName' => $flight->guest_name,
                     'arrivalDate' => $flight->arrival_date,
-                    'arrivalTime' => $flight->arrival_time
+                    'arrivalTime' => $flight->arrival_time,
                 ];
             });
         
@@ -28,10 +29,11 @@ class GenerateFlightsReportRepository extends BaseRepository
             ->map(function ($flight) {
                 return [
                     'transaction' => $flight->transaction->reference_number,
+                    'flightNumber' => $flight->flight_number,
                     'roomNumber' => $flight->transaction->room->room_number,
                     'guestName' => $flight->guest_name,
                     'departureDate' => $flight->departure_date,
-                    'departureTime' => $flight->departure_time
+                    'departureTime' => $flight->departure_time,
                 ];
             });
 
