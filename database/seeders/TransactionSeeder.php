@@ -7,6 +7,7 @@ use App\Models\{
     Transaction\Transaction,
     Transaction\TransactionHistory,
     Transaction\Payment,
+    Transaction\Folio,
     Guest\Guest
 };
 use Faker\Factory as Faker;
@@ -31,7 +32,7 @@ class TransactionSeeder extends Seeder
         foreach ($transactions as $transaction) {
             $this->createGuest($transaction);
             $transaction = $this->createHistory($transaction);
-            $this->createTransaction($transaction, $now);
+            $this->createTransaction($transaction, $now, $faker);
             $this->createPayment($transaction, $now, $faker);
         }
     }
@@ -90,9 +91,9 @@ class TransactionSeeder extends Seeder
         ]);
     }
 
-    private function createTransaction($transaction, $now)
+    private function createTransaction($transaction, $now, $faker)
     {
-        Transaction::create([
+        $newTransaction = Transaction::create([
             'id' => $transaction['id'],
             'reference_number' => $this->transactionReferenceNumber(),
             'room_id' => $transaction['id'],
@@ -106,6 +107,12 @@ class TransactionSeeder extends Seeder
             'guest_id' => $transaction['id'],
             'transaction_history_id' => $transaction['transaction_history_id'],
             'created_at' => $now,
+        ]);
+        Folio::create([
+            'item' => 'ROOM',
+            'transaction_id' => $newTransaction->id,
+            'type' => 'INDIVIDUAL',
+            'folio_a_name' => $newTransaction->guest->full_name,
         ]);
     }
 
