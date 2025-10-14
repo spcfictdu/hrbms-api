@@ -39,13 +39,15 @@ class AccountInfoRepository extends BaseRepository
             });
 
             $reservations = Transaction::where('guest_id', $guest->id)->where('status', 'RESERVED')->get()->map(function ($reservation) {
+                $payment = Payment::where('transaction_id', $reservation->id)
+                    ->sum('amount_received');
                 return [
                     'referenceNumber' => $reservation->reference_number,
                     'status' => $reservation->status,
                     'roomName' => $reservation->room->roomType->name,
                     'checkInDate' => $reservation->check_in_date,
                     'checkOutDate' => $reservation->check_out_date,
-                    'amountReceived' => $reservation->payment?->amount_received,
+                    'amountReceived' => $payment,
                     'roomDescription' => $reservation->room->roomType->description,
                     'amenities' => $reservation->room->roomType->amenities->map(function ($amenity) {
                         return [
@@ -57,13 +59,15 @@ class AccountInfoRepository extends BaseRepository
             });
 
             $histories = Transaction::where('guest_id', $guest->id)->where('status', 'CHECKED-OUT')->get()->map(function ($history) {
+                $payment = Payment::where('transaction_id', $history->id)
+                    ->sum('amount_received');
                 return [
                     'referenceNumber' => $history->reference_number,
                     'status' => $history->status,
                     'roomName' => $history->room->roomType->name,
                     'checkInDate' => $history->check_in_date,
                     'checkOutDate' => $history->check_out_date,
-                    'amountReceived' => $history->payment->amount_received,
+                    'amountReceived' => $payment,
                     'roomDescription' => $history->room->roomType->description,
                     'amenities' => $history->room->roomType->amenities->map(function ($amenity) {
                         return [
