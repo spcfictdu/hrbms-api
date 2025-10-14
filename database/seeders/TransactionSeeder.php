@@ -30,9 +30,9 @@ class TransactionSeeder extends Seeder
 
         foreach ($transactions as $transaction) {
             $this->createGuest($transaction);
+            $transaction = $this->createHistory($transaction);
             $this->createTransaction($transaction, $now);
             $this->createPayment($transaction, $now, $faker);
-            $this->createHistory($transaction, $now, $faker);
         }
     }
 
@@ -53,8 +53,8 @@ class TransactionSeeder extends Seeder
                 "email" => $faker->unique()->email,
                 "idType" => ["PASSPORT", "DRIVER'S LICENSE", "UMID", "PHILHEALTH", "TIN", "POSTAL", "NBI CLEARANCE", "PRC", "SENIOR CITIZEN", "NATIONAL", "PWD"],
                 "idNumber" => "123456789",
-                "checkIn" => ["date" => $now->startOfDay()->toDateString(), "time" => "09:00"],
-                "checkOut" => ["date" => $now->addDay()->toDateString(), "time" => "14:00"],
+                "checkIn" => ["date" => $now->copy()->startOfDay()->toDateString(), "time" => "09:00"],
+                "checkOut" => ["date" => $now->copy()->addDay()->toDateString(), "time" => "14:00"],
                 "payment" => [
                     "payment_type" => ["CASH", "GCASH"],
                     "amount_received" => [
@@ -67,7 +67,8 @@ class TransactionSeeder extends Seeder
                         'sunday' => 1440 + ($i - 1) * 100
                     ]
                 ],
-                "number_of_guest" => 2
+                "number_of_guest" => 2,
+                "transaction_history_id" => null,
             ];
         }
         return $transactions;
@@ -75,7 +76,7 @@ class TransactionSeeder extends Seeder
 
     private function createGuest($transaction)
     {
-        Guest::insert([
+        Guest::create([
             'reference_number' => $this->guestReferenceNumber(),
             'first_name' => $transaction['first_name'],
             'middle_name' => $transaction['middle_name'],
@@ -91,11 +92,11 @@ class TransactionSeeder extends Seeder
 
     private function createTransaction($transaction, $now)
     {
-        Transaction::insert([
+        Transaction::create([
             'id' => $transaction['id'],
             'reference_number' => $this->transactionReferenceNumber(),
             'room_id' => $transaction['id'],
-            'status' => $transaction['status'][array_rand($transaction['status'])],
+            'status' => $transaction['status_selected'],
             'room_total' => $transaction['room_total'],
             'check_in_date' => $transaction['checkIn']['date'],
             'check_in_time' => $transaction['checkIn']['time'],
@@ -103,13 +104,14 @@ class TransactionSeeder extends Seeder
             'check_out_time' => $transaction['checkOut']['time'],
             'number_of_guest' => $transaction['number_of_guest'],
             'guest_id' => $transaction['id'],
-            'created_at' => $now
+            'transaction_history_id' => $transaction['transaction_history_id'],
+            'created_at' => $now,
         ]);
     }
 
     private function createPayment($transaction, $now, $faker)
     {
-        Payment::insert([
+        Payment::create([
             'transaction_id' => $transaction['id'],
             'user_id' => $faker->randomElement([64, 66]),
             'cashier_session_id' => 2,
@@ -119,20 +121,29 @@ class TransactionSeeder extends Seeder
         ]);
     }
 
-    private function createHistory($transaction, $now, $faker) {
+    private function createHistory($transaction)
+    {
         $status = $transaction['status'][array_rand($transaction['status'])];
+        $transaction['status_selected'] = $status;
+
+        $transactionHistory = null;
+
         if ($status === 'CHECKED-IN') {
-            TransactionHistory::insert([
+            $transactionHistory = TransactionHistory::create([
                 'check_in_date' => $transaction['checkIn']['date'],
                 'check_in_time' => $transaction['checkIn']['time'],
             ]);
         } elseif ($status === 'CHECKED-OUT') {
-            TransactionHistory::insert([
+            $transactionHistory = TransactionHistory::create([
                 'check_in_date' => $transaction['checkIn']['date'],
                 'check_in_time' => $transaction['checkIn']['time'],
                 'check_out_date' => $transaction['checkOut']['date'],
                 'check_out_time' => $transaction['checkOut']['time'],
             ]);
         }
+
+        $transaction['transaction_history_id'] = $transactionHistory?->id;
+
+        return $transaction;
     }
 }
