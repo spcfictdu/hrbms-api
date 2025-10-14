@@ -82,7 +82,7 @@ class ShowPaymentRepository extends BaseRepository
                 'quantity' => (float)$transaction->number_of_guest + 1,
                 'unitPrice' => $baseRates[$dayOfWeek],
                 'totalPrice' => $transaction->room_total,
-                'discount' => $discountValue,
+                'discount' => $discountValue ?? 0,
                 'timestamp' => Carbon::parse($payment->created_at)->format('Y-m-d H:i:s'),
             ];
         }
