@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\{
     Transaction\Transaction,
+    Transaction\TransactionHistory,
     Transaction\Payment,
     Guest\Guest
 };
@@ -31,6 +32,7 @@ class TransactionSeeder extends Seeder
             $this->createGuest($transaction);
             $this->createTransaction($transaction, $now);
             $this->createPayment($transaction, $now, $faker);
+            $this->createHistory($transaction, $now, $faker);
         }
     }
 
@@ -115,5 +117,22 @@ class TransactionSeeder extends Seeder
             'amount_received' => $transaction['payment']['amount_received']['tuesday'],
             'created_at' => $now
         ]);
+    }
+
+    private function createHistory($transaction, $now, $faker) {
+        $status = $transaction['status'][array_rand($transaction['status'])];
+        if ($status === 'CHECKED-IN') {
+            TransactionHistory::insert([
+                'check_in_date' => $transaction['checkIn']['date'],
+                'check_in_time' => $transaction['checkIn']['time'],
+            ]);
+        } elseif ($status === 'CHECKED-OUT') {
+            TransactionHistory::insert([
+                'check_in_date' => $transaction['checkIn']['date'],
+                'check_in_time' => $transaction['checkIn']['time'],
+                'check_out_date' => $transaction['checkOut']['date'],
+                'check_out_time' => $transaction['checkOut']['time'],
+            ]);
+        }
     }
 }
