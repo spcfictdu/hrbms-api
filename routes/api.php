@@ -273,7 +273,7 @@ Route::group([
     $route->delete('/flight/delete', [TransactionController::class, 'deleteFlight']);
 });
 
-Route::get('/transaction/payment/show', [TransactionController::class, 'showPayment'])->middleware('auth:sanctum');
+Route::post('/transaction/payment/show', [TransactionController::class, 'showPayment'])->middleware('auth:sanctum');
 Route::put('/transaction/folio/update', [TransactionController::class, 'updateFolio'])->middleware('auth:sanctum');
 
 // This route has authentication check inside the controller
