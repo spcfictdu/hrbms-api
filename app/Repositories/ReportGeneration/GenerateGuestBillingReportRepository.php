@@ -121,6 +121,9 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 ] ?? null,
             ];
 
+            $transformedAddons = collect($transformedAddons);
+            $transformedPayments = collect($transformedPayments);
+
             $mergedTransactions = $transformedAddons->merge($transformedPayments);
 
             $mergedTransactions = $mergedTransactions->sortBy(function ($item) {
