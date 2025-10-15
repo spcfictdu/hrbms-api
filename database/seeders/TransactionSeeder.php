@@ -107,7 +107,7 @@ class TransactionSeeder extends Seeder
         $roomCapacity = $room->roomType->capacity;
 
         $rate = $baseRates[$dayOfWeek];
-        $extraPersonCharge = $rate / $roomCapacity / 2;
+        $extraPersonCharge = $transaction['number_of_guest'] * ($rate / $roomCapacity / 2);
 
         $newTransaction = Transaction::create([
             'id' => $transaction['id'],
