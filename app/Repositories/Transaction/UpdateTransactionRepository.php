@@ -372,9 +372,11 @@ class UpdateTransactionRepository extends BaseRepository
                                         return (!$r->start_date || $date->gte(Carbon::parse($r->start_date)))
                                             && (!$r->end_date || $date->lte(Carbon::parse($r->end_date)));
                                     });
+                                $extraPersonCharge = (float)$transaction->number_of_guest * ((float)$rate->{$day} / (float)$transaction->room->roomType->capacity / 2); 
+                                $dailyTotal = $extraPersonCharge + $rate->{$day};
 
                                 if ($rate) {
-                                    $total += $rate->{$day};
+                                    $total += $dailyTotal;
                                 }
                             }
 
