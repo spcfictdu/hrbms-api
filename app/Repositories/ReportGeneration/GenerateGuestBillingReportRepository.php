@@ -56,7 +56,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                     'quantity' => $addon->quantity,
                     'price' => number_format((float) $addon->total_price, 2, '.', ''),
                     'paymentId' => $addon->payment_id ?? $addon->payment?->id,
-                    'paymentType' => $addon->payment->payment_type,
+                    'paymentType' => $addon->payment->payment_type ?? null,
                     'paymentAmount' => number_format((float) ($addon->payment->amount_received ?? 0), 2, '.', ''),
                     'paymentStatus' => $addon->payment_status,
                     'folio' => [
@@ -78,7 +78,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                             'charge' => $addon->folio->folio_d_charge * $addon->total_price,
                         ] ?? null,
                     ],
-                    'user' => $addon->payment->user->username,
+                    'user' => $addon->payment->user->username ?? null,
                     'datetime' => Carbon::parse($addon->created_at)->format('Y-m-d H:i:s'),
                 ];
             });

@@ -20,6 +20,7 @@ use App\Models\PaymentType\CreditCardPayment;
 use App\Models\Transaction\TransactionHistory;
 use App\Models\CashierSession\CashierSession;
 use App\Models\Transaction\VoidRefund;
+use App\Models\Transaction\Folio;
 use App\Models\Guest\Guest;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
@@ -118,23 +119,43 @@ class UpdateTransactionRepository extends BaseRepository
                     $fullAddons = BookingAddon::where('transaction_id', $transaction->id)->get();
                     $lastPurchaseBatch = $fullAddons->max('purchase_batch');
 
+                    $createdAddons = collect();
                     if (isset($request->addons) && isset($transaction->id)) {
-                        $sample = array_map(function ($addon) use ($request, $transaction, $lastPurchaseBatch, $payment) {
-                            $checkPrice = Addon::where('name', $addon['name'])->first();
-                            if ($checkPrice->price) {
-                                $totalPrice = $checkPrice->price * $addon['quantity'];
-
-                                $addons = BookingAddon::create([
-                                    "transaction_id" => $transaction->id,
-                                    "payment_id" => $payment->id,
-                                    "name" => $addon['name'],
-                                    "quantity" => $addon['quantity'],
-                                    "total_price" => $totalPrice,
-                                    "purchase_batch" => $lastPurchaseBatch + 1,
-                                ]);
+                        foreach ($request->addons as $addonData) {
+                            $addonModel = Addon::where('name', $addonData['name'])->first();
+                            if (!$addonModel) {
+                                continue;
                             }
-                            return $addon;
-                        }, $request->addons);
+
+                            $quantity = (int) ($addonData['quantity'] ?? 1);
+                            $totalPrice = round($addonModel->price * $quantity, 2);
+
+                            $bookingAddon = BookingAddon::create([
+                                "transaction_id" => $transaction->id,
+                                "name" => $addonData['name'],
+                                "quantity" => $quantity,
+                                "total_price" => $totalPrice
+                            ]);
+
+                            $folio = $addonData['folio'] ?? [];
+
+                            Folio::create([
+                                'item' => 'ADDON',
+                                'type' => $folio['type'] ?? 'INDIVIDUAL',
+                                'transaction_id' => $transaction->id,
+                                'booking_addon_id' => $bookingAddon->id,
+                                'folio_a_name' => $transaction->guest?->full_name ?? null,
+                                'folio_a_charge' => 1 - ($folio['folioB']['charge'] ?? 0) - ($folio['folioC']['charge'] ?? 0) - ($folio['folioD']['charge'] ?? 0),
+                                'folio_b_name' => $folio['folioB']['name'] ?? null,
+                                'folio_b_charge' => $folio['folioB']['charge'] ?? 0,
+                                'folio_c_name' => $folio['folioC']['name'] ?? null,
+                                'folio_c_charge' => $folio['folioC']['charge'] ?? 0,
+                                'folio_d_name' => $folio['folioD']['name'] ?? null,
+                                'folio_d_charge' => $folio['folioD']['charge'] ?? 0
+                            ]);
+
+                            $createdAddons->push($bookingAddon);
+                        }
                     }
 
                     $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
