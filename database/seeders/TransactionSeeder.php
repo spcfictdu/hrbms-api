@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\{
+    Room\Room,
+    Room\RoomTypeRate,
     Transaction\Transaction,
     Transaction\TransactionHistory,
     Transaction\Payment,
@@ -44,7 +46,6 @@ class TransactionSeeder extends Seeder
             $transactions[] = [
                 "id" => $i,
                 "status" => ["RESERVED", "CONFIRMED", "CHECKED-IN", "CHECKED-OUT"],
-                "room_total" => 1234.00,
                 "first_name" => Str::upper($faker->firstName),
                 "middle_name" => Str::upper($faker->lastName),
                 "last_name" => Str::upper($faker->lastName),
@@ -93,12 +94,27 @@ class TransactionSeeder extends Seeder
 
     private function createTransaction($transaction, $now, $faker)
     {
+        $room = Room::where('id', $transaction['id'])
+            ->first();
+
+        $baseRates = $room->roomType->rates()
+            ->where('type', 'REGULAR')
+            ->first();
+
+        $date = Carbon::parse($transaction['checkIn']['date']);
+        $dayOfWeek = strtolower($date->format('l'));
+
+        $roomCapacity = $room->roomType->capacity;
+
+        $rate = $baseRates[$dayOfWeek];
+        $extraPersonCharge = $rate / $roomCapacity / 2;
+
         $newTransaction = Transaction::create([
             'id' => $transaction['id'],
             'reference_number' => $this->transactionReferenceNumber(),
             'room_id' => $transaction['id'],
             'status' => $transaction['status_selected'],
-            'room_total' => $transaction['room_total'],
+            'room_total' => $rate + $extraPersonCharge,
             'check_in_date' => $transaction['checkIn']['date'],
             'check_in_time' => $transaction['checkIn']['time'],
             'check_out_date' => $transaction['checkOut']['date'],
