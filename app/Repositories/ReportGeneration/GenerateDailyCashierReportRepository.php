@@ -84,7 +84,7 @@ class GenerateDailyCashierReportRepository
                 ->values();
 
             $userReports[] = [
-                'user' => $user->username,
+                'user' => $user->last_name . ', ' . $user->first_name,
                 'cashierSessionId' => $session->id,
                 'openingBalance' => $session->opening_balance,
                 'openingAdjustment' => $session->opening_adjustment,

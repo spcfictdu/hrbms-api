@@ -134,7 +134,8 @@ class UpdateTransactionRepository extends BaseRepository
                                 "transaction_id" => $transaction->id,
                                 "name" => $addonData['name'],
                                 "quantity" => $quantity,
-                                "total_price" => $totalPrice
+                                "total_price" => $totalPrice,
+                                "payment_id" => $payment->id,
                             ]);
 
                             $folio = $addonData['folio'] ?? [];

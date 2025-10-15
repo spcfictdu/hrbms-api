@@ -10,7 +10,9 @@ use App\Models\{
     Transaction\TransactionHistory,
     Transaction\Payment,
     Transaction\Folio,
-    Guest\Guest
+    Guest\Guest,
+    Amenity\BookingAddon,
+    Amenity\Addon,
 };
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
@@ -36,6 +38,7 @@ class TransactionSeeder extends Seeder
             $transaction = $this->createHistory($transaction);
             $this->createTransaction($transaction, $now, $faker);
             $this->createPayment($transaction, $now, $faker);
+            $this->createAddons($transaction, $now, $faker);
         }
     }
 
@@ -168,5 +171,46 @@ class TransactionSeeder extends Seeder
         $transaction['transaction_history_id'] = $transactionHistory?->id;
 
         return $transaction;
+    }
+
+    private function createAddons($transaction, $now, $faker) {
+        $createdAddons = collect();
+        $addonNames = ['Transport', 'Soap', 'Slippers', 'Shampoo', 'Minibar', 'Extra pillow'];
+
+        for ($i = 1; $i <= 3; $i++) {
+            $usedNames = $createdAddons->pluck('name')->toArray();
+            $availableNames = array_diff($addonNames, $usedNames);
+
+            if (empty($availableNames)) {
+                break;
+            }
+
+            $name = $faker->randomElement($availableNames);
+            $addonModel = Addon::where('name', $name)->first();
+
+            if (!$addonModel) {
+                continue;
+            }
+
+            $bookingAddon = BookingAddon::create([
+                'transaction_id' => $transaction['id'],
+                'payment_id' => $transaction['id'],
+                'purchase_batch' => 1,
+                'payment_status' => 'PENDING',
+                'name' => $name,
+                'quantity' => 1,
+                'total_price' => $addonModel->price,
+            ]);
+
+            Folio::create([
+                'item' => 'ADDON',
+                'transaction_id' => $transaction['id'],
+                'booking_addon_id' => $bookingAddon->id,
+                'type' => 'INDIVIDUAL',
+                'folio_a_name' => $bookingAddon->transaction->guest->full_name,
+            ]);
+
+            $createdAddons->push($bookingAddon);
+        }
     }
 }
