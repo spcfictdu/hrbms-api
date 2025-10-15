@@ -44,30 +44,57 @@ class GenerateDailyCashierReportRepository
 
             foreach ($payments as $payment) {
                 $transactions[] = [
-                    'type' => 'payment',
+                    'transactionReferenceNumber' => $payment->transaction->reference_number,
+                    'type' => 'PAYMENT',
                     'amount' => $payment->amount_received,
                     'method' => $payment->payment_type,
                     'timestamp' => $payment->created_at->timezone('Asia/Manila')->toDateTimeString(),
                 ];                
             }
 
-            $totalRefunded = VoidRefund::where('cashier_session_id', $session->id)
+            $refunds = VoidRefund::where('cashier_session_id', $session->id)
                 ->where('type', 'REFUND')
-                ->sum('amount');
+                ->get();
 
-            $totalVoided = VoidRefund::where('cashier_session_id', $session->id)
+            $voids = VoidRefund::where('cashier_session_id', $session->id)
                 ->where('type', 'VOID')
-                ->sum('amount');
+                ->get();
+
+            $totalRefunded = $refunds->sum('amount');
+            $totalVoided = $voids->sum('amount');
+
+            $mergedVoidsRefunds = $refunds->merge($voids);
+
+            $transformedVoidsRefunds = $mergedVoidsRefunds->map(function ($data) {
+                return [
+                    'transactionReferenceNumber' => $data->transaction->reference_number,
+                    'type' => $data->type,
+                    'amount' => $data->amount,
+                    'method' => null,
+                    'timestamp' => $data->created_at->timezone('Asia/Manila')->toDateTimeString()
+                ];
+            });
+
+            $transformedVoidsRefunds = collect($transformedVoidsRefunds);
+            $transactions = collect($transactions);
+
+            $mergedTransactions = $transformedVoidsRefunds->merge($transactions);
+
+            $orderedTransactions = $mergedTransactions->groupBy('timestamp', 'asc')
+                ->values();
 
             $userReports[] = [
                 'user' => $user->username,
+                'cashierSessionId' => $session->id,
                 'openingBalance' => $session->opening_balance,
+                'openingAdjustment' => $session->opening_adjustment,
                 'closingBalance' => $session->closing_balance,
+                'closingAdjustment' => $session->closing_adjustment,
                 'totalRefunded' => $totalRefunded,
                 'totalVoided' => $totalVoided,
                 'openedAt' => $session->opened_at,
                 'closedAt' => $session->closed_at,
-                'transactions' => $transactions,
+                'transactions' => $mergedTransactions,
             ];
         }
 
