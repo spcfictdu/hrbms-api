@@ -11,8 +11,9 @@ use App\Models\Transaction\{
 class UpdateFolioRepository extends BaseRepository
 {
     public function execute($request){
-        if (isset($request->transactionId)) {
-            $folio = Folio::where('transaction_id', $request->transactionId)
+        if (isset($request->referenceNumber)) {
+            $transaction = Transaction::where('reference_number', $request->referenceNumber)->first();
+            $folio = Folio::where('transaction_id', $transaction->id)
                 ->where('item', 'ROOM')
                 ->first();
         } elseif (isset($request->bookingAddonId)) {
