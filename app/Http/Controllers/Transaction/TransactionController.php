@@ -35,6 +35,7 @@ use App\Repositories\Transaction\{
     UpdateTransactionRepository,
     Miscellaneous\DeleteReservationRepository,
     Miscellaneous\ShowFormTransactionRepository,
+    Miscellaneous\IndexBankRepository,
     Flight\CreateFlightRepository,
     Flight\IndexFlightRepository,
     Flight\ShowFlightRepository,
@@ -47,7 +48,7 @@ use App\Repositories\Transaction\{
 class TransactionController extends Controller
 {
     // $bookEdit, $bookIndex, $bookShow, $bookUpdate
-    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction, $guestIndex, $guestTransactionShow, $guestTransactionCreate, $indexFlight, $createFlight, $showFlight, $updateFlight, $deleteFlight, $showPayment, $updateFolio;
+    protected $index, $create, $show, $update, $deleteReservation, $showFormTransaction, $guestIndex, $guestTransactionShow, $guestTransactionCreate, $indexFlight, $createFlight, $showFlight, $updateFlight, $deleteFlight, $showPayment, $updateFolio, $indexBank;
 
     public function __construct(
         // IndexBookingRepository $bookIndex,
@@ -70,6 +71,7 @@ class TransactionController extends Controller
         DeleteFlightRepository $deleteFlight,
         ShowPaymentRepository $showPayment,
         UpdateFolioRepository $updateFolio,
+        IndexBankRepository $indexBank,
     ) {
         // $this->bookIndex = $bookIndex;
         // $this->bookShow = $bookShow;
@@ -91,6 +93,7 @@ class TransactionController extends Controller
         $this->deleteFlight = $deleteFlight;
         $this->showPayment = $showPayment;
         $this->updateFolio = $updateFolio;
+        $this->indexBank = $indexBank;
     }
 
     // protected function bookIndex(IndexBookingRequest $request)
@@ -191,5 +194,9 @@ class TransactionController extends Controller
     protected function updateFolio(Request $request)
     {
         return $this->updateFolio->execute($request);
+    }
+
+    protected function indexBank() {
+        return $this->indexBank->execute();
     }
 }
