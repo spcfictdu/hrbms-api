@@ -161,6 +161,7 @@ class ShowTransactionRepository extends BaseRepository
                 ],
                 "transaction" => [
                     "referenceNumber" => $transaction->reference_number,
+                    "roomCharges" => $roomCharges,
                     "status" => $transaction->status,
                     "paymentStatus" => $transaction->payment_status,
                     "amountRefunded" => $refundedRoom->amount ?? null,
