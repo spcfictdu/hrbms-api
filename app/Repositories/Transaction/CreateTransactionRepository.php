@@ -137,12 +137,16 @@ class CreateTransactionRepository extends BaseRepository
                 'transaction_id' => $transaction->id,
                 'folio_a_name' => $transaction->guest->full_name,
                 'folio_a_charge' => 1 - ($request->room['folio']['folioB']['charge'] ?? 0) - ($request->room['folio']['folioC']['charge'] ?? 0) - ($request->room['folio']['folioD']['charge'] ?? 0),
+                'folio_a_amount' => $request->room['folio']['folioA']['amount'],
                 'folio_b_name' => $request->room['folio']['folioB']['name'] ?? null,
                 'folio_b_charge' => $request->room['folio']['folioB']['charge'] ?? 0,
+                'folio_b_amount' => $request->room['folio']['folioB']['amount'] ?? 0,
                 'folio_c_name' => $request->room['folio']['folioC']['name'] ?? null,
                 'folio_c_charge' => $request->room['folio']['folioC']['charge'] ?? 0,
+                'folio_c_amount' => $request->room['folio']['folioC']['amount'] ?? 0,
                 'folio_d_name' => $request->room['folio']['folioD']['name'] ?? null,
-                'folio_d_charge' => $request->room['folio']['folioD']['charge'] ?? 0
+                'folio_d_charge' => $request->room['folio']['folioD']['charge'] ?? 0,
+                'folio_c_amount' => $request->room['folio']['folioD']['amount'] ?? 0,
             ]);
 
             // if (isset($request->addons) && isset($transaction->id)) {
@@ -205,12 +209,16 @@ class CreateTransactionRepository extends BaseRepository
                         'booking_addon_id' => $bookingAddon->id,
                         'folio_a_name' => $transaction->guest?->full_name ?? null,
                         'folio_a_charge' => 1 - ($folio['folioB']['charge'] ?? 0) - ($folio['folioC']['charge'] ?? 0) - ($folio['folioD']['charge'] ?? 0),
+                        'folio_a_amount' => $totalPrice - ($folio['folioB']['amount'] ?? 0) - ($folio['folioC']['amount'] ?? 0) - ($folio['folioD']['amount'] ?? 0),
                         'folio_b_name' => $folio['folioB']['name'] ?? null,
                         'folio_b_charge' => $folio['folioB']['charge'] ?? 0,
+                        'folio_b_amount' => $folio['folioB']['amount'] ?? 0,
                         'folio_c_name' => $folio['folioC']['name'] ?? null,
                         'folio_c_charge' => $folio['folioC']['charge'] ?? 0,
+                        'folio_c_amount' => $folio['folioC']['amount'] ?? 0,
                         'folio_d_name' => $folio['folioD']['name'] ?? null,
-                        'folio_d_charge' => $folio['folioD']['charge'] ?? 0
+                        'folio_d_charge' => $folio['folioD']['charge'] ?? 0,
+                        'folio_c_amount' => $folio['folioD']['amount'] ?? 0,
                     ]);
 
                     $createdAddons->push($bookingAddon);

@@ -20,13 +20,17 @@ return new class extends Migration
             $table->foreign('booking_addon_id')->references('id')->on('booking_addons')->onDelete('cascade');
             $table->enum('type', ['INDIVIDUAL', 'SPONSORED'])->default('INDIVIDUAL');
             $table->string('folio_a_name');
-            $table->decimal('folio_a_charge', 3, 2)->default(1.00);
+            $table->decimal('folio_a_charge', 5, 4)->default(1.00);
+            $table->decimal('folio_a_amount', 8, 2);
             $table->string('folio_b_name')->nullable();
-            $table->decimal('folio_b_charge', 3, 2)->default(0);
+            $table->decimal('folio_b_charge', 5, 4)->default(0);
+            $table->decimal('folio_b_amount', 8, 2)->default(0);
             $table->string('folio_c_name')->nullable();
-            $table->decimal('folio_c_charge', 3, 2)->default(0);
+            $table->decimal('folio_c_charge', 5, 4)->default(0);
+            $table->decimal('folio_c_amount', 8, 2)->default(0);
             $table->string('folio_d_name')->nullable();
-            $table->decimal('folio_d_charge', 3, 2)->default(0);
+            $table->decimal('folio_d_charge', 5, 4)->default(0);
+            $table->decimal('folio_d_amount', 8, 2)->default(0);
             $table->timestamps();
         });
     }

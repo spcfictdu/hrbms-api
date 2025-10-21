@@ -147,12 +147,16 @@ class UpdateTransactionRepository extends BaseRepository
                                 'booking_addon_id' => $bookingAddon->id,
                                 'folio_a_name' => $transaction->guest?->full_name ?? null,
                                 'folio_a_charge' => 1 - ($folio['folioB']['charge'] ?? 0) - ($folio['folioC']['charge'] ?? 0) - ($folio['folioD']['charge'] ?? 0),
+                                'folio_a_amount' => $totalPrice - ($folio['folioB']['amount'] ?? 0) - ($folio['folioC']['amount'] ?? 0) - ($folio['folioD']['amount'] ?? 0),
                                 'folio_b_name' => $folio['folioB']['name'] ?? null,
                                 'folio_b_charge' => $folio['folioB']['charge'] ?? 0,
+                                'folio_b_amount' => $folio['folioB']['amount'] ?? 0,
                                 'folio_c_name' => $folio['folioC']['name'] ?? null,
                                 'folio_c_charge' => $folio['folioC']['charge'] ?? 0,
+                                'folio_c_amount' => $folio['folioC']['amount'] ?? 0,
                                 'folio_d_name' => $folio['folioD']['name'] ?? null,
-                                'folio_d_charge' => $folio['folioD']['charge'] ?? 0
+                                'folio_d_charge' => $folio['folioD']['charge'] ?? 0,
+                                'folio_c_amount' => $folio['folioD']['amount'] ?? 0,
                             ]);
 
                             $createdAddons->push($bookingAddon);

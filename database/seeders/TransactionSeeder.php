@@ -132,6 +132,7 @@ class TransactionSeeder extends Seeder
             'transaction_id' => $newTransaction->id,
             'type' => 'INDIVIDUAL',
             'folio_a_name' => $newTransaction->guest->full_name,
+            'folio_a_amount' => $newTransaction->room_total,
         ]);
     }
 
@@ -208,6 +209,7 @@ class TransactionSeeder extends Seeder
                 'booking_addon_id' => $bookingAddon->id,
                 'type' => 'INDIVIDUAL',
                 'folio_a_name' => $bookingAddon->transaction->guest->full_name,
+                'folio_a_amount' => $bookingAddon->total_price,
             ]);
 
             $createdAddons->push($bookingAddon);

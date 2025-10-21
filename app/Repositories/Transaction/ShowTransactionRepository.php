@@ -6,6 +6,7 @@ use App\Models\Amenity\BookingAddon;
 use App\Models\Transaction\{
     Transaction,
     Payment,
+    Folio,
 };
 use App\Models\Transaction\VoidRefund;
 use App\Models\Discount\Voucher;
@@ -88,6 +89,11 @@ class ShowTransactionRepository extends BaseRepository
             $addonModel = Addon::where('name', $addon->name)->first();
             $addonPrice = $addonModel->price;
 
+            $addonCharges = Folio::where('transaction_id', $transaction->id)
+                ->where('item', 'ADDON')
+                ->where('booking_addon_id', $addon->id)
+                ->first();
+
             return [
                 'name' => $addon['name'],
                 'addonId' => $addon['id'],
@@ -97,6 +103,7 @@ class ShowTransactionRepository extends BaseRepository
                 'paymentStatus' => $addon->payment_status,
                 'amountRefunded' => $refundedAddon->amount ?? null,
                 'purchaseBatch' => $addon->purchase_batch,
+                'charges' => $addonCharges,
                 'createdAt' => $addon->created_at,
             ];
         });
@@ -139,6 +146,10 @@ class ShowTransactionRepository extends BaseRepository
         $refundedRoom = VoidRefund::where('item', 'ROOM')
             ->where('type', 'REFUND')
             ->where('transaction_id', $transaction->id)
+            ->first();
+
+        $roomCharges = Folio::where('transaction_id', $transaction->id)
+            ->where('item', 'ROOM')
             ->first();
         
         return $this->success("Transaction Info", [
