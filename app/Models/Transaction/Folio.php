@@ -20,12 +20,16 @@ class Folio extends Model
         'booking_addon_id',
         'folio_a_name',
         'folio_a_charge',
+        'folio_a_amount',
         'folio_b_name',
         'folio_b_charge',
+        'folio_b_amount',
         'folio_c_name',
         'folio_c_charge',
+        'folio_c_amount',
         'folio_d_name',
         'folio_d_charge',
+        'folio_d_amount',
     ];
 
     protected $hidden = [

@@ -53,17 +53,17 @@ class UpdateFolioRepository extends BaseRepository
             } elseif ($request->folioType === 'SPONSORED') {
                 $folio->update([
                     'type' => $request->folioType ?? $folio->type,
-                    'folio_a_charge' => 1 - ($request->folioB['charge'] ?? 0) - ($request->folioC['charge'] ?? 0) - ($request->folioD['charge'] ?? 0),
-                    'folio_a_amount' => $transaction->room_total - ($request->folioB['charge'] ?? 0) - ($request->folioC['charge'] ?? 0) - ($request->folioD['charge'] ?? 0),
+                    'folio_a_charge' => 1 - ($request->folioB['charge'] ?? $folio->folio_b_charge ?? 0) - ($request->folioC['charge'] ?? $folio->folio_c_charge ?? 0) - ($request->folioD['charge'] ?? $folio->folio_d_charge ?? 0),
+                    'folio_a_amount' => $grandTotal - ($request->folioB['amount'] ?? $folio->folio_b_amount ?? 0) - ($request->folioC['amount'] ?? $folio->folio_c_amount ?? 0) - ($request->folioD['amount'] ?? $folio->folio_d_amount ?? 0),
                     'folio_b_name' => $request->folioB['name'] ?? $folio->folio_b_name,
-                    'folio_b_charge' => $request->folioB['charge'] ?? $folio->folio_b_charge,
-                    'folio_b_amount' => $request->folioB['amount'] ?? $folio->folio_b_amount,
+                    'folio_b_charge' => $request->folioB['charge'] ?? $folio->folio_b_charge ?? 0,
+                    'folio_b_amount' => $request->folioB['amount'] ?? $folio->folio_b_amount ?? 0,
                     'folio_c_name' => $request->folioC['name'] ?? $folio->folio_c_name,
-                    'folio_c_charge' => $request->folioC['charge'] ?? $folio->folio_c_charge,
-                    'folio_c_amount' => $request->folioC['amount'] ?? $folio->folio_c_amount,
+                    'folio_c_charge' => $request->folioC['charge'] ?? $folio->folio_c_charge ?? 0,
+                    'folio_c_amount' => $request->folioC['amount'] ?? $folio->folio_c_amount ?? 0,
                     'folio_d_name' => $request->folioD['name'] ?? $folio->folio_d_name,
-                    'folio_d_charge' => $request->folioD['charge'] ?? $folio->folio_d_charge,
-                    'folio_d_amount' => $request->folioD['amount'] ?? $folio->folio_d_amount,
+                    'folio_d_charge' => $request->folioD['charge'] ?? $folio->folio_d_charge ?? 0,
+                    'folio_d_amount' => $request->folioD['amount'] ?? $folio->folio_d_amount ?? 0,
                 ]);
             }
             
