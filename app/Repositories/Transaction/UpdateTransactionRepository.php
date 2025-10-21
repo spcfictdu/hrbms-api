@@ -257,13 +257,14 @@ class UpdateTransactionRepository extends BaseRepository
                         ]);
 
                         $guest = $transaction->guest;
-
-                        Mail::to($guest->email)->send(new ReserveConfirmationMail($transaction));
-                        return $this->success("Reservation Confirmed Successfully.", Arr::collapse([
-                            $this->getCamelCase($guest->toArray()),
-                            $this->getCamelCase($transaction->toArray()),
-                            $this->getCamelCase($payment->toArray())
-                        ]));
+                        if (app()->environment('production')) {
+                            Mail::to($guest->email)->send(new ReserveConfirmationMail($transaction));
+                            return $this->success("Reservation Confirmed Successfully.", Arr::collapse([
+                                $this->getCamelCase($guest->toArray()),
+                                $this->getCamelCase($transaction->toArray()),
+                                $this->getCamelCase($payment->toArray())
+                            ]));
+                        }
                     }
 
                     $transaction->room->update([
