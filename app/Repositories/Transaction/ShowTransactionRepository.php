@@ -81,7 +81,7 @@ class ShowTransactionRepository extends BaseRepository
             ->get();
         $addonsTotal = $addons->sum('total_price');
 
-        $fullAddons = $addons->map(function ($addon) {
+        $fullAddons = $addons->map(function ($addon) use ($transaction){
 
             $refundedAddon = VoidRefund::where('addon_id', $addon->id)
                 ->where('type', 'REFUND')
