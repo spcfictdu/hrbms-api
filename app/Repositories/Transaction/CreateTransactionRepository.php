@@ -131,13 +131,15 @@ class CreateTransactionRepository extends BaseRepository
                 "guest_id" => $guest->id,
             ]);
 
+            // dd($request->room, $request->addons);
+
             $roomCharge = Folio::create([
                 'item' => 'ROOM',
                 'type' => $request->room['folio']['type'] ?? 'INDIVIDUAL',
                 'transaction_id' => $transaction->id,
                 'folio_a_name' => $transaction->guest->full_name,
                 'folio_a_charge' => 1 - ($request->room['folio']['folioB']['charge'] ?? 0) - ($request->room['folio']['folioC']['charge'] ?? 0) - ($request->room['folio']['folioD']['charge'] ?? 0),
-                'folio_a_amount' => $request->room['folio']['folioA']['amount'],
+                'folio_a_amount' => $transaction->room_total - ($request->room['folio']['folioB']['amount'] ?? 0) - ($request->room['folio']['folioC']['amount'] ?? 0) - ($request->room['folio']['folioD']['amount'] ?? 0),
                 'folio_b_name' => $request->room['folio']['folioB']['name'] ?? null,
                 'folio_b_charge' => $request->room['folio']['folioB']['charge'] ?? 0,
                 'folio_b_amount' => $request->room['folio']['folioB']['amount'] ?? 0,

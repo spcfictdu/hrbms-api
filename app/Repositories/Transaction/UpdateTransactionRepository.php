@@ -156,7 +156,7 @@ class UpdateTransactionRepository extends BaseRepository
                                 'folio_c_amount' => $folio['folioC']['amount'] ?? 0,
                                 'folio_d_name' => $folio['folioD']['name'] ?? null,
                                 'folio_d_charge' => $folio['folioD']['charge'] ?? 0,
-                                'folio_c_amount' => $folio['folioD']['amount'] ?? 0,
+                                'folio_d_amount' => $folio['folioD']['amount'] ?? 0,
                             ]);
 
                             $createdAddons->push($bookingAddon);
