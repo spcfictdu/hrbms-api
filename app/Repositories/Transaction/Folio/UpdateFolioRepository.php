@@ -65,6 +65,19 @@ class UpdateFolioRepository extends BaseRepository
                     'folio_d_charge' => $request->folioD['charge'] ?? $folio->folio_d_charge ?? 0,
                     'folio_d_amount' => $request->folioD['amount'] ?? $folio->folio_d_amount ?? 0,
                 ]);
+                if ($request->filled('folioB') && $request->folioB['name'] === null) {
+                    $folio->update([
+                        'folio_b_name' => null,
+                    ]);   
+                } elseif ($request->filled('folioC') && $request->folioC['name'] === null) {
+                    $folio->update([
+                        'folio_c_name' => null,
+                    ]);   
+                } elseif ($request->filled('folioD') && $request->folioD['name'] === null) {
+                    $folio->update([
+                        'folio_d_name' => null,
+                    ]);   
+                }
             }
             
             return $this->success('Folio record updated successfully', $folio);
