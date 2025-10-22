@@ -69,11 +69,13 @@ class UpdateFolioRepository extends BaseRepository
                     $folio->update([
                         'folio_b_name' => null,
                     ]);   
-                } elseif ($request->filled('folioC') && $request->folioC['name'] === null) {
+                } 
+                if ($request->filled('folioC') && $request->folioC['name'] === null) {
                     $folio->update([
                         'folio_c_name' => null,
                     ]);   
-                } elseif ($request->filled('folioD') && $request->folioD['name'] === null) {
+                } 
+                if ($request->filled('folioD') && $request->folioD['name'] === null) {
                     $folio->update([
                         'folio_d_name' => null,
                     ]);   
