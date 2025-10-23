@@ -71,7 +71,7 @@
                         </div>
                         <div style="padding: 1rem;">
                             <small>
-                                <p style="margin: 0;">HRBMS is a system developed for Hotel and Room Students in a Bulacan School.</p>
+                                <p style="margin: 0;">HRBMS is a system developed for CHTM Students in SPCF.</p>
                             </small>
                         </div>
                     </div>
