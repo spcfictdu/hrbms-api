@@ -5,7 +5,6 @@ namespace App\Repositories\Auth;
 use App\Models\Guest\Guest;
 use App\Repositories\BaseRepository;
 use App\Models\User;
-use Illuminate\Support\Str;
 
 class RegisterRepository extends BaseRepository
 {
@@ -31,8 +30,8 @@ class RegisterRepository extends BaseRepository
     {
         $user = User::create([
             'username' => $request->username ?? null,
-            'first_name' => Str::of($request->firstName)->upper(),
-            'last_name' => Str::of($request->lastName)->upper(),
+            'first_name' => mb_strtoupper($request->firstName),
+            'last_name' => mb_strtoupper($request->lastName),
             'email' => $request->email,
             'password' => $request->password,
             'mobile' => $request->mobile ?? null,
@@ -47,9 +46,9 @@ class RegisterRepository extends BaseRepository
     {
         return Guest::create([
             'reference_number' => $this->guestReferenceNumber(),
-            'first_name' => Str::of($request->firstName)->upper(),
-            'middle_name' => Str::of($request->middleName)->upper() ?? null,
-            'last_name' => Str::of($request->lastName)->upper(),
+            'first_name' => mb_strtoupper($request->firstName),
+            'middle_name' => mb_strtoupper($request->middleName) ?? null,
+            'last_name' => mb_strtoupper($request->lastName),
             'phone_number' => $request->mobileNumber,
             'email' => $request->email,
             'user_id' => $user->id,
