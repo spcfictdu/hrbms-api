@@ -57,7 +57,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                     'price' => number_format((float) $addon->total_price, 2, '.', ''),
                     'paymentId' => $addon->payment_id ?? $addon->payment?->id,
                     'paymentType' => $addon->payment->payment_type ?? null,
-                    'paymentAmount' => number_format((float) ($addon->payment->amount_received ?? 0), 2, '.', ''),
+                    'paymentAmount' => 0,
                     'paymentStatus' => $addon->payment_status,
                     'folio' => [
                         'folioType' => $addon->folio->type,
@@ -97,6 +97,21 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 ];
             });
 
+            $roomPayment = Payment::where('transaction_id', $transaction->id)
+                ->orderBy('id', 'asc')
+                ->first();
+
+            $room = [
+                'item' => $transaction->room->roomType->name,
+                'quantity' => (int)$transaction->number_of_guest + 1,
+                'price' => ($transaction->room_total) - $discountValue,
+                'paymentId' => $roomPayment->id,
+                'paymentAmount' => 0,
+                'paymentStatus' => $transaction->payment_status,
+                'user' => $roomPayment->user->username,
+                'datetime' => Carbon::parse($transaction->created_at)->format('Y-m-d H:i:s'),
+            ];
+
             $chargeDistribution = Folio::where('transaction_id', $transaction->id)
                 ->get();
             $roomCharges = $chargeDistribution->where('item', 'ROOM')
@@ -121,10 +136,12 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 ] ?? null,
             ];
 
+            $room = collect([$room]);
             $transformedAddons = collect($transformedAddons);
             $transformedPayments = collect($transformedPayments);
 
-            $mergedTransactions = $transformedAddons->merge($transformedPayments);
+            $mergedItems = $room->merge($transformedAddons);
+            $mergedTransactions = $mergedItems->merge($transformedPayments);
 
             $mergedTransactions = $mergedTransactions->sortBy(function ($item) {
                 return Carbon::parse($item['datetime'])->timestamp;
