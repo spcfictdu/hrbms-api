@@ -57,7 +57,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                     'quantity' => $addon->quantity,
                     'price' => number_format((float) $addon->total_price, 2, '.', ''),
                     'paymentId' => $addon->payment_id ?? $addon->payment?->id,
-                    'paymentType' => $addon->payment->payment_type ?? null,
+                    'paymentType' => null,
                     'paymentAmount' => 0,
                     'paymentStatus' => $addon->payment_status,
                     'folio' => [
@@ -107,6 +107,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 'quantity' => (int)$transaction->number_of_guest + 1,
                 'price' => $transaction->room_total - $discountValue,
                 'paymentId' => $roomPayment->id,
+                'paymentType' => null,
                 'paymentAmount' => 0,
                 'paymentStatus' => $transaction->payment_status,
                 'user' => $roomPayment->user->username,
