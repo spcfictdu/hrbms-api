@@ -7,6 +7,7 @@ use App\Models\Transaction\Transaction;
 use App\Models\Amenity\BookingAddon;
 use App\Models\Transaction\Payment;
 use App\Models\Transaction\Folio;
+use App\Models\Room\RoomType;
 use Carbon\Carbon;
 
 class GenerateGuestBillingReportRepository extends BaseRepository
@@ -104,7 +105,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
             $room = [
                 'item' => $transaction->room->roomType->name,
                 'quantity' => (int)$transaction->number_of_guest + 1,
-                'price' => ($transaction->room_total) - $discountValue,
+                'price' => $transaction->room_total - $discountValue,
                 'paymentId' => $roomPayment->id,
                 'paymentAmount' => 0,
                 'paymentStatus' => $transaction->payment_status,
@@ -150,8 +151,12 @@ class GenerateGuestBillingReportRepository extends BaseRepository
             $totalBalance = $transaction->room_total - $discountValue;
 
             $mergedTransactions = $mergedTransactions->map(function ($item) use (&$totalBalance) {
+                $roomTypeNames = RoomType::pluck('name')->toArray();
+                
                 if ($item['item'] === 'PAYMENT') {
                     $totalBalance -= (float) $item['paymentAmount'];
+                } elseif (in_array($item['item'], $roomTypeNames)) {
+                    $totalBalance = $totalBalance;
                 } else {
                     if (!in_array($item['paymentStatus'], ['VOIDED', 'REFUNDED'])) {
                         $totalBalance += (float) $item['price'];
