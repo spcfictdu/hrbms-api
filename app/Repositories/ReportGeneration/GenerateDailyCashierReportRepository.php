@@ -27,6 +27,18 @@ class GenerateDailyCashierReportRepository
             ->with('user')
             ->get();
 
+        $cashiers = User::Role('FRONT DESK')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $cashierIds = [];
+        $i = 1;
+
+        foreach ($cashiers as $cashier) {
+            $cashierIds[(string)$cashier->id] = $i;
+            $i += 1;
+        }
+
         $userReports = [];
 
         foreach ($cashierSessions as $session) {
@@ -44,6 +56,8 @@ class GenerateDailyCashierReportRepository
 
             foreach ($payments as $payment) {
                 $transactions[] = [
+                    'userId' => $payment->user->id,
+                    'username' => $payment->user->username,
                     'transactionReferenceNumber' => $payment->transaction->reference_number,
                     'type' => 'PAYMENT',
                     'amount' => $payment->amount_received,
@@ -67,6 +81,8 @@ class GenerateDailyCashierReportRepository
 
             $transformedVoidsRefunds = $mergedVoidsRefunds->map(function ($data) {
                 return [
+                    'userId' => $data->cashierSession->user->id,
+                    'username' => $data->cashierSession->user->username,
                     'transactionReferenceNumber' => $data->transaction->reference_number,
                     'type' => $data->type,
                     'amount' => $data->amount,
@@ -86,6 +102,7 @@ class GenerateDailyCashierReportRepository
             $userReports[] = [
                 'user' => $user->last_name . ', ' . $user->first_name,
                 'userId' => $user->id,
+                'cashierId' => $cashierIds[(string)$user->id] ?? 'admin',
                 'cashierSessionId' => $session->id,
                 'openingBalance' => $session->opening_balance,
                 'openingAdjustment' => $session->opening_adjustment,
