@@ -52,6 +52,26 @@ class GenerateGuestBillingReportRepository extends BaseRepository
             $grandTotal = ((float)$transaction->room_total - (float)$discountValue) + (float)$addonsTotal;
 
             $transformedAddons = $fullAddons->map(function ($addon) {
+                if ($addon->folio->folio_a_amount <= 0) {
+                    $aCharge = $addon->folio->folio_a_charge * $addon->total_price;
+                } else {
+                    $aCharge = $addon->folio->folio_a_amount;
+                }
+                if ($addon->folio->folio_b_amount <= 0) {
+                    $bCharge = $addon->folio->folio_b_charge * $addon->total_price;
+                } else {
+                    $bCharge = $addon->folio->folio_b_amount;
+                }
+                if ($addon->folio->folio_c_amount <= 0) {
+                    $cCharge = $addon->folio->folio_c_charge * $addon->total_price;
+                } else {
+                    $cCharge = $addon->folio->folio_c_amount;
+                }
+                if ($addon->folio->folio_d_amount <= 0) {
+                    $dCharge = $addon->folio->folio_d_charge * $addon->total_price;
+                } else {
+                    $dCharge = $addon->folio->folio_d_amount;
+                }
                 return [
                     'item' => $addon->name,
                     'quantity' => $addon->quantity,
@@ -64,19 +84,19 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                         'folioType' => $addon->folio->type,
                         'folioA' => [
                             'name' => $addon->folio->folio_a_name,
-                            'charge' => $addon->folio->folio_a_charge * $addon->total_price,
+                            'charge' => $aCharge,
                         ] ?? null,
                         'folioB' => [
                             'name' => $addon->folio->folio_b_name,
-                            'charge' => $addon->folio->folio_b_charge * $addon->total_price,
+                            'charge' => $bCharge,
                         ] ?? null,
                         'folioC' => [
                             'name' => $addon->folio->folio_c_name,
-                            'charge' => $addon->folio->folio_c_charge * $addon->total_price,
+                            'charge' => $cCharge,
                         ] ?? null,
                         'folioD' => [
                             'name' => $addon->folio->folio_d_name,
-                            'charge' => $addon->folio->folio_d_charge * $addon->total_price,
+                            'charge' => $dCharge,
                         ] ?? null,
                     ],
                     'user' => $addon->payment->user->username ?? null,
@@ -102,6 +122,51 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 ->orderBy('id', 'asc')
                 ->first();
 
+            $chargeDistribution = Folio::where('transaction_id', $transaction->id)
+                ->get();
+            $roomCharges = $chargeDistribution->where('item', 'ROOM')
+                ->first();
+
+            if ($roomCharges->folio_a_amount <= 0) {
+                $aCharge = $roomCharges->folio_a_charge * ($transaction->room_total - $discountValue);
+            } else {
+                $aCharge = $roomCharges->folio_a_amount;
+            }
+            if ($roomCharges->folio_b_amount <= 0) {
+                $bCharge = $roomCharges->folio_b_charge * ($transaction->room_total - $discountValue);
+            } else {
+                $bCharge = $roomCharges->folio_b_amount;
+            }
+            if ($roomCharges->folio_c_amount <= 0) {
+                $cCharge = $roomCharges->folio_c_charge * ($transaction->room_total - $discountValue);
+            } else {
+                $cCharge = $roomCharges->folio_c_amount;
+            }
+            if ($roomCharges->folio_d_amount <= 0) {
+                $dCharge = $roomCharges->folio_d_charge * ($transaction->room_total - $discountValue);
+            } else {
+                $dCharge = $roomCharges->folio_d_amount;
+            }
+            $transformedRoomCharges = [
+                'folioType' => $roomCharges->type,
+                'folioA' => [
+                    'name' => $roomCharges->folio_a_name,
+                    'charge' => $aCharge
+                ],
+                'folioB' => [
+                    'name' => $roomCharges->folio_b_name,
+                    'charge' => $bCharge
+                ] ?? null,
+                'folioC' => [
+                    'name' => $roomCharges->folio_c_name,
+                    'charge' => $cCharge
+                ] ?? null,
+                'folioD' => [
+                    'name' => $roomCharges->folio_d_name,
+                    'charge' => $dCharge
+                ] ?? null,
+            ];
+
             $room = [
                 'item' => $transaction->room->roomType->name,
                 'quantity' => (int)$transaction->number_of_guest + 1,
@@ -110,32 +175,9 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 'paymentType' => null,
                 'paymentAmount' => 0,
                 'paymentStatus' => $transaction->payment_status,
+                'folio' => $transformedRoomCharges,
                 'user' => $roomPayment->user->username,
                 'datetime' => Carbon::parse($transaction->created_at)->format('Y-m-d H:i:s'),
-            ];
-
-            $chargeDistribution = Folio::where('transaction_id', $transaction->id)
-                ->get();
-            $roomCharges = $chargeDistribution->where('item', 'ROOM')
-                ->first();
-            $transformedRoomCharges = [
-                'folioType' => $roomCharges->type,
-                'folioA' => [
-                    'name' => $roomCharges->folio_a_name,
-                    'charge' => $roomCharges->folio_a_charge * ($transaction->room_total - $discountValue)
-                ],
-                'folioB' => [
-                    'name' => $roomCharges->folio_b_name,
-                    'charge' => $roomCharges->folio_b_charge * ($transaction->room_total - $discountValue)
-                ] ?? null,
-                'folioC' => [
-                    'name' => $roomCharges->folio_c_name,
-                    'charge' => $roomCharges->folio_c_charge * ($transaction->room_total - $discountValue)
-                ] ?? null,
-                'folioD' => [
-                    'name' => $roomCharges->folio_d_name,
-                    'charge' => $roomCharges->folio_d_charge * ($transaction->room_total - $discountValue)
-                ] ?? null,
             ];
 
             $room = collect([$room]);
@@ -192,7 +234,6 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 'checkIn' => $checkIn,
                 'checkOut' => $checkOut,
                 'roomTotal' => number_format((float) $transaction->room_total, 2, '.', ''),
-                'roomCharges' => $transformedRoomCharges,
                 'addonsTotal' => number_format((float) $addonsTotal, 2, '.', ''),
                 'grossTotal' => number_format((float) $grossTotal, 2, '.', ''),
                 'discount' => $discount->discount ?? null,

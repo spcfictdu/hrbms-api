@@ -139,7 +139,6 @@ class CreateTransactionRepository extends BaseRepository
                 'transaction_id' => $transaction->id,
                 'folio_a_name' => $transaction->guest->full_name,
                 'folio_a_charge' => 1 - ($request->room['folio']['folioB']['charge'] ?? 0) - ($request->room['folio']['folioC']['charge'] ?? 0) - ($request->room['folio']['folioD']['charge'] ?? 0),
-                'folio_a_amount' => $transaction->room_total - ($request->room['folio']['folioB']['amount'] ?? 0) - ($request->room['folio']['folioC']['amount'] ?? 0) - ($request->room['folio']['folioD']['amount'] ?? 0),
                 'folio_b_name' => $request->room['folio']['folioB']['name'] ?? null,
                 'folio_b_charge' => $request->room['folio']['folioB']['charge'] ?? 0,
                 'folio_b_amount' => $request->room['folio']['folioB']['amount'] ?? 0,
@@ -150,6 +149,14 @@ class CreateTransactionRepository extends BaseRepository
                 'folio_d_charge' => $request->room['folio']['folioD']['charge'] ?? 0,
                 'folio_c_amount' => $request->room['folio']['folioD']['amount'] ?? 0,
             ]);
+            if (($request->room['folio']['folioB']['amount'] ?? 0 > 0)
+                    || ($request->room['folio']['folioC']['amount'] ?? 0 > 0)
+                    || ($request->room['folio']['folioC']['amount'] ?? 0 > 0)) {
+                        $roomCharge->update([
+                            'folio_a_charge' => 0,
+                            'folio_a_amount' => ($transaction->room_total - $discountValue) - ($request->room['folio']['folioB']['amount'] ?? 0) - ($request->room['folio']['folioC']['amount'] ?? 0) - ($request->room['folio']['folioC']['amount'] ?? 0),
+                        ]);
+                    }
 
             // if (isset($request->addons) && isset($transaction->id)) {
             //     $sample = array_map(function ($addon) use ($request, $transaction) {
@@ -204,14 +211,13 @@ class CreateTransactionRepository extends BaseRepository
 
                     $folio = $addonData['folio'] ?? [];
 
-                    Folio::create([
+                    $addonFolio = Folio::create([
                         'item' => 'ADDON',
                         'type' => $folio['type'] ?? 'INDIVIDUAL',
                         'transaction_id' => $transaction->id,
                         'booking_addon_id' => $bookingAddon->id,
                         'folio_a_name' => $transaction->guest?->full_name ?? null,
                         'folio_a_charge' => 1 - ($folio['folioB']['charge'] ?? 0) - ($folio['folioC']['charge'] ?? 0) - ($folio['folioD']['charge'] ?? 0),
-                        'folio_a_amount' => $totalPrice - ($folio['folioB']['amount'] ?? 0) - ($folio['folioC']['amount'] ?? 0) - ($folio['folioD']['amount'] ?? 0),
                         'folio_b_name' => $folio['folioB']['name'] ?? null,
                         'folio_b_charge' => $folio['folioB']['charge'] ?? 0,
                         'folio_b_amount' => $folio['folioB']['amount'] ?? 0,
@@ -222,6 +228,11 @@ class CreateTransactionRepository extends BaseRepository
                         'folio_d_charge' => $folio['folioD']['charge'] ?? 0,
                         'folio_c_amount' => $folio['folioD']['amount'] ?? 0,
                     ]);
+                    if (($folio['folioB']['amount'] ?? 0 > 0) || ($folio['folioC']['amount'] ?? 0 > 0) || ($folio['folioD']['amount'] ?? 0 > 0)) {
+                        $addonFolio->update([
+                            'folio_a_amount' => $totalPrice - ($folio['folioB']['amount'] ?? 0) - ($folio['folioC']['amount'] ?? 0) - ($folio['folioD']['amount'] ?? 0),
+                        ]);
+                    }
 
                     $createdAddons->push($bookingAddon);
                 }

@@ -140,14 +140,13 @@ class UpdateTransactionRepository extends BaseRepository
 
                             $folio = $addonData['folio'] ?? [];
 
-                            Folio::create([
+                            $addonFolio = Folio::create([
                                 'item' => 'ADDON',
                                 'type' => $folio['type'] ?? 'INDIVIDUAL',
                                 'transaction_id' => $transaction->id,
                                 'booking_addon_id' => $bookingAddon->id,
                                 'folio_a_name' => $transaction->guest?->full_name ?? null,
                                 'folio_a_charge' => 1 - ($folio['folioB']['charge'] ?? 0) - ($folio['folioC']['charge'] ?? 0) - ($folio['folioD']['charge'] ?? 0),
-                                'folio_a_amount' => $totalPrice - ($folio['folioB']['amount'] ?? 0) - ($folio['folioC']['amount'] ?? 0) - ($folio['folioD']['amount'] ?? 0),
                                 'folio_b_name' => $folio['folioB']['name'] ?? null,
                                 'folio_b_charge' => $folio['folioB']['charge'] ?? 0,
                                 'folio_b_amount' => $folio['folioB']['amount'] ?? 0,
@@ -158,6 +157,12 @@ class UpdateTransactionRepository extends BaseRepository
                                 'folio_d_charge' => $folio['folioD']['charge'] ?? 0,
                                 'folio_d_amount' => $folio['folioD']['amount'] ?? 0,
                             ]);
+                            if (($folio['folioB']['amount'] ?? 0 > 0) || ($folio['folioC']['amount'] ?? 0 > 0) || ($folio['folioD']['amount'] ?? 0 > 0)) {
+                                $addonFolio->update([
+                                    'folio_a_charge' => 0,
+                                    'folio_a_amount' => $totalPrice - ($folio['folioB']['amount'] ?? 0) - ($folio['folioC']['amount'] ?? 0) - ($folio['folioD']['amount'] ?? 0),
+                                ]);
+                            }
 
                             $createdAddons->push($bookingAddon);
                         }

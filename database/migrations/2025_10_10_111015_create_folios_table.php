@@ -21,7 +21,7 @@ return new class extends Migration
             $table->enum('type', ['INDIVIDUAL', 'SPONSORED'])->default('INDIVIDUAL');
             $table->string('folio_a_name');
             $table->decimal('folio_a_charge', 5, 4)->default(1.00);
-            $table->decimal('folio_a_amount', 8, 2);
+            $table->decimal('folio_a_amount', 8, 2)->default(0);
             $table->string('folio_b_name')->nullable();
             $table->decimal('folio_b_charge', 5, 4)->default(0);
             $table->decimal('folio_b_amount', 8, 2)->default(0);

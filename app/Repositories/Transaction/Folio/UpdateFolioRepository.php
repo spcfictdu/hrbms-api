@@ -54,7 +54,6 @@ class UpdateFolioRepository extends BaseRepository
                 $folio->update([
                     'type' => $request->folioType ?? $folio->type,
                     'folio_a_charge' => 1 - ($request->folioB['charge'] ?? $folio->folio_b_charge ?? 0) - ($request->folioC['charge'] ?? $folio->folio_c_charge ?? 0) - ($request->folioD['charge'] ?? $folio->folio_d_charge ?? 0),
-                    'folio_a_amount' => $grandTotal - ($request->folioB['amount'] ?? $folio->folio_b_amount ?? 0) - ($request->folioC['amount'] ?? $folio->folio_c_amount ?? 0) - ($request->folioD['amount'] ?? $folio->folio_d_amount ?? 0),
                     'folio_b_name' => $request->folioB['name'] ?? $folio->folio_b_name,
                     'folio_b_charge' => $request->folioB['charge'] ?? $folio->folio_b_charge ?? 0,
                     'folio_b_amount' => $request->folioB['amount'] ?? $folio->folio_b_amount ?? 0,
@@ -65,6 +64,12 @@ class UpdateFolioRepository extends BaseRepository
                     'folio_d_charge' => $request->folioD['charge'] ?? $folio->folio_d_charge ?? 0,
                     'folio_d_amount' => $request->folioD['amount'] ?? $folio->folio_d_amount ?? 0,
                 ]);
+                if (($request->folioB['amount'] ?? $folio->folio_b_amount ?? 0 > 0) || ($request->folioC['amount'] ?? $folio->folio_b_amount ?? 0 > 0) || ($request->folioD['amount'] ?? $folio->folio_b_amount ?? 0 > 0)) {
+                    $folio->update([
+                        'folio_a_charge' => 0,
+                        'folio_a_amount' => $grandTotal - ($request->folioB['amount'] ?? $folio->folio_b_amount ?? 0) - ($request->folioC['amount'] ?? $folio->folio_c_amount ?? 0) - ($request->folioD['amount'] ?? $folio->folio_d_amount ?? 0),
+                    ]);
+                }
                 if ($request->filled('folioB') && $request->folioB['name'] === null) {
                     $folio->update([
                         'folio_b_name' => null,
