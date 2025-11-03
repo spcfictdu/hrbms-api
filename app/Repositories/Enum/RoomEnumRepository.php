@@ -27,15 +27,23 @@ class RoomEnumRepository extends BaseRepository
 
         // Create a DatePeriod object
         $begin = new DateTime($filterDateRange[0]);
-        $end = new DateTime($filterDateRange[1] ?? '2000-01-01');
-        $interval = new DateInterval('P1D'); // Set interval to 1 day
-        $dateRange = new DatePeriod($begin, $interval, $end);
+        $end = new DateTime($filterDateRange[1] ?? $filterDateRange[0]); // fallback to same day if missing
+        $interval = new DateInterval('P1D');
 
-        // Convert DatePeriod object to an array of dates
-        $dates = [];
-        foreach ($dateRange as $date) {
-            $dates[] = $date->format('Y-m-d');
-        }
+        // If same-day checkout or invalid range, include at least one date (the check-in date)
+        if ($begin = $end) {
+            $dates = [$begin->format('Y-m-d')];
+        } else {
+            $dateRange = new DatePeriod($begin, $interval, $end);
+            $dates = [];
+            foreach ($dateRange as $date) {
+                $dates[] = $date->format('Y-m-d');
+            }
+
+            // Add checkout date if you want it counted as a full day
+            // (optional depending on business rule)
+            $dates[] = $end->format('Y-m-d');
+        }   
 
         $roomsQuery = Room::query();
 
