@@ -31,7 +31,7 @@ class RoomEnumRepository extends BaseRepository
         $interval = new DateInterval('P1D');
 
         // If same-day checkout or invalid range, include at least one date (the check-in date)
-        if ($begin = $end) {
+        if ($begin === $end) {
             $dates = [$begin->format('Y-m-d')];
         } else {
             $dateRange = new DatePeriod($begin, $interval, $end);
@@ -39,10 +39,6 @@ class RoomEnumRepository extends BaseRepository
             foreach ($dateRange as $date) {
                 $dates[] = $date->format('Y-m-d');
             }
-
-            // Add checkout date if you want it counted as a full day
-            // (optional depending on business rule)
-            $dates[] = $end->format('Y-m-d');
         }   
 
         $roomsQuery = Room::query();
