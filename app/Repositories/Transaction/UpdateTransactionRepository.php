@@ -117,7 +117,7 @@ class UpdateTransactionRepository extends BaseRepository
                     // }
 
                     $fullAddons = BookingAddon::where('transaction_id', $transaction->id)->get();
-                    $lastPurchaseBatch = $fullAddons->max('purchase_batch');
+                    $lastPurchaseBatch = $fullAddons->max('purchase_batch') ?? 1;
 
                     $createdAddons = collect();
                     if (isset($request->addons) && isset($transaction->id)) {
@@ -136,6 +136,7 @@ class UpdateTransactionRepository extends BaseRepository
                                 "quantity" => $quantity,
                                 "total_price" => $totalPrice,
                                 "payment_id" => $payment->id,
+                                "purchase_batch" => $lastPurchaseBatch + 1
                             ]);
 
                             $folio = $addonData['folio'] ?? [];
