@@ -145,7 +145,7 @@ class RoomEnumRepository extends BaseRepository
                 'addons' => $fullAddons,
                 'addonsTotal' => $addonsTotal,
                 'discount' => ($discountValue * 100 . '%'), // show discount
-                'roomTotal' => round($addonsTotal + (array_sum(array_map(function ($date) use ($rate, $discountValue) {
+                'roomTotal' => round((array_sum(array_map(function ($date) use ($rate, $discountValue) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
                     return ($rate[$dayOfWeek] ?? 0) * (1 - $discountValue);
                 }, $dates))), 2),
