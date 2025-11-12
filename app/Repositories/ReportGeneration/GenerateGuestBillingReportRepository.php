@@ -22,19 +22,19 @@ class GenerateGuestBillingReportRepository extends BaseRepository
         $guest = $transaction->guest;
 
         if ($guest) {
-            $discount = $transaction->voucherDiscount ?? $transaction->seniorPwdDiscount ?? null;
-            if ($discount !== null) {
-                $discountValue = (float)$transaction->room_total * ((float)$discount->value);
-            } else {
-                $discountValue = 0;
-            }
-
             $payments = Payment::where('transaction_id', $transaction->id)
                 ->get();
 
             $fullAddons = BookingAddon::with('payment')
                 ->where('transaction_id', $transaction->id)
                 ->get();
+            
+            $discount = $transaction->voucherDiscount ?? $transaction->seniorPwdDiscount ?? null;
+            if ($discount !== null) {
+                $discountValue = ((float)$transaction->room_total + $fullAddons->sum('total_price')) * ((float)$discount->value);
+            } else {
+                $discountValue = 0;
+            }
 
             // $addonsCharges = $chargeDistribution->where('item', 'ADDON')
             //     ->get();
@@ -49,7 +49,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
 
             $grossTotal = $transaction->room_total + $addonsTotal;
 
-            $grandTotal = ((float)$transaction->room_total - (float)$discountValue) + (float)$addonsTotal;
+            $grandTotal = ((float)$transaction->room_total  + (float)$addonsTotal) - (float)$discountValue;
 
             $transformedAddons = $fullAddons->map(function ($addon) {
                 if ($addon->folio->folio_a_amount <= 0) {

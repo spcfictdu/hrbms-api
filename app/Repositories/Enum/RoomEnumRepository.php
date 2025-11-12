@@ -141,21 +141,26 @@ class RoomEnumRepository extends BaseRepository
                 'addons' => $fullAddons,
                 'addonsTotal' => $addonsTotal,
                 'discount' => ($discountValue * 100 . '%'), // show discount
-                'roomTotal' => round((array_sum(array_map(function ($date) use ($rate, $discountValue) {
+                'roomTotal' => array_sum(array_map(function ($date) use ($rate, $discountValue) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
-                    return ($rate[$dayOfWeek] ?? 0) * (1 - $discountValue);
-                }, $dates))), 2),
+                    return ($rate[$dayOfWeek] ?? 0);
+                }, $dates)),
                 'extraPersonCount' => $extraPersonCount,
-                'extraPersonTotal' => round(array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue) {
+                'extraPersonTotal' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
                     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
-                    return round(($extraPersonRate * $extraPersonCount) * (1 - $discountValue), 2);
-                }, $dates)), 2),
-                'roomTotalWithExtraPerson' =>  round($addonsTotal + array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue) {
+                    return $extraPersonRate * $extraPersonCount;
+                }, $dates)),
+                'roomTotalWithExtraPerson' =>  array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
                     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
-                    return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount)) * (1 - $discountValue);
-                }, $dates)), 2),
+                    return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount));
+                }, $dates)),
+                'discountedAmount' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue, $extraPersonRate, $addonsTotal) {
+                    $dayOfWeek = strtolower((new DateTime($date))->format('l'));
+                    $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
+                    return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount) + $addonsTotal) * $discountValue;
+                }, $dates)),
                 'extraPersonCapacity' => $room->roomType->extra_person_capacity ? range(0, $room->roomType->extra_person_capacity) : 0,
             ];
         });
