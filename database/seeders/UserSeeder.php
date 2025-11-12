@@ -64,38 +64,17 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('developer'),
                 'role' => 'GUEST',
             ],
-            [
-                'id' => 6,
-                'username' => 'frontdesk',
-                'first_name' => 'tester',
-                'last_name' => 'tester',
-                'email' => 'helpdesk@gmail.com',
-                'password' => Hash::make('developer'),
-                'role' => 'FRONT DESK',
-            ]
+            // [
+            //     'id' => 6,
+            //     'username' => 'frontdesk',
+            //     'first_name' => 'tester',
+            //     'last_name' => 'tester',
+            //     'email' => 'helpdesk@gmail.com',
+            //     'password' => Hash::make('developer'),
+            //     'role' => 'FRONT DESK',
+            // ]
             // Add more users here with their respective roles
         ];
-
-        $additonalUsers = User::factory()->count(60)->create();
-        // $randomRole = fake()->randomElement(['ADMIN', 'FRONT DESK', 'GUEST']);
-        // $role = Role::findByName($randomRole);
-        foreach ($additonalUsers as $user) {
-            $user->assignRole('GUEST');
-        }
-
-        // Create 60 front desk users
-        // for ($i = 0; $i < 60; $i++) {
-        //     $user = User::create([
-        //         'username' => 'frontdesk' . $i,
-        //         'first_name' => $faker->firstName,
-        //         'last_name' => $faker->lastName,
-        //         'email' => $faker->unique()->safeEmail,
-        //         'password' => Hash::make('frontdesk'),
-        //     ]);
-
-        //     $role = Role::findByName('FRONT DESK');
-        //     $user->assignRole($role);
-        // };
 
         foreach ($users as $userData) {
             $user = User::create([
@@ -115,10 +94,10 @@ class UserSeeder extends Seeder
                     "first_name" => $userData['first_name'],
                     "middle_name" => null,
                     "last_name" => $userData['last_name'],
-                    "province" => strtoupper($faker->state),
-                    "city" => strtoupper($faker->city),
+                    "province" => mb_strtoupper($faker->state),
+                    "city" => mb_strtoupper($faker->city),
                     "phone_number" => '09' . $faker->numerify('#########'),
-                    // "email" => $faker->email,
+                    "email" => $userData['email'],
                     "email" => "dev@gmail.com",
                     "id_type" => "PRC",
                     "id_number" => "123456789",
@@ -129,6 +108,56 @@ class UserSeeder extends Seeder
             $role = Role::findByName($userData['role']);
             $user->assignRole($role);
         }
+
+        $cashiers = User::factory()->count(10)->create();
+        $i = 1;
+        foreach ($cashiers as $cashier) {
+            $cashier->assignRole('FRONT DESK');
+            $cashier->update([
+                'username' => 'frontdesk' . $i,
+                'first_name' => 'frontdesk',
+                'last_name' => $i,
+                'email' => 'helpdesk' . $i . '@gmail.com',
+                'password' => Hash::make('developer'),
+            ]);
+            $i+=1;
+        }
+
+        $additionalUsers = User::factory()->count(30)->create();
+        // $randomRole = fake()->randomElement(['ADMIN', 'FRONT DESK', 'GUEST']);
+        // $role = Role::findByName($randomRole);
+        foreach ($additionalUsers as $user) {
+            $middleName = $faker->lastName;
+            $guest = Guest::create([
+                "reference_number" => $this->guestReferenceNumber(),
+                "first_name" => $user->first_name,
+                "middle_name" => mb_strtoupper($middleName),
+                "last_name" => $user->last_name,
+                "province" => mb_strtoupper($faker->state),
+                "city" => mb_strtoupper($faker->city),
+                "phone_number" => '09' . $faker->numerify('#########'),
+                "email" => $user->email,
+                "email" => "dev@gmail.com",
+                "id_type" => "PRC",
+                "id_number" => "123456789",
+                "user_id" => $user->id
+            ]);
+            $user->assignRole('GUEST');
+        }
+
+        // Create 60 front desk users
+        // for ($i = 0; $i < 60; $i++) {
+        //     $user = User::create([
+        //         'username' => 'frontdesk' . $i,
+        //         'first_name' => $faker->firstName,
+        //         'last_name' => $faker->lastName,
+        //         'email' => $faker->unique()->safeEmail,
+        //         'password' => Hash::make('frontdesk'),
+        //     ]);
+
+        //     $role = Role::findByName('FRONT DESK');
+        //     $user->assignRole($role);
+        // };
     }
 
     protected function guestReferenceNumber()

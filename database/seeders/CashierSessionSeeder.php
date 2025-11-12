@@ -3,9 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\CashierSession\CashierSession;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Date;
+use Carbon\Carbon;
 
 class CashierSessionSeeder extends Seeder
 {
@@ -14,34 +16,27 @@ class CashierSessionSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = [
-            [
-                "userId" => 64,
-                "openingBalance" => 1000,
-                "openingAdjustment" => 0,
-                "openedAt" => Date::now(),
-                // "is_open"
-                "status" => "ACTIVE",
-            ],
-            [
-                "userId" => 66,
-                "openingBalance" => 1000,
-                "openingAdjustment" => 250,
-                "openedAt" => Date::now(),
-                // "is_open"
-                "status" => "ACTIVE",
-            ]
-        ];
+        $now = Carbon::now();
+        $data = User::Role('FRONT DESK')->get();
 
         foreach ($data as $row) {
-            CashierSession::insert([
-                "user_id" => $row["userId"],
-                "opening_balance" => $row["openingBalance"],
-                "opening_adjustment" => $row["openingAdjustment"],
-                "beginning_balance" => $row["openingBalance"] + $row["openingAdjustment"],
-                "opened_at" => $row["openedAt"],
-                "status" => $row["status"],
+            CashierSession::create([
+                "user_id" => $row->id,
+                "opening_balance" => 1000,
+                "opening_adjustment" => 0,
+                "beginning_balance" => 1000,
+                "opened_at" => $now,
+                "status" => 'ACTIVE',
             ]);
         }
+
+        CashierSession::create([
+            'user_id' => 4,
+            'opening_balance' => 1000,
+            'opening_adjustment' => 0,
+            'beginning_balance' => 1000,
+            'opened_at' => $now,
+            'status' => 'ACTIVE'
+        ]);
     }
 }
