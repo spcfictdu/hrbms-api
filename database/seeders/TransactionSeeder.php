@@ -139,7 +139,7 @@ class TransactionSeeder extends Seeder
     {
         Payment::create([
             'transaction_id' => $transaction['id'],
-            'user_id' => $faker->randomElement([64, 66]),
+            'user_id' => $faker->randomElement([4, 5, 6, 7, 8, 9]),
             'cashier_session_id' => 2,
             'payment_type' => $transaction['payment']['payment_type'][array_rand($transaction['payment']['payment_type'])],
             'amount_received' => $transaction['payment']['amount_received']['tuesday'],
