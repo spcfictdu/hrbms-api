@@ -79,7 +79,7 @@ class ShowTransactionRepository extends BaseRepository
         $addons = BookingAddon::where('transaction_id', $transaction->id)
             ->orderBy('purchase_batch')
             ->get();
-        $addonsTotal = $addons->sum('total_price');
+        $addonsTotal = $addons->whereNotIn('payment_status', ['VOIDED', 'REFUNDED'])->sum('total_price');
 
         $fullAddons = $addons->map(function ($addon) use ($transaction){
 
@@ -142,7 +142,7 @@ class ShowTransactionRepository extends BaseRepository
         }
 
         // Calculate room total with discount and add-ons
-        $finalRoomTotal =($roomTotal + $fullAddons->sum('total_price')) * (1 - $discountValue);
+        $finalRoomTotal = ($roomTotal + $addonsTotal) * (1 - $discountValue);
         $refundedRoom = VoidRefund::where('item', 'ROOM')
             ->where('type', 'REFUND')
             ->where('transaction_id', $transaction->id)
@@ -188,7 +188,7 @@ class ShowTransactionRepository extends BaseRepository
                     "voucherCode" => $discountCode ?? null,
                     "idNumber" => $snrPwdId ?? null,
                     "discountName" => $discountName,
-                    "discounted" => ($roomTotal + $fullAddons->sum('total_price')) * $discountValue,
+                    "discounted" => ($roomTotal + $addonsTotal) * $discountValue,
                     "roomTotal" => $roomTotal,
                     "finalRoomTotal" => $finalRoomTotal,
                 ],
