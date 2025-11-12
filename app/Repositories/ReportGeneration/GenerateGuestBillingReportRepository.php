@@ -31,7 +31,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
             
             $discount = $transaction->voucherDiscount ?? $transaction->seniorPwdDiscount ?? null;
             if ($discount !== null) {
-                $discountValue = ((float)$transaction->room_total) * ((float)$discount->value);
+                $discountValue = ((float)$transaction->room_total + (float)$fullAddons->whereNotIn('payment_status', ['VOIDED', 'REFUNDED'])->sum('total_price')) * ((float)$discount->value);
             } else {
                 $discountValue = 0;
             }
@@ -113,7 +113,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                     'paymentType' => $payment->payment_type,
                     'paymentAmount' => number_format((float) ($payment->amount_received ?? 0), 2, '.', ''),
                     'paymentStatus' => null,
-                    'user' => $payment->user->username,
+                    'user' => $payment->user->username ?? null,
                     'datetime' => Carbon::parse($payment->created_at)->format('Y-m-d H:i:s'),
                 ];
             });
@@ -176,7 +176,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 'paymentAmount' => 0,
                 'paymentStatus' => $transaction->payment_status,
                 'folio' => $transformedRoomCharges,
-                'user' => $roomPayment->user->username,
+                'user' => $roomPayment->user->username ?? null,
                 'datetime' => Carbon::parse($transaction->created_at)->format('Y-m-d H:i:s'),
             ];
 
