@@ -170,7 +170,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
             $room = [
                 'item' => $transaction->room->roomType->name,
                 'quantity' => (int)$transaction->number_of_guest + 1,
-                'price' => $transaction->room_total - $discountValue,
+                'price' => $transaction->room_total,
                 'paymentId' => $roomPayment->id,
                 'paymentType' => null,
                 'paymentAmount' => 0,
