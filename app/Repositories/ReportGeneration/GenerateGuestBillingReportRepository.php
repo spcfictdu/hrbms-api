@@ -31,7 +31,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
             
             $discount = $transaction->voucherDiscount ?? $transaction->seniorPwdDiscount ?? null;
             if ($discount !== null) {
-                $discountValue = ((float)$transaction->room_total + $fullAddons->sum('total_price')) * ((float)$discount->value);
+                $discountValue = ((float)$transaction->room_total) * ((float)$discount->value);
             } else {
                 $discountValue = 0;
             }
