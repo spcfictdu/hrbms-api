@@ -51,26 +51,26 @@ class GenerateGuestBillingReportRepository extends BaseRepository
 
             $grandTotal = ((float)$transaction->room_total  + (float)$addonsTotal) - (float)$discountValue;
 
-            $transformedAddons = $fullAddons->map(function ($addon) {
+            $transformedAddons = $fullAddons->map(function ($addon) use ($discount) {
                 if ($addon->folio->folio_a_amount <= 0) {
-                    $aCharge = $addon->folio->folio_a_charge * ($addon->total_price * (1 - $discount->value));
+                    $aCharge = $addon->folio->folio_a_charge * ($addon->total_price * (1 - ($discount->value ?? 0)));
                 } else {
-                    $aCharge = $addon->folio->folio_a_amount * (1 - $discount->value);
+                    $aCharge = $addon->folio->folio_a_amount * (1 - ($discount->value ?? 0));
                 }
                 if ($addon->folio->folio_b_amount <= 0) {
-                    $bCharge = $addon->folio->folio_b_charge * ($addon->total_price * (1 - $discount->value));
+                    $bCharge = $addon->folio->folio_b_charge * ($addon->total_price * (1 - ($discount->value ?? 0)));
                 } else {
-                    $bCharge = $addon->folio->folio_b_amount * (1 - $discount->value);
+                    $bCharge = $addon->folio->folio_b_amount * (1 - ($discount->value ?? 0));
                 }
                 if ($addon->folio->folio_c_amount <= 0) {
-                    $cCharge = $addon->folio->folio_c_charge * ($addon->total_price * (1 - $discount->value));
+                    $cCharge = $addon->folio->folio_c_charge * ($addon->total_price * (1 - ($discount->value ?? 0)));
                 } else {
-                    $cCharge = $addon->folio->folio_c_amount * (1 - $discount->value);
+                    $cCharge = $addon->folio->folio_c_amount * (1 - ($discount->value ?? 0));
                 }
                 if ($addon->folio->folio_d_amount <= 0) {
-                    $dCharge = $addon->folio->folio_d_charge * ($addon->total_price * (1 - $discount->value));
+                    $dCharge = $addon->folio->folio_d_charge * ($addon->total_price * (1 - ($discount->value ?? 0)));
                 } else {
-                    $dCharge = $addon->folio->folio_d_amount * (1 - $discount->value);
+                    $dCharge = $addon->folio->folio_d_amount * (1 - ($discount->value ?? 0));
                 }
                 return [
                     'item' => $addon->name,
@@ -128,24 +128,24 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 ->first();
 
             if ($roomCharges->folio_a_amount <= 0) {
-                $aCharge = $roomCharges->folio_a_charge * ($transaction->room_total * (1 - $discount->value));
+                $aCharge = $roomCharges->folio_a_charge * ($transaction->room_total * (1 - ($discount->value ?? 0)));
             } else {
-                $aCharge = $roomCharges->folio_a_amount * (1 - $discount->value);
+                $aCharge = $roomCharges->folio_a_amount * (1 - ($discount->value ?? 0));
             }
             if ($roomCharges->folio_b_amount <= 0) {
-                $bCharge = $roomCharges->folio_b_charge * ($transaction->room_total * (1 - $discount->value));
+                $bCharge = $roomCharges->folio_b_charge * ($transaction->room_total * (1 - ($discount->value ?? 0)));
             } else {
-                $bCharge = $roomCharges->folio_b_amount * (1 - $discount->value);
+                $bCharge = $roomCharges->folio_b_amount * (1 - ($discount->value ?? 0));
             }
             if ($roomCharges->folio_c_amount <= 0) {
-                $cCharge = $roomCharges->folio_c_charge * ($transaction->room_total * (1 - $discount->value));
+                $cCharge = $roomCharges->folio_c_charge * ($transaction->room_total * (1 - ($discount->value ?? 0)));
             } else {
-                $cCharge = $roomCharges->folio_c_amount * (1 - $discount->value);
+                $cCharge = $roomCharges->folio_c_amount * (1 - ($discount->value ?? 0));
             }
             if ($roomCharges->folio_d_amount <= 0) {
-                $dCharge = $roomCharges->folio_d_charge * ($transaction->room_total * (1 - $discount->value));
+                $dCharge = $roomCharges->folio_d_charge * ($transaction->room_total * (1 - ($discount->value ?? 0)));
             } else {
-                $dCharge = $roomCharges->folio_d_amount * (1 - $discount->value);
+                $dCharge = $roomCharges->folio_d_amount * (1 - ($discount->value ?? 0));
             }
             $transformedRoomCharges = [
                 'folioType' => $roomCharges->type,
