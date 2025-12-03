@@ -10,17 +10,16 @@ class IndexVoucherRepository extends BaseRepository
 {
     public function execute()
     {
-        $vouchers = DB::table('vouchers')->get();
-        return $this->success(
-            'list of all vouchers', $vouchers->map(function($voucher){
-                return [
-                    'code' => $voucher->code,
-                    'discount' => ($voucher->value*100 . '%'),
-                    'usage' => $voucher->usage,
-                    'status' => $voucher->status
-                ];
-                
-            })); 
-
+        $vouchers = Voucher::all();
+        $transformedVouchers = $vouchers->map(function ($voucher) {
+            return [
+                'code' => $voucher->code,
+                'expiresAt' => $voucher->expires_at,
+                'discount' => ($voucher->value*100 . '%'),
+                'usage' => $voucher->usage,
+                'status' => $voucher->status
+            ];
+        });
+        return $this->success('List of all vouchers', $transformedVouchers);
     }
 }
