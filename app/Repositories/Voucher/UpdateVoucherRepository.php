@@ -20,7 +20,7 @@ class UpdateVoucherRepository extends BaseRepository
                 'code' => $request->code ?? $voucher->code,
                 'value' => $request->value/100 ?? $voucher->value,
                 'usage' => $request->usage ?? $voucher->usage,
-                'expires_at' => $request->expiresAt ?? $voucher->expires_at
+                'expires_at' => $request->expires_at ?? $voucher->expires_at
             ]);
         }
 
