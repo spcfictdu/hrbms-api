@@ -13,6 +13,7 @@ class IndexVoucherRepository extends BaseRepository
         $vouchers = Voucher::all();
         $transformedVouchers = $vouchers->map(function ($voucher) {
             return [
+                'referenceNumber' => $voucher->reference_number,
                 'code' => $voucher->code,
                 'expiresAt' => $voucher->expires_at,
                 'discount' => ($voucher->value*100 . '%'),
