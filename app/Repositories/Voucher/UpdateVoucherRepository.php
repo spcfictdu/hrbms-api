@@ -10,35 +10,19 @@ class UpdateVoucherRepository extends BaseRepository
     public function execute($request, $referenceNumber)
     {
         $voucher = Voucher::where('reference_number', $referenceNumber)->firstOrFail();
-        $voucherCode = $request->code ?? $voucher->code;
-        $voucherValue = $request->value ? $request->value / 100 :$voucher->value;
-        $voucherUsage = $request->usage ?? $voucher->usage;
 
-        if($request->status){
-            if($request->status === 'ACTIVE' && $voucherUsage >= 1){
-                $voucher->update([
-                    'code' => $voucherCode,
-                    'value' => $voucherValue,
-                    'usage' => $voucherUsage,
-                    'status' => $request->status
-                ]);
-            }else{
-                $voucher->update([
-                    'code' => $voucherCode,
-                    'value' => $voucherValue,
-                    'usage' => $voucherUsage,
-                    'status' => $request->status
-                ]);
-            }
-        }else{
-            $voucherStatus = $voucherUsage < 1 ? 'INACTIVE' : 'ACTIVE';
+        if (isset($request->status)) {
             $voucher->update([
-                'code' => $voucherCode,
-                'value' => $voucherValue,
-                'usage' => $voucherUsage,
-                'status' => $voucherStatus
+                'status' => $request->status
             ]);
-        }  
+        } else {
+            $voucher->update([
+                'code' => $request->code ?? $voucher->code,
+                'value' => $request->value/100 ?? $voucher->value,
+                'usage' => $request->usage ?? $voucher->usage,
+                'expires_at' => $request->expiresAt ?? $voucher->expires_at
+            ]);
+        }
 
         return $this->success('Voucher updated', 
                  [
