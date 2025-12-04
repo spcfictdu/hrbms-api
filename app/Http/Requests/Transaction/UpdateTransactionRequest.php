@@ -39,7 +39,7 @@ class UpdateTransactionRequest extends ResponseRequest
 
             'cardHolderName' => ['required_if:paymentType,CREDIT_CARD', 'string'],
             'cardNumber' => ['required_if:paymentType,CREDIT_CARD', 'string', 'digits:16'],
-            'expirationDate' => ['required_if:paymentType,CREDIT_CARD', 'string', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'], // Format: MM/YY
+            'expiration_date' => ['required_if:paymentType,CREDIT_CARD', 'string', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'], // Format: MM/YY
             'cvc' => ['required_if:paymentType,CREDIT_CARD', 'string', 'digits:3'],
 
             'bankId' => ['required_if:payment.paymentType,CREDIT_CARD', 'required_if:payment.paymentType,CHEQUE'],
