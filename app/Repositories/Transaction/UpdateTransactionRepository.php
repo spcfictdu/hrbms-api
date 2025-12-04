@@ -307,7 +307,7 @@ class UpdateTransactionRepository extends BaseRepository
                                     $totalReceived = Payment::where('transaction_id', $transaction->id)
                                         ->sum('amount_received');
                                     $discountedRoom = $transaction->room_total - ($transaction->room_total * $discountValue);
-                                    $addonsPayment = $totalReceived - $discountedRoom;
+                                    $addonsPayment = $totalReceived + $discountedRoom;
 
                                     if ($totalReceived >= $discountedRoom) {
                                         $transaction->update([
