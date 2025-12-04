@@ -254,7 +254,7 @@ class UpdateTransactionRepository extends BaseRepository
                             "payment_id" => $payment->id,
                             "card_number" => $request->cardNumber,
                             "card_holder_name" => $request->cardHolderName,
-                            "expiration_date" => $request->expiration_date,
+                            "expiration_date" => $request->expirationDate,
                             "cvc" => $request->cvc,
                             "bank_id" => $request->bankId,
                         ]);
