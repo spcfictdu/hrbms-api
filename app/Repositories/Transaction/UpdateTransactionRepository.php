@@ -271,6 +271,7 @@ class UpdateTransactionRepository extends BaseRepository
                             "status" => "CONFIRMED",
                             "payment_id" => $payment->id
                         ]);
+                        DB::commit();
 
                         $guest = $transaction->guest;
                         if (app()->environment('production')) {
