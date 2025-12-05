@@ -86,12 +86,6 @@
                     $lastName = $transaction->guest->last_name;
 
                     $email = $transaction->guest->email;
-                    if (strpos($email, '@') !== false) {
-                        [$local, $domain] = explode('@', $email, 2);
-                        $maskedEmail = substr($local, 0, 1) . str_repeat('*', max(strlen($local) - 1, 0)) . '@' . $domain;
-                    } else {
-                        $maskedEmail = $email;
-                    }
 
                     $bookedOn = \Carbon\Carbon::parse($transaction->created_at)->format('d M Y');
                 @endphp
@@ -103,7 +97,7 @@
                             <h4 style="margin: 0;">Guest Details</h4>
                             <small>
                                 <div>{{ $firstName }} {{ $middleName }} {{ $lastName }}</div>
-                                <div>{{ $maskedEmail }}</div>
+                                <div>{{ $email }}</div>
                             </small>
                         </div>
                         <div style="padding: 1rem;">

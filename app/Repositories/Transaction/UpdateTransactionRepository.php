@@ -286,6 +286,7 @@ class UpdateTransactionRepository extends BaseRepository
                     $transaction->room->update([
                         "status" => strtoupper("OCCUPIED")
                     ]);
+                    DB::commit();
                 } elseif (!isset($request->status)) {
                     if ($transaction->payment_status !== 'VOIDED' && $transaction->payment_status !== 'REFUNDED') {
                         if (isset($request->checkInOut)) {
