@@ -377,6 +377,7 @@ class UpdateTransactionRepository extends BaseRepository
                             }
                             $response = $this->updateTransactionAndRoomStatus($transaction, $request);
                             if ($response) {
+                                DB::commit();
                                 return $response;
                             }
                         } else {
