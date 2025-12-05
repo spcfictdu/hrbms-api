@@ -183,6 +183,7 @@ class ShowTransactionRepository extends BaseRepository
                 ],
                 "guestName" => $guest->full_name,
                 "guestId" => $guest->id,
+                "guestEmail" => $guest->email,
                 "priceSummary" => [
                     "baseRate" => $roomType->rates->where('type', 'REGULAR')->first()->monday,
                     "days" => $diffInDays,
