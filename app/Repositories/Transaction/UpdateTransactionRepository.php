@@ -249,7 +249,7 @@ class UpdateTransactionRepository extends BaseRepository
                             "bank_id" => $request->bankId,
                         ]);
                     } elseif ($request->paymentType === 'CREDIT_CARD') {
-                        $exp = $request->payment['expirationDate']; 
+                        $exp = $request->expirationDate; 
                         $expiration = Carbon::createFromFormat('m/y', $exp)->endOfMonth();
 
                         if ($expiration->lt(Carbon::now())) {
@@ -258,11 +258,11 @@ class UpdateTransactionRepository extends BaseRepository
 
                         CreditCardPayment::create([
                             "payment_id" => $payment->id,
-                            "card_number" => $request->payment['cardNumber'],
-                            "card_holder_name" => $request->payment['cardHolderName'],
+                            "card_number" => $request->cardNumber,
+                            "card_holder_name" => $request->cardHolderName,
                             "expiration_date" => $exp,
-                            "cvc" => $request->payment['cvc'],
-                            "bank_id" => $request->payment['bankId']
+                            "cvc" => $request->cvc,
+                            "bank_id" => $request->bankId
                         ]);
                     }
 

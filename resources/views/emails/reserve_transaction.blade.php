@@ -123,23 +123,12 @@
                     $totalRoomRate += $rate->$day ?? 0;
                 }
 
-                // Extras
-                $roomCapacity = $transaction->room->roomType->capacity ?? 1;
-                $extraPersonCount = max(($transaction->number_of_guest ?? 1) - $roomCapacity, 0);
-
-                // Use current day's rate for extra person calculation
-                $dayOfWeek = strtolower(now()->format('l'));
-                $todayRate = $rate->$dayOfWeek ?? 0;
-
-                $extraPersonRate = ($todayRate / $roomCapacity) / 2;
-                $extraGuestTotal = $extraPersonCount * $extraPersonRate * $days;
-
                 // Add-ons
                 $addons = $transaction->bookingAddon ?? collect();
                 $addonsTotal = $addons->sum('total_price');
 
                 // Totals
-                $grandTotal = $totalRoomRate + $extraGuestTotal + $addonsTotal;
+                $grandTotal = $totalRoomRate + $addonsTotal;
                 $paymentReceived = $transaction->payment->sum('amount_received');
                 $balance = max($grandTotal - $paymentReceived, 0);
             @endphp
@@ -150,7 +139,6 @@
             <p><strong>Check-in Date and Time:</strong> {{ $transaction->check_in_date }}  /  {{ date('h:i A', strtotime($transaction->check_in_time)) }}</p>
             <p><strong>Check-out Date and Time:</strong> {{ $transaction->check_out_date }}  /  {{ date('h:i A', strtotime($transaction->check_out_time)) }}</p>
             <p><strong>Room Total:</strong> ₱{{ $totalRoomRate }}</p>
-            <p><strong>Extra Person Charge:</strong> ₱{{ $extraGuestTotal }}</p>
             <p><strong>Addon Total:</strong> ₱{{ $addonsTotal }}</p>
             <p><strong>Grand Total:</strong> ₱{{ $grandTotal }}</p>
         </div>

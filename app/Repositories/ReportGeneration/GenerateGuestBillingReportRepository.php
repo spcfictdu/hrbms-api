@@ -199,7 +199,9 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 if ($item['item'] === 'PAYMENT') {
                     $totalBalance -= (float) $item['paymentAmount'];
                 } elseif (in_array($item['item'], $roomTypeNames)) {
-                    $totalBalance = $totalBalance;
+                    if (in_array($item['paymentStatus'], ['VOIDED', 'REFUNDED'])) {
+                        $totalBalance -= (float) $item['paymentAmount'];
+                    }
                 } else {
                     if (!in_array($item['paymentStatus'], ['VOIDED', 'REFUNDED'])) {
                         $totalBalance += (float) $item['price'];

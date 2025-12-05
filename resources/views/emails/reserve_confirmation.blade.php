@@ -81,9 +81,9 @@
                 @php
                     $mask = fn($text) => substr($text, 0, 1) . str_repeat('*', max(strlen($text) - 1, 0));
 
-                    $maskedFirstName = $mask($transaction->guest->first_name);
-                    $maskedMiddleName = $transaction->guest->middle_name ? $mask($transaction->guest->middle_name) : '';
-                    $maskedLastName = $mask($transaction->guest->last_name);
+                    $firstName = $transaction->guest->first_name;
+                    $middleName = $transaction->guest->middle_name ?? '';
+                    $lastName = $transaction->guest->last_name;
 
                     $email = $transaction->guest->email;
                     if (strpos($email, '@') !== false) {
@@ -102,7 +102,7 @@
                         <div style="padding: 1rem; border-bottom: 1px solid rgba(0, 0, 0, 0.175);">
                             <h4 style="margin: 0;">Guest Details</h4>
                             <small>
-                                <div>{{ $maskedFirstName }} {{ $maskedMiddleName }} {{ $maskedLastName }}</div>
+                                <div>{{ $firstName }} {{ $middleName }} {{ $lastName }}</div>
                                 <div>{{ $maskedEmail }}</div>
                             </small>
                         </div>
