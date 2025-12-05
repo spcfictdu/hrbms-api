@@ -117,9 +117,6 @@ class RoomEnumRepository extends BaseRepository
                 $rate = $specialRate;
             }
 
-            // Extra Person Calculation
-            $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
-
             return [
                 'referenceNumber' => $room->reference_number,
                 'roomNumber' => $room->room_number,
@@ -128,14 +125,12 @@ class RoomEnumRepository extends BaseRepository
                 'roomTypeCapacity' => $room->roomType->capacity ?? 'N/A',
                 'duration' => count($dates),
                 'roomRateType' => $rate['type'] ?? 'N/A',
-                'roomRatesArray' => array_map(function ($date) use ($rate, $room, $extraPersonCount) {
+                'roomRatesArray' => array_map(function ($date) use ($rate, $room) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
-                    $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
                     return [
                         'date' => $date,
                         'dayOfWeek' => $dayOfWeek,
                         'rate' => $rate[$dayOfWeek] ?? 'N/A',
-                        'extraPersonRate' => $extraPersonRate * ($extraPersonCount ?? 0),
                     ];
                 }, $dates),
                 'addons' => $fullAddons,
@@ -146,20 +141,19 @@ class RoomEnumRepository extends BaseRepository
                     return ($rate[$dayOfWeek] ?? 0);
                 }, $dates)),
                 'extraPersonCount' => $extraPersonCount,
-                'extraPersonTotal' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue) {
+                // 'extraPersonTotal' => array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue) {
+                //     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
+                //     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
+                //     return $extraPersonRate * $extraPersonCount;
+                // }, $dates)),
+                // 'roomTotalWithExtraPerson' =>  array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue) {
+                //     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
+                //     $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
+                //     return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount));
+                // }, $dates)),
+                'discountedAmount' => round($addonsTotal * $discountValue + array_sum(array_map(function ($date) use ($rate, $room, $discountValue, $addonsTotal) {
                     $dayOfWeek = strtolower((new DateTime($date))->format('l'));
-                    $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
-                    return $extraPersonRate * $extraPersonCount;
-                }, $dates)),
-                'roomTotalWithExtraPerson' =>  array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue) {
-                    $dayOfWeek = strtolower((new DateTime($date))->format('l'));
-                    $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
-                    return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount));
-                }, $dates)),
-                'discountedAmount' => round($addonsTotal * $discountValue + array_sum(array_map(function ($date) use ($rate, $room, $extraPersonCount, $discountValue, $addonsTotal) {
-                    $dayOfWeek = strtolower((new DateTime($date))->format('l'));
-                    $extraPersonRate = ($rate[$dayOfWeek] / $room->roomType->capacity) / 2;
-                    return ($rate[$dayOfWeek] + ($extraPersonRate * $extraPersonCount)) * $discountValue;
+                    return $rate[$dayOfWeek] * $discountValue;
                 }, $dates)), 2),
                 'extraPersonCapacity' => $room->roomType->extra_person_capacity ? range(0, $room->roomType->extra_person_capacity) : 0,
             ];

@@ -386,32 +386,32 @@ class UpdateTransactionRepository extends BaseRepository
                                 "check_out_date" => $request->checkOutDate ?? $transaction->check_out_date,
                                 "check_out_time" => $request->checkOutTime ?? $transaction->check_out_time
                             ]);
-                            $checkIn = Carbon::parse($request->check_in_date ?? $transaction->check_in_date);
-                            $checkOut = Carbon::parse($request->check_out_date ?? $transaction->check_out_date);
+                            // $checkIn = Carbon::parse($request->check_in_date ?? $transaction->check_in_date);
+                            // $checkOut = Carbon::parse($request->check_out_date ?? $transaction->check_out_date);
 
-                            $period = CarbonPeriod::create($checkIn, $checkOut->subDay()); 
+                            // $period = CarbonPeriod::create($checkIn, $checkOut->subDay()); 
 
-                            $roomTypeRates = $transaction->room->roomType->rates;
+                            // $roomTypeRates = $transaction->room->roomType->rates;
 
-                            $total = 0;
-                            foreach ($period as $date) {
-                                $day = strtolower($date->format('l'));
-                                $rate = $roomTypeRates
-                                    ->first(function ($r) use ($date) {
-                                        return (!$r->start_date || $date->gte(Carbon::parse($r->start_date)))
-                                            && (!$r->end_date || $date->lte(Carbon::parse($r->end_date)));
-                                    });
-                                $extraPersonCharge = (float)$transaction->number_of_guest * ((float)$rate->{$day} / (float)$transaction->room->roomType->capacity / 2); 
-                                $dailyTotal = $extraPersonCharge + $rate->{$day};
+                            // $total = 0;
+                            // foreach ($period as $date) {
+                            //     $day = strtolower($date->format('l'));
+                            //     $rate = $roomTypeRates
+                            //         ->first(function ($r) use ($date) {
+                            //             return (!$r->start_date || $date->gte(Carbon::parse($r->start_date)))
+                            //                 && (!$r->end_date || $date->lte(Carbon::parse($r->end_date)));
+                            //         });
+                            //     $extraPersonCharge = (float)$transaction->number_of_guest * ((float)$rate->{$day} / (float)$transaction->room->roomType->capacity / 2); 
+                            //     $dailyTotal = $extraPersonCharge + $rate->{$day};
 
-                                if ($rate) {
-                                    $total += $dailyTotal;
-                                }
-                            }
+                            //     if ($rate) {
+                            //         $total += $dailyTotal;
+                            //     }
+                            // }
 
-                            $transaction->update([
-                                'room_total' =>  $total
-                            ]);
+                            // $transaction->update([
+                            //     'room_total' =>  $total
+                            // ]);
                         }
 
                         $guestDetails = null;
