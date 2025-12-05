@@ -147,6 +147,9 @@ class ShowTransactionRepository extends BaseRepository
             ->where('type', 'REFUND')
             ->where('transaction_id', $transaction->id)
             ->first();
+        if ($refundedRoom) {
+            $finalRoomTotal = 0;
+        }
 
         $roomCharges = Folio::where('transaction_id', $transaction->id)
             ->where('item', 'ROOM')

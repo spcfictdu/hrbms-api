@@ -24,6 +24,7 @@ use App\Models\Discount\SeniorPwdDiscount;
 use App\Models\PaymentType\CreditCardPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class CreateTransactionRepository extends BaseRepository
 {
@@ -337,12 +338,18 @@ class CreateTransactionRepository extends BaseRepository
                         "bank_id" => $request->payment['bankId']
                     ]);
                 } elseif ($request->payment['paymentType'] === 'CREDIT_CARD') {
+                    $exp = $request->payment['expirationDate']; 
+                    $expiration = Carbon::createFromFormat('m/y', $exp)->endOfMonth();
+
+                    if ($expiration->lt(Carbon::now())) {
+                        return $this->error('Credit card is expired');
+                    }
 
                     CreditCardPayment::create([
                         "payment_id" => $payment->id,
                         "card_number" => $request->payment['cardNumber'],
                         "card_holder_name" => $request->payment['cardHolderName'],
-                        "expiration_date" => $request->payment['expirationDate'],
+                        "expiration_date" => $exp,
                         "cvc" => $request->payment['cvc'],
                         "bank_id" => $request->payment['bankId']
                     ]);

@@ -249,14 +249,20 @@ class UpdateTransactionRepository extends BaseRepository
                             "bank_id" => $request->bankId,
                         ]);
                     } elseif ($request->paymentType === 'CREDIT_CARD') {
+                        $exp = $request->payment['expirationDate']; 
+                        $expiration = Carbon::createFromFormat('m/y', $exp)->endOfMonth();
+
+                        if ($expiration->lt(Carbon::now())) {
+                            return $this->error('Credit card is expired');
+                        }
 
                         CreditCardPayment::create([
                             "payment_id" => $payment->id,
-                            "card_number" => $request->cardNumber,
-                            "card_holder_name" => $request->cardHolderName,
-                            "expiration_date" => $request->expirationDate,
-                            "cvc" => $request->cvc,
-                            "bank_id" => $request->bankId,
+                            "card_number" => $request->payment['cardNumber'],
+                            "card_holder_name" => $request->payment['cardHolderName'],
+                            "expiration_date" => $exp,
+                            "cvc" => $request->payment['cvc'],
+                            "bank_id" => $request->payment['bankId']
                         ]);
                     }
 
@@ -306,32 +312,43 @@ class UpdateTransactionRepository extends BaseRepository
 
                                     $totalReceived = Payment::where('transaction_id', $transaction->id)
                                         ->sum('amount_received');
-                                    $discountedRoom = $transaction->room_total - ($transaction->room_total * $discountValue);
-                                    $addonsPayment = $totalReceived + $discountedRoom;
+                                    $discountedTotal = ($transaction->room_total + $fullAddons->sum('total_price')) * (1 - $discountValue);
 
-                                    if ($totalReceived >= $discountedRoom) {
+                                    // if ($totalReceived >= $discountedRoom) {
+                                    //     $transaction->update([
+                                    //         'payment_status' => 'PAID',
+                                    //     ]);
+
+                                    //     if ($addonsPayment >= $fullAddons->sum('total_price')) {
+                                    //         foreach ($fullAddons as $addon) {
+                                    //             $addon->update([
+                                    //                 'payment_status' => 'PAID'
+                                    //             ]);
+                                    //         }
+                                    //     } else {
+                                    //         return $this->error('Payment is not enough');
+                                    //     }
+                                    // } else {
+                                    //     return $this->error('Payment is not enough');
+                                    // }
+
+                                    if ($totalReceived >= $discountedTotal) {
                                         $transaction->update([
-                                            'payment_status' => 'PAID',
+                                            'payment_status' => 'PAID'
                                         ]);
 
-                                        if ($addonsPayment >= $fullAddons->sum('total_price')) {
-                                            foreach ($fullAddons as $addon) {
-                                                $addon->update([
-                                                    'payment_status' => 'PAID'
-                                                ]);
-                                            }
-                                        } else {
-                                            return $this->error('Payment is not enough');
+                                        foreach ($fullAddons as $addon) {
+                                            $addon->update([
+                                                'payment_status' => 'PAID'
+                                            ]);
                                         }
-                                    } else {
-                                        return $this->error('Payment is not enough');
                                     }
 
                                     if ($transaction->payment_status !== 'PAID') {
                                         return $this->error('Transaction not fully paid');
                                     } else {
                                         foreach ($fullAddons as $addon) {
-                                            if ($addon->payment_status === 'PENDING' || $addon->payment_status === 'PARTIAL') {
+                                            if ($addon->payment_status === 'PENDING') {
                                                 return $this->error('Transaction not fully paid');
                                             }
                                         }
