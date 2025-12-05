@@ -444,6 +444,7 @@ class UpdateTransactionRepository extends BaseRepository
                                 $transaction->room->update([
                                     'status' => 'UNCLEAN',
                                 ]);
+                                DB::commit();
                                 return $response;
                             } else {
                                 return $this->error('Cannot void or refund room');
@@ -453,6 +454,7 @@ class UpdateTransactionRepository extends BaseRepository
                         if (isset($request->addonsPaymentStatus)) {
                             $response = $this->voidRefundAddons($transaction, $request);
                             if ($response) {
+                                DB::commit();
                                 return $response;
                             } else {
                                 return $this->error('Cannot void or refund item');

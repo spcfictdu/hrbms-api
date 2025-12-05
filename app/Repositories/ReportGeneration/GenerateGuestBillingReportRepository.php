@@ -191,16 +191,16 @@ class GenerateGuestBillingReportRepository extends BaseRepository
                 return Carbon::parse($item['datetime'])->timestamp;
             })->values();
 
-            $totalBalance = $transaction->room_total - $discountValue;
+            $totalBalance = 0;
 
-            $mergedTransactions = $mergedTransactions->map(function ($item) use (&$totalBalance) {
+            $mergedTransactions = $mergedTransactions->map(function ($item) use (&$totalBalance, $transaction, $discountValue) {
                 $roomTypeNames = RoomType::pluck('name')->toArray();
                 
                 if ($item['item'] === 'PAYMENT') {
                     $totalBalance -= (float) $item['paymentAmount'];
                 } elseif (in_array($item['item'], $roomTypeNames)) {
-                    if (in_array($item['paymentStatus'], ['VOIDED', 'REFUNDED'])) {
-                        $totalBalance -= (float) $item['paymentAmount'];
+                    if (!in_array($item['paymentStatus'], ['VOIDED', 'REFUNDED'])) {
+                        $totalBalance += ($transaction->room_total - $discountValue);   
                     }
                 } else {
                     if (!in_array($item['paymentStatus'], ['VOIDED', 'REFUNDED'])) {

@@ -143,17 +143,6 @@
                         $totalRoomRate += $rate->$day ?? 0;
                     }
 
-                    // Extras
-                    $roomCapacity = $transaction->room->roomType->capacity ?? 1;
-                    $extraPersonCount = max(($transaction->number_of_guest ?? 1) - $roomCapacity, 0);
-
-                    // Use current day's rate for extra person calculation
-                    $dayOfWeek = strtolower(now()->format('l'));
-                    $todayRate = $rate->$dayOfWeek ?? 0;
-
-                    $extraPersonRate = ($todayRate / $roomCapacity) / 2;
-                    $extraGuestTotal = $extraPersonCount * $extraPersonRate * $days;
-
                     // Add-ons
                     $addons = $transaction->bookingAddon ?? collect();
                     $addonsTotal = $addons->sum('total_price');
@@ -163,7 +152,7 @@
                     $discountRate = $discount->value ?? 0;
 
                     // Totals
-                    $grandTotal = (1 - $discountRate) * ($totalRoomRate + $extraGuestTotal) + $addonsTotal;
+                    $grandTotal = (1 - $discountRate) * ($totalRoomRate + $addonsTotal);
                     $paymentReceived = $transaction->payment->sum('amount_received');
                     $balance = max($grandTotal - $paymentReceived, 0);
                 @endphp
@@ -184,12 +173,8 @@
                                         <td style="text-align: end;">₱{{ number_format($totalRoomRate, 2) }}</td>
                                     </tr>
                                     <tr>
-                                        <td>Extra Guest Charge</td>
-                                        <td style="text-align: end;">₱{{ number_format($extraGuestTotal, 2) }}</td>
-                                    </tr>
-                                    <tr>
                                         <td>Discounted</td>
-                                        <td style="text-align: end;">₱{{ number_format($discountRate * ($totalRoomRate + $extraGuestTotal), 2) }}</td>
+                                        <td style="text-align: end;">₱{{ number_format($discountRate * ($totalRoomRate + $addonsTotal), 2) }}</td>
                                     </tr>
 
                                     {{-- Add-ons List --}}
