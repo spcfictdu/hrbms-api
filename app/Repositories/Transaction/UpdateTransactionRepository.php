@@ -43,7 +43,7 @@ class UpdateTransactionRepository extends BaseRepository
         // });
 
         try {
-            // DB::beginTransaction();
+            DB::beginTransaction();
 
             $transaction = Transaction::where('reference_number', $request->referenceNumber)
                 ->whereNot('payment_status', 'VOIDED')
@@ -469,7 +469,7 @@ class UpdateTransactionRepository extends BaseRepository
                 return $this->error('Transaction not found.');
             }
 
-            // DB::commit();
+            DB::commit();
             // show payment and transaction if successul payment
             //     $data = [
             //         'payment' => $payment,
@@ -485,7 +485,7 @@ class UpdateTransactionRepository extends BaseRepository
             ]);
 
         } catch (\Exception $e) {
-            // DB::rollBack();
+            DB::rollBack();
             Log::error("Transaction update error: " . $e->getMessage());
             return $this->error("Error: " . $e->getMessage(), 500, [], false);
         }
