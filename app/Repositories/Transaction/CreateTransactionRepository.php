@@ -132,6 +132,84 @@ class CreateTransactionRepository extends BaseRepository
                 "guest_id" => $guest->id,
             ]);
 
+            $payment = null;
+
+            if (isset($request->payment) && isset($transaction->id)) {
+                if ($user->hasRole('ADMIN')) {
+
+                    $cashierSession = CashierSession::where('user_id', $request->cashierId)->latest()->first();
+
+                    if ($cashierSession->status === 'INACTIVE') {
+                        return $this->error('User\'s cashier is not open');
+                    }
+
+                } elseif ($user->hasRole('FRONT DESK')) {
+
+                    $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
+                    if (!$cashierSession) {
+                        return $this->error('User\'s cashier is not open');
+                    }
+
+                }
+
+                $payment = Payment::create([
+                    "transaction_id" => $transaction->id,
+                    "user_id" => $user->id,
+                    "cashier_session_id" => $cashierSession->id,
+                    "payment_type" => strtoupper($request->payment['paymentType']),
+                    "amount_received" => $request->payment['amountReceived']
+                ]);
+
+                $room->update([
+                    "status" => strtoupper("OCCUPIED")
+                ]);
+            }
+
+            // verify if discount exists and create it to database
+            if ($request->discount) {
+
+                $discountName = strtoupper($request->discount);
+                if ($discountName === 'VOUCHER') {
+
+                    $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
+
+                    if ($voucher->status === 'ACTIVE') {
+                        $voucherCode = Voucher::where('code', $request->voucherCode)->first('id');
+                        VoucherDiscount::create([
+                            "payment_id" => $payment->id,
+                            "transaction_id" => $transaction->id,
+                            "voucher_id" => $voucherCode->id,
+                            "discount" => $discountName,
+                            "value" => $voucher->value,
+                        ]);
+
+                        $voucher->update([
+                            'usage' => (int)$voucher->usage - 1,
+                            'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE',
+                        ]);
+                    } else {
+                        return $this->error('Voucher is not available');
+                    }
+                } else {
+                    $discount = Discount::where('name', $discountName)->first();
+
+                    if (!$discount) {
+                        return $this->error("Discount '$discountName' not found.");
+                    }
+
+                    SeniorPwdDiscount::create([
+                        "payment_id" => $payment->id,
+                        "transaction_id" => $transaction->id,
+                        "discount" => $discount->name,
+                        "id_number" => $request->idNumber,
+                        "value" => $discount->value,
+                    ]);
+                }
+            }
+
+            $discount = VoucherDiscount::where('transaction_id', $transaction->id)->first() ?? SeniorPwdDiscount::where('transaction_id', $transaction->id)->first() ?? null;
+            $discountValue = $discount->value ?? 0;
+
             // dd($request->room, $request->addons);
 
             $roomCharge = Folio::create([
@@ -239,43 +317,8 @@ class CreateTransactionRepository extends BaseRepository
                 }
             }
 
-            $payment = null;
 
-            if (isset($request->payment) && isset($transaction->id)) {
-                if ($user->hasRole('ADMIN')) {
-
-                    $cashierSession = CashierSession::where('user_id', $request->cashierId)->latest()->first();
-
-                    if ($cashierSession->status === 'INACTIVE') {
-                        return $this->error('User\'s cashier is not open');
-                    }
-
-                } elseif ($user->hasRole('FRONT DESK')) {
-
-                    $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
-                    if (!$cashierSession) {
-                        return $this->error('User\'s cashier is not open');
-                    }
-
-                }
-                // if ($user->hasRole('ADMIN')) {
-                //     $cashierSession = CashierSession::where('status', 'ACTIVE')->first();
-                // } elseif ($user->hasRole('FRONT DESK')) {
-                //     $cashierSession = $user->cashierSessions->where('status', 'ACTIVE')->first();
-                // }
-
-                $payment = Payment::create([
-                    "transaction_id" => $transaction->id,
-                    "user_id" => $user->id,
-                    "cashier_session_id" => $cashierSession->id,
-                    "payment_type" => strtoupper($request->payment['paymentType']),
-                    "amount_received" => $request->payment['amountReceived']
-                ]);
-                
-                $room->update([
-                    "status" => strtoupper("OCCUPIED")
-                ]);
-                
+            if (isset($request->payment) && isset($transaction->id)) {                
                 $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
                     ->whereNot('payment_status', 'VOIDED')
                     ->orderBy('id', 'asc')
@@ -285,48 +328,6 @@ class CreateTransactionRepository extends BaseRepository
                     $addon->update([
                         'payment_id' => $payment->id,
                     ]);
-                }
-
-                // verify if discount exists and create it to database
-                if ($request->discount) {
-
-                    $discountName = strtoupper($request->discount);
-                    if ($discountName === 'VOUCHER') {
-
-                        $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
-
-                        if ($voucher->status === 'ACTIVE') {
-                            $voucherCode = Voucher::where('code', $request->voucherCode)->first('id');
-                            VoucherDiscount::create([
-                                "payment_id" => $payment->id,
-                                "transaction_id" => $transaction->id,
-                                "voucher_id" => $voucherCode->id,
-                                "discount" => $discountName,
-                                "value" => $voucher->value,
-                            ]);
-
-                            $voucher->update([
-                                'usage' => (int)$voucher->usage - 1,
-                                'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE',
-                            ]);
-                        } else {
-                            return $this->error('Voucher is not available');
-                        }
-                    } else {
-                        $discount = Discount::where('name', $discountName)->first();
-
-                        if (!$discount) {
-                            return $this->error("Discount '$discountName' not found.");
-                        }
-
-                        SeniorPwdDiscount::create([
-                            "payment_id" => $payment->id,
-                            "transaction_id" => $transaction->id,
-                            "discount" => $discount->name,
-                            "id_number" => $request->idNumber,
-                            "value" => $discount->value,
-                        ]);
-                    }
                 }
 
                 if ($request->payment['paymentType'] === 'CHEQUE') {
@@ -354,9 +355,6 @@ class CreateTransactionRepository extends BaseRepository
                         "bank_id" => $request->payment['bankId']
                     ]);
                 }
-                
-                $discount = VoucherDiscount::where('transaction_id', $transaction->id)->first() ?? SeniorPwdDiscount::where('transaction_id', $transaction->id)->first() ?? null;
-                $discountValue = $discount->value ?? 0;
 
                 // $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
                 //     ->whereNot('payment_status', 'VOIDED')
