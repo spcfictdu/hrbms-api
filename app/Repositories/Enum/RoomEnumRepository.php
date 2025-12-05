@@ -64,6 +64,9 @@ class RoomEnumRepository extends BaseRepository
 
         // Set default discount value if no discount is found
         $discountValue = $discount->value ?? 0;
+        if ($request->roomPaymentStatus === 'REFUNDED' || $request->roomPaymentStatus === 'VOIDED') {
+            $discountValue = 0;
+        }
 
         $addons = array_map(function ($addon) {
             $key = ['name', 'quantity'];
