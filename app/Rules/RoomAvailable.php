@@ -5,6 +5,7 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class RoomAvailable implements ValidationRule
 {
@@ -36,12 +37,18 @@ class RoomAvailable implements ValidationRule
             ->whereDate('check_out_date', '>=', $this->checkInDate)
             ->get(['check_in_time', 'check_out_time']);
 
+        $bookingCheckIn = Carbon::parse($this->checkInTime);
+        $bookingCheckOut = Carbon::parse($this->checkOutTime);
+
         // Check time overlap only if date overlaps
         foreach ($existingBookings as $booking) {
+            $existingCheckIn = Carbon::parse($booking->check_in_time)->subHours(2);
+            $existingCheckOut = Carbon::parse($booking->check_out_time)->addHours(2);
+
             $overlaps = (
-                ($this->checkInTime >= $booking->check_in_time && $this->checkInTime < $booking->check_out_time) ||
-                ($this->checkOutTime > $booking->check_in_time && $this->checkOutTime <= $booking->check_out_time) ||
-                ($this->checkInTime <= $booking->check_in_time && $this->checkOutTime >= $booking->check_out_time)
+                ($bookingCheckIn >= $existingCheckIn && $bookingCheckIn < $existingCheckOut) ||
+                ($bookingCheckOut > $existingCheckIn && $bookingCheckOut <= $existingCheckOut) ||
+                ($bookingCheckIn <= $existingCheckIn && $bookingCheckOut >= $existingCheckOut)
             );
 
             if ($overlaps) {
