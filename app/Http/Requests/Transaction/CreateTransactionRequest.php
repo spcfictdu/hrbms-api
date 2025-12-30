@@ -26,7 +26,7 @@ class CreateTransactionRequest extends ResponseRequest
     public function rules()
     {
         return [
-            'room.referenceNumber' => ['required', 'string', 'exists:rooms,reference_number', new RoomAvailable($this->checkIn['time'], $this->checkOut['time'], $this->checkIn['date'])],
+            'room.referenceNumber' => ['required', 'string', 'exists:rooms,reference_number', new RoomAvailable($this->checkIn['time'], $this->checkOut['time'], $this->checkIn['date'], $this->checkOut['date'])],
 
             'guest.firstName' => ['required', 'string'],
             'guest.middleName' => ['nullable', 'string'],

@@ -9,13 +9,14 @@ use Carbon\Carbon;
 
 class RoomAvailable implements ValidationRule
 {
-    protected $checkInTime, $checkOutTime, $checkInDate;
+    protected $checkInTime, $checkOutTime, $checkInDate, $checkOutDate;
 
-    public function __construct($checkInTime, $checkOutTime, $checkInDate)
+    public function __construct($checkInTime, $checkOutTime, $checkInDate, $checkOutDate)
     {
         $this->checkInTime = $checkInTime;
         $this->checkOutTime = $checkOutTime;
         $this->checkInDate = $checkInDate;
+        $this->checkOutDate = $checkOutDate;
     }
 
     /**
@@ -35,15 +36,15 @@ class RoomAvailable implements ValidationRule
             ->whereNull('deleted_at')
             ->whereDate('check_in_date', '<=', $this->checkInDate)
             ->whereDate('check_out_date', '>=', $this->checkInDate)
-            ->get(['check_in_time', 'check_out_time']);
+            ->get(['check_in_date', 'check_out_date', 'check_in_time', 'check_out_time']);
 
-        $bookingCheckIn = Carbon::parse($this->checkInTime);
-        $bookingCheckOut = Carbon::parse($this->checkOutTime);
+        $bookingCheckIn = Carbon::parse($this->checkInDate . ' ' . $this->checkInTime);
+        $bookingCheckOut = Carbon::parse($this->checkOutDate . ' ' . $this->checkOutTime);
 
         // Check time overlap only if date overlaps
         foreach ($existingBookings as $booking) {
-            $existingCheckIn = Carbon::parse($booking->check_in_time)->subHours(2);
-            $existingCheckOut = Carbon::parse($booking->check_out_time)->addHours(2);
+            $existingCheckIn = Carbon::parse($booking->check_in_date . ' ' . $booking->check_in_time)->subHours(2);
+            $existingCheckOut = Carbon::parse($booking->check_out_date . ' ' . $booking->check_out_time)->addHours(2);
 
             $overlaps = (
                 ($bookingCheckIn >= $existingCheckIn && $bookingCheckIn < $existingCheckOut) ||
@@ -52,7 +53,7 @@ class RoomAvailable implements ValidationRule
             );
 
             if ($overlaps) {
-                $fail("The room is not available for the given time slot on this date.");
+                $fail("The room is not available for the given time slot on this date. {$existingCheckIn} - {$existingCheckOut}");
                 return;
             }
         }
