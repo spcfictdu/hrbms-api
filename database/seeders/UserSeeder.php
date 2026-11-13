@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'username' => 'user123',
+                'username' => 'user456',
                 'first_name' => 'JANE',
                 'last_name' => 'DOE',
                 'email' => 'test@gmail.com',

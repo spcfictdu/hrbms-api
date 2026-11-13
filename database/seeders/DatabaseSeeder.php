@@ -12,7 +12,6 @@ use Database\Seeders\{
     AmenitySeeder,
     RoomTypeSeeder,
     RoomSeeder,
-    TransactionSeeder,
     CashierSessionSeeder,
 };
 
@@ -33,11 +32,9 @@ class DatabaseSeeder extends Seeder
             RoomSeeder::class,
             CashierSessionSeeder::class,
             BankSeeder::class,
-            TransactionSeeder::class,
             AvailabilityCalendarSeeder::class,
             RoomTypeRateSeeder::class,
             VoucherSeeder::class,
-            FlightSeeder::class,
         ]);
     }
 }
