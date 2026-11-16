@@ -142,7 +142,7 @@ class ShowTransactionRepository extends BaseRepository
         }
 
         // Calculate room total with discount and add-ons
-        $finalRoomTotal = ($roomTotal + $addonsTotal) * (1 - $discountValue);
+        $finalRoomTotal = ($roomTotal * (1 - $discountValue)) + $addonsTotal;
         $refundedRoom = VoidRefund::where('item', 'ROOM')
             ->where('type', 'REFUND')
             ->where('transaction_id', $transaction->id)
@@ -192,7 +192,7 @@ class ShowTransactionRepository extends BaseRepository
                     "voucherCode" => $discountCode ?? null,
                     "idNumber" => $snrPwdId ?? null,
                     "discountName" => $discountName,
-                    "discounted" => ($roomTotal + $addonsTotal) * $discountValue,
+                    "discounted" => $roomTotal * $discountValue,
                     "roomTotal" => $roomTotal,
                     "finalRoomTotal" => $finalRoomTotal,
                 ],

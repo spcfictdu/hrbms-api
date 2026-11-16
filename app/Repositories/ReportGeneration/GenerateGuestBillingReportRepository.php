@@ -31,7 +31,7 @@ class GenerateGuestBillingReportRepository extends BaseRepository
             
             $discount = $transaction->voucherDiscount ?? $transaction->seniorPwdDiscount ?? null;
             if ($discount !== null) {
-                $discountValue = ((float)$transaction->room_total + (float)$fullAddons->whereNotIn('payment_status', ['VOIDED', 'REFUNDED'])->sum('total_price')) * ((float)$discount->value);
+                $discountValue = (float)$transaction->room_total * ((float)$discount->value);
             } else {
                 $discountValue = 0;
             }
@@ -53,24 +53,24 @@ class GenerateGuestBillingReportRepository extends BaseRepository
 
             $transformedAddons = $fullAddons->map(function ($addon) use ($discount) {
                 if ($addon->folio->folio_a_amount <= 0) {
-                    $aCharge = $addon->folio->folio_a_charge * ($addon->total_price * (1 - ($discount->value ?? 0)));
+                    $aCharge = $addon->folio->folio_a_charge * $addon->total_price;
                 } else {
-                    $aCharge = $addon->folio->folio_a_amount * (1 - ($discount->value ?? 0));
+                    $aCharge = $addon->folio->folio_a_amount;
                 }
                 if ($addon->folio->folio_b_amount <= 0) {
-                    $bCharge = $addon->folio->folio_b_charge * ($addon->total_price * (1 - ($discount->value ?? 0)));
+                    $bCharge = $addon->folio->folio_b_charge * $addon->total_price;
                 } else {
-                    $bCharge = $addon->folio->folio_b_amount * (1 - ($discount->value ?? 0));
+                    $bCharge = $addon->folio->folio_b_amount;
                 }
                 if ($addon->folio->folio_c_amount <= 0) {
-                    $cCharge = $addon->folio->folio_c_charge * ($addon->total_price * (1 - ($discount->value ?? 0)));
+                    $cCharge = $addon->folio->folio_c_charge * $addon->total_price;
                 } else {
-                    $cCharge = $addon->folio->folio_c_amount * (1 - ($discount->value ?? 0));
+                    $cCharge = $addon->folio->folio_c_amount;
                 }
                 if ($addon->folio->folio_d_amount <= 0) {
-                    $dCharge = $addon->folio->folio_d_charge * ($addon->total_price * (1 - ($discount->value ?? 0)));
+                    $dCharge = $addon->folio->folio_d_charge * $addon->total_price;
                 } else {
-                    $dCharge = $addon->folio->folio_d_amount * (1 - ($discount->value ?? 0));
+                    $dCharge = $addon->folio->folio_d_amount;
                 }
                 return [
                     'item' => $addon->name,

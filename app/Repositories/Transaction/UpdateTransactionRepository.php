@@ -27,9 +27,17 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReserveConfirmationMail;
+use App\Repositories\Transaction\Payment\PaymentAllocator;
 
 class UpdateTransactionRepository extends BaseRepository
 {
+    protected PaymentAllocator $allocator;
+
+    public function __construct(PaymentAllocator $allocator)
+    {
+        $this->allocator = $allocator;
+    }
+
     public function execute($request)
     {
         // dd($request);
@@ -81,6 +89,31 @@ class UpdateTransactionRepository extends BaseRepository
 
                     }
                     
+                    // validate everything that can fail BEFORE any payment is written
+                    $voucher = null;
+                    $discountModel = null;
+                    if ($request->discount) {
+                        $discountName = strtoupper($request->discount);
+                        if ($discountName === 'VOUCHER') {
+                            $voucher = Voucher::where('code', $request->voucherCode)->firstOrFail();
+                            if ($voucher->status !== 'ACTIVE') {
+                                return $this->error('Voucher is not available');
+                            }
+                        } else {
+                            $discountModel = Discount::where('name', $discountName)->first();
+                            if (!$discountModel) {
+                                return $this->error("Discount '$discountName' not found.");
+                            }
+                        }
+                    }
+
+                    if ($request->paymentType === 'CREDIT_CARD') {
+                        $expiration = Carbon::createFromFormat('m/y', $request->expirationDate)->endOfMonth();
+                        if ($expiration->lt(Carbon::now())) {
+                            return $this->error('Credit card is expired');
+                        }
+                    }
+
                     $payment = Payment::create([
                         "transaction_id" => $transaction->id,
                         "user_id" => $user->id,
@@ -198,47 +231,33 @@ class UpdateTransactionRepository extends BaseRepository
                     // }
 
 
-                    // verify if discount exists and create it to database
-                    if ($request->discount) {
+                    // create the discount (validated above)
+                    if ($voucher) {
+                        VoucherDiscount::create([
+                            "payment_id" => $payment->id,
+                            "transaction_id" => $transaction->id,
+                            "voucher_id" => $voucher->id,
+                            "discount" => 'VOUCHER',
+                            "value" => $voucher->value,
+                        ]);
 
-                        $discountName = strtoupper($request->discount);
-                        if ($discountName === 'VOUCHER') {
-
-                            $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
-
-                            if ($voucher->status === 'ACTIVE') {
-                                $voucherCode = Voucher::where('code', $request->voucherCode)->first('id');
-                                VoucherDiscount::create([
-                                    "payment_id" => $payment->id,
-                                    "transaction_id" => $transaction->id,
-                                    "voucher_id" => $voucherCode->id,
-                                    "discount" => $discountName,
-                                    "value" => $voucher->value,
-                                ]);
-
-                                $voucher->update([
-                                    'usage' => (int)$voucher->usage - 1,
-                                    'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE',
-                                ]);
-                            } else {
-                                return $this->error('Voucher is not available');
-                            }
-                        } else {
-                            $discount = Discount::where('name', $discountName)->first();
-
-                            if (!$discount) {
-                                return $this->error("Discount '$discountName' not found.");
-                            }
-
-                            SeniorPwdDiscount::create([
-                                "payment_id" => $payment->id,
-                                "transaction_id" => $transaction->id,
-                                "discount" => $discount->name,
-                                "id_number" => $request->idNumber,
-                                "value" => $discount->value,
-                            ]);
-                        }
+                        $voucher->update([
+                            'usage' => (int)$voucher->usage - 1,
+                            'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE',
+                        ]);
+                    } elseif ($discountModel) {
+                        SeniorPwdDiscount::create([
+                            "payment_id" => $payment->id,
+                            "transaction_id" => $transaction->id,
+                            "discount" => $discountModel->name,
+                            "id_number" => $request->idNumber,
+                            "value" => $discountModel->value,
+                        ]);
                     }
+
+                    // work out which part of the transaction this payment covers
+                    $this->allocator->reconcile($transaction);
+                    $transaction->refresh();
 
                     if ($request->paymentType === 'CHEQUE') {
 
@@ -249,13 +268,7 @@ class UpdateTransactionRepository extends BaseRepository
                             "bank_id" => $request->bankId,
                         ]);
                     } elseif ($request->paymentType === 'CREDIT_CARD') {
-                        $exp = $request->expirationDate; 
-                        $expiration = Carbon::createFromFormat('m/y', $exp)->endOfMonth();
-
-                        if ($expiration->lt(Carbon::now())) {
-                            return $this->error('Credit card is expired');
-                        }
-
+                        $exp = $request->expirationDate;
                         CreditCardPayment::create([
                             "payment_id" => $payment->id,
                             "card_number" => $request->cardNumber,
@@ -304,65 +317,21 @@ class UpdateTransactionRepository extends BaseRepository
                                 }
 
                                 if ($request->checkOutDate && $request->checkOutTime) {
-                                    $discount = VoucherDiscount::where('transaction_id', $transaction->id)->first() ?? SeniorPwdDiscount::where('transaction_id', $transaction->id)->first() ?? null;
-                                    $discountValue = $discount->value ?? 0;
-
-                                    $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
-                                        ->whereNot('payment_status', 'VOIDED')
-                                        ->whereNot('payment_status', 'REFUNDED')
-                                        ->get();
-
-                                    $totalReceived = Payment::where('transaction_id', $transaction->id)
-                                        ->sum('amount_received');
-                                    $discountedTotal = ($transaction->room_total + $fullAddons->sum('total_price')) * (1 - $discountValue);
-
-                                    // if ($totalReceived >= $discountedRoom) {
-                                    //     $transaction->update([
-                                    //         'payment_status' => 'PAID',
-                                    //     ]);
-
-                                    //     if ($addonsPayment >= $fullAddons->sum('total_price')) {
-                                    //         foreach ($fullAddons as $addon) {
-                                    //             $addon->update([
-                                    //                 'payment_status' => 'PAID'
-                                    //             ]);
-                                    //         }
-                                    //     } else {
-                                    //         return $this->error('Payment is not enough');
-                                    //     }
-                                    // } else {
-                                    //     return $this->error('Payment is not enough');
-                                    // }
-
-                                    if ($totalReceived >= $discountedTotal) {
-                                        $transaction->update([
-                                            'payment_status' => 'PAID'
-                                        ]);
-
-                                        foreach ($fullAddons as $addon) {
-                                            $addon->update([
-                                                'payment_status' => 'PAID'
-                                            ]);
-                                        }
-                                    }
-
-                                    if ($transaction->payment_status !== 'PAID') {
+                                    // settle any leftover credit, then make sure nothing is owed
+                                    $this->allocator->reconcile($transaction);
+                                    if ($this->allocator->outstanding($transaction) > 0) {
                                         return $this->error('Transaction not fully paid');
-                                    } else {
-                                        foreach ($fullAddons as $addon) {
-                                            if ($addon->payment_status === 'PENDING') {
-                                                return $this->error('Transaction not fully paid');
-                                            }
-                                        }
-                                        $transactionHistory->update([
-                                            "check_out_date" => $request->checkOutDate ?? null,
-                                            "check_out_time" => $request->checkOutTime ?? null,
-                                        ]);
-                                        $transaction->update([
-                                            "check_out_date" => $request->checkOutDate ?? null,
-                                            "check_out_time" => $request->checkOutTime ?? null,
-                                        ]);
                                     }
+                                    $transaction->refresh();
+
+                                    $transactionHistory->update([
+                                        "check_out_date" => $request->checkOutDate ?? null,
+                                        "check_out_time" => $request->checkOutTime ?? null,
+                                    ]);
+                                    $transaction->update([
+                                        "check_out_date" => $request->checkOutDate ?? null,
+                                        "check_out_time" => $request->checkOutTime ?? null,
+                                    ]);
                                 }
 
                             } else {
@@ -379,8 +348,7 @@ class UpdateTransactionRepository extends BaseRepository
                             }
                             $response = $this->updateTransactionAndRoomStatus($transaction, $request);
                             if ($response) {
-                                DB::commit();
-                                return $response;
+                                return $this->finish($response);
                             }
                         } else {
                             $transaction->update([
@@ -442,25 +410,23 @@ class UpdateTransactionRepository extends BaseRepository
 
                         if (isset($request->paymentStatus)) {
                             $response = $this->voidRefundTransaction($transaction, $request);
-                            if ($response !== null) {
+                            if ($response === null) {
+                                return $this->error('Cannot void or refund room');
+                            }
+                            if ($response->getStatusCode() < 400) {
                                 $transaction->room->update([
                                     'status' => 'UNCLEAN',
                                 ]);
-                                DB::commit();
-                                return $response;
-                            } else {
-                                return $this->error('Cannot void or refund room');
                             }
+                            return $this->finish($response);
                         }
 
                         if (isset($request->addonsPaymentStatus)) {
                             $response = $this->voidRefundAddons($transaction, $request);
-                            if ($response) {
-                                DB::commit();
-                                return $response;
-                            } else {
+                            if (!$response) {
                                 return $this->error('Cannot void or refund item');
                             }
+                            return $this->finish($response);
                         }
 
                     } else {
@@ -528,46 +494,70 @@ class UpdateTransactionRepository extends BaseRepository
         }
     }
 
+    private function fail($message)
+    {
+        DB::rollBack();
+
+        return $this->error($message);
+    }
+
+    /** Commit on success, roll back when the helper produced an error response. */
+    private function finish($response)
+    {
+        if ($response->getStatusCode() >= 400) {
+            DB::rollBack();
+        } else {
+            DB::commit();
+        }
+
+        return $response;
+    }
+
     private function voidRefundTransaction($transaction, $request)
     {
+        // make sure statuses reflect what was actually paid before deciding
+        $this->allocator->reconcile($transaction);
+        $transaction->refresh();
+
         $fullAddons = BookingAddon::where('transaction_id', $transaction->id)
             ->get();
 
         $discount = VoucherDiscount::where('transaction_id', $transaction->id)->first() ?? SeniorPwdDiscount::where('transaction_id', $transaction->id)->first() ?? null;
         $discountValue = $discount->value ?? 0;
-        
+
         $cashierSession = CashierSession::where('user_id', $request->cashierId)
             ->where('status', 'ACTIVE')
             ->latest()
             ->first();
-        
+
         if (!$cashierSession) {
             return $this->error('Cashier is inactive');
         }
-        
+
         if ($request->paymentStatus === 'VOIDED') {
-            if ($transaction->payment_status === 'PAID') {
+            // nothing has been paid yet, so there is nothing to give back
+            if ($transaction->payment_status !== 'PENDING') {
                 return null;
-            } else {
-                foreach ($fullAddons as $addon) {
-                    if ($addon->payment_status !== 'VOIDED') {
-                        $addon->update([
-                            'payment_status' => 'VOIDED',
-                        ]);
-                    }
-                    VoidRefund::create([
-                        'type' => 'VOID',
-                        'item' => 'ADDON',
-                        'transaction_id' => $transaction->id,
-                        'cashier_session_id' => $cashierSession->id,
-                        'amount' => number_format((float) $addon->total_price, 2, '.', ''),
+            }
+
+            foreach ($fullAddons as $addon) {
+                if ($addon->payment_status !== 'VOIDED') {
+                    $addon->update([
+                        'payment_status' => 'VOIDED',
                     ]);
                 }
-
-                $transaction->update([
-                    'payment_status' => 'VOIDED',
+                VoidRefund::create([
+                    'type' => 'VOID',
+                    'item' => 'ADDON',
+                    'transaction_id' => $transaction->id,
+                    'cashier_session_id' => $cashierSession->id,
+                    'amount' => number_format((float) $addon->total_price, 2, '.', ''),
                 ]);
             }
+
+            $transaction->update([
+                'payment_status' => 'VOIDED',
+            ]);
 
             $voided = VoidRefund::create([
                 'type' => 'VOID',
@@ -579,112 +569,79 @@ class UpdateTransactionRepository extends BaseRepository
             return $this->success('Transaction voided successfully', $voided);
 
         } elseif ($request->paymentStatus === 'REFUNDED') {
-            // $totalReceived = Payment::where('transaction_id', $transaction->id)
-            //     ->sum('amount_received');
-            $roomPaid = $transaction->room_total - ($transaction->room_total * $discountValue);
-            // // $addonsPaid = 0;
-            // $addonsPayment = $totalReceived - $roomPaid;
-            if ($transaction->payment_status !== 'PAID') {
+            // money has been received (fully or partially) for the room
+            if (!in_array($transaction->payment_status, ['PAID', 'PARTIAL'])) {
                 return null;
-            } else {
-                // if ($transaction->payment_status === 'PARTIAL') {
-                //     $roomPaid = $totalReceived;
-                //     $addonsPaid = 0;
-                    
-                //     foreach ($fullAddons as $addon) {
-                //         $addon->update([
-                //             'payment_status' => 'VOIDED',
-                //         ]);
-                //         VoidRefund::create([
-                //             'type' => 'VOID',
-                //             'item' => 'ADDON',
-                //             'transaction_id' => $transaction->id,
-                //             'cashier_session_id' => $cashierSession->id,
-                //             'amount' => number_format((float) $addon->total_price, 2, '.', ''),
-                //         ]);
-                //     }
-                // } elseif ($transaction->payment_status === 'PAID' || $transaction->payment_status === 'PENDING') {
-                    foreach ($fullAddons as $addon) {
-                        if ($addon->payment_status !== 'REFUNDED' && $addon->payment_status !== 'VOIDED') {
-                            if ($addon->payment_status === 'PENDING') {
-                                $addon->update([
-                                    'payment_status' => 'VOIDED',
-                                ]);
-                                VoidRefund::create([
-                                    'type' => 'VOID',
-                                    'item' => 'ADDON',
-                                    'transaction_id' => $transaction->id,
-                                    'addon_id' => $addon->id,
-                                    'cashier_session_id' => $cashierSession->id,
-                                    'amount' => number_format((float) $addon->total_price, 2, '.', ''),
-                                ]);
-
-                            } elseif ($addon->payment_status === 'PAID') {
-                                $addon->update([
-                                    'payment_status' => 'REFUNDED',
-                                ]);
-                                // $addonsPayment -= $addon->total_price;
-                                // $addonsPaid += $addon->total_price;
-
-                                VoidRefund::create([
-                                    'type' => 'REFUND',
-                                    'item' => 'ADDON',
-                                    'transaction_id' => $transaction->id,
-                                    'addon_id' => $addon->id,
-                                    'cashier_session_id' => $cashierSession->id,
-                                    'amount' => number_format((float) $addon->total_price, 2, '.', ''),
-                                ]);
-
-                                // $addonsPayment -= $addon->total_price;
-
-                            } 
-                            // elseif (($addonsPayment - $addon->total_price) < 0) {
-                            //     $addon->update([
-                            //         'payment_status' => 'REFUNDED',
-                            //     ]);
-
-                            //     VoidRefund::create([
-                            //         'type' => 'REFUND',
-                            //         'item' => 'ADDON',
-                            //         'transaction_id' => $transaction->id,
-                            //         'addon_id' => $addon->id,
-                            //         'cashier_session_id' => $cashierSession->id,
-                            //         'amount' => number_format((float) $addonsPayment, 2, '.', ''),
-                            //     ]);
-
-                            //     $addonsPayment -= $addon->total_price;
-                            // }
-                        }
-                    }
-                // } else {
-                //     return null;
-                // }
-
-                $transaction->update([
-                    'payment_status' => 'REFUNDED',
-                ]);
             }
+
+            foreach ($fullAddons as $addon) {
+                if (in_array($addon->payment_status, ['REFUNDED', 'VOIDED'])) {
+                    continue;
+                }
+
+                $addonPaid = $this->allocator->allocated($transaction, $addon);
+
+                if ($addonPaid > 0) {
+                    // refund what was actually paid for this addon
+                    $this->allocator->reverse($transaction, $addon, 'REFUND');
+                    $addon->update([
+                        'payment_status' => 'REFUNDED',
+                    ]);
+
+                    VoidRefund::create([
+                        'type' => 'REFUND',
+                        'item' => 'ADDON',
+                        'transaction_id' => $transaction->id,
+                        'addon_id' => $addon->id,
+                        'cashier_session_id' => $cashierSession->id,
+                        'amount' => number_format($addonPaid, 2, '.', ''),
+                    ]);
+                } else {
+                    $addon->update([
+                        'payment_status' => 'VOIDED',
+                    ]);
+
+                    VoidRefund::create([
+                        'type' => 'VOID',
+                        'item' => 'ADDON',
+                        'transaction_id' => $transaction->id,
+                        'addon_id' => $addon->id,
+                        'cashier_session_id' => $cashierSession->id,
+                        'amount' => number_format((float) $addon->total_price, 2, '.', ''),
+                    ]);
+                }
+            }
+
+            $roomPaid = $this->allocator->reverse($transaction, null, 'REFUND');
+
+            $transaction->update([
+                'payment_status' => 'REFUNDED',
+            ]);
 
             $refunded = VoidRefund::create([
                 'type' => 'REFUND',
                 'item' => 'ROOM',
                 'transaction_id' => $transaction->id,
                 'cashier_session_id' => $cashierSession->id,
-                'amount' => number_format((float) $roomPaid, 2, '.', ''),
+                'amount' => number_format($roomPaid, 2, '.', ''),
             ]);
             return $this->success('Transaction refunded successfully', $refunded);
         }
+
+        return null;
     }
 
     private function voidRefundAddons($transaction, $request)
     {
-        $addon = BookingAddon::where('id', $request->addonId)->first();
+        $addon = BookingAddon::where('id', $request->addonId)
+            ->where('transaction_id', $transaction->id)
+            ->first();
 
         $cashierSession = CashierSession::where('user_id', $request->cashierId)
             ->where('status', 'ACTIVE')
             ->latest()
             ->first();
-        
+
         if (!$cashierSession) {
             return $this->error('Cashier is inactive');
         }
@@ -693,14 +650,19 @@ class UpdateTransactionRepository extends BaseRepository
             return $this->error('Addon not found');
         }
 
+        // make sure the addon status reflects what was actually paid
+        $this->allocator->reconcile($transaction);
+        $addon->refresh();
+
         if ($request->addonsPaymentStatus === 'VOIDED') {
-            if ($addon->payment_status === 'PENDING') {
-                $addon->update([
-                    'payment_status' => 'VOIDED',
-                ]);
-            } else {
+            // only an addon with nothing paid towards it can be voided
+            if ($addon->payment_status !== 'PENDING') {
                 return null;
             }
+
+            $addon->update([
+                'payment_status' => 'VOIDED',
+            ]);
 
             $voided = VoidRefund::create([
                 'type' => 'VOID',
@@ -713,38 +675,27 @@ class UpdateTransactionRepository extends BaseRepository
             return $this->success('Addon voided successfully', $voided);
 
         } elseif ($request->addonsPaymentStatus === 'REFUNDED') {
-            $addonAmount = 0;
-            if ($addon->payment_status === 'PAID') {
-                $addon->update([
-                    'payment_status' => 'REFUNDED',
-                ]);
-                $addonAmount = $addon->total_price;
-            }
-            // elseif ($addon->payment_status === 'PARTIAL') {
-            //     $addonsPaid = BookingAddon::where('payment_status', 'PAID')
-            //         ->orWhere('payment_status', 'REFUNDED')
-            //         ->orWhere('payment_status', 'VOIDED')
-            //         ->sum('total_price');
-            //     $totalReceived = Payment::where('transaction_id', $transaction->id)
-            //         ->sum('amount_received');
-            //     $addon->update([
-            //         'payment_status' => 'REFUNDED',
-            //     ]);
-            //     $addonAmount = ($totalReceived - $transaction->room_total) - $addonsPaid;
-            // } 
-            else {
+            // fully or partially paid addons are refunded for what was actually paid
+            if (!in_array($addon->payment_status, ['PAID', 'PARTIAL'])) {
                 return null;
             }
-            
+
+            $addonAmount = $this->allocator->reverse($transaction, $addon, 'REFUND');
+            $addon->update([
+                'payment_status' => 'REFUNDED',
+            ]);
+
             $refunded = VoidRefund::create([
                 'type' => 'REFUND',
                 'item' => 'ADDON',
                 'transaction_id' => $transaction->id,
                 'addon_id' => $addon->id,
                 'cashier_session_id' => $cashierSession->id,
-                'amount' => number_format((float) $addonAmount, 2, '.', ''),
+                'amount' => number_format($addonAmount, 2, '.', ''),
             ]);
             return $this->success('Addon refunded successfully', $refunded);
         }
+
+        return null;
     }
 }

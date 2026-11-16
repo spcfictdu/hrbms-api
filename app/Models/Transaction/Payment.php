@@ -98,4 +98,9 @@ class Payment extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function allocations()
+    {
+        return $this->hasMany(PaymentAllocation::class, 'payment_id');
+    }
 }

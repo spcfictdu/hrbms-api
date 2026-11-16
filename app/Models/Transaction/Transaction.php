@@ -119,4 +119,9 @@ class Transaction extends Model
     {
         return $this->hasOne(Folio::class);
     }
+
+    public function allocations()
+    {
+        return $this->hasMany(PaymentAllocation::class, 'transaction_id');
+    }
 }

@@ -25,9 +25,16 @@ use App\Models\PaymentType\CreditCardPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Repositories\Transaction\Payment\PaymentAllocator;
 
 class CreateTransactionRepository extends BaseRepository
 {
+    protected PaymentAllocator $allocator;
+
+    public function __construct(PaymentAllocator $allocator)
+    {
+        $this->allocator = $allocator;
+    }
 
     public function execute($request)
     {
@@ -132,6 +139,35 @@ class CreateTransactionRepository extends BaseRepository
                 "guest_id" => $guest->id,
             ]);
 
+            // validate everything that can fail BEFORE any payment is written
+            $voucher = null;
+            $discountModel = null;
+            if ($request->discount) {
+                if (!isset($request->payment)) {
+                    return $this->error('A discount can only be applied together with a payment.');
+                }
+
+                $discountName = strtoupper($request->discount);
+                if ($discountName === 'VOUCHER') {
+                    $voucher = Voucher::where('code', $request->voucherCode)->firstOrFail();
+                    if ($voucher->status !== 'ACTIVE') {
+                        return $this->error('Voucher is not available');
+                    }
+                } else {
+                    $discountModel = Discount::where('name', $discountName)->first();
+                    if (!$discountModel) {
+                        return $this->error("Discount '$discountName' not found.");
+                    }
+                }
+            }
+
+            if (isset($request->payment) && $request->payment['paymentType'] === 'CREDIT_CARD') {
+                $expiration = Carbon::createFromFormat('m/y', $request->payment['expirationDate'])->endOfMonth();
+                if ($expiration->lt(Carbon::now())) {
+                    return $this->error('Credit card is expired');
+                }
+            }
+
             $payment = null;
 
             if (isset($request->payment) && isset($transaction->id)) {
@@ -165,46 +201,28 @@ class CreateTransactionRepository extends BaseRepository
                 ]);
             }
 
-            // verify if discount exists and create it to database
-            if ($request->discount) {
+            // create the discount (validated above)
+            if ($voucher) {
+                VoucherDiscount::create([
+                    "payment_id" => $payment->id,
+                    "transaction_id" => $transaction->id,
+                    "voucher_id" => $voucher->id,
+                    "discount" => 'VOUCHER',
+                    "value" => $voucher->value,
+                ]);
 
-                $discountName = strtoupper($request->discount);
-                if ($discountName === 'VOUCHER') {
-
-                    $voucher = Voucher::where('code', $request->voucherCode)->firstorfail();
-
-                    if ($voucher->status === 'ACTIVE') {
-                        $voucherCode = Voucher::where('code', $request->voucherCode)->first('id');
-                        VoucherDiscount::create([
-                            "payment_id" => $payment->id,
-                            "transaction_id" => $transaction->id,
-                            "voucher_id" => $voucherCode->id,
-                            "discount" => $discountName,
-                            "value" => $voucher->value,
-                        ]);
-
-                        $voucher->update([
-                            'usage' => (int)$voucher->usage - 1,
-                            'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE',
-                        ]);
-                    } else {
-                        return $this->error('Voucher is not available');
-                    }
-                } else {
-                    $discount = Discount::where('name', $discountName)->first();
-
-                    if (!$discount) {
-                        return $this->error("Discount '$discountName' not found.");
-                    }
-
-                    SeniorPwdDiscount::create([
-                        "payment_id" => $payment->id,
-                        "transaction_id" => $transaction->id,
-                        "discount" => $discount->name,
-                        "id_number" => $request->idNumber,
-                        "value" => $discount->value,
-                    ]);
-                }
+                $voucher->update([
+                    'usage' => (int)$voucher->usage - 1,
+                    'status' => ($voucher->usage - 1 < 1) ? 'INACTIVE' : 'ACTIVE',
+                ]);
+            } elseif ($discountModel) {
+                SeniorPwdDiscount::create([
+                    "payment_id" => $payment->id,
+                    "transaction_id" => $transaction->id,
+                    "discount" => $discountModel->name,
+                    "id_number" => $request->idNumber,
+                    "value" => $discountModel->value,
+                ]);
             }
 
             $discount = VoucherDiscount::where('transaction_id', $transaction->id)->first() ?? SeniorPwdDiscount::where('transaction_id', $transaction->id)->first() ?? null;
@@ -226,7 +244,7 @@ class CreateTransactionRepository extends BaseRepository
                 'folio_c_amount' => $request->room['folio']['folioC']['amount'] ?? 0,
                 'folio_d_name' => $request->room['folio']['folioD']['name'] ?? null,
                 'folio_d_charge' => $request->room['folio']['folioD']['charge'] ?? 0,
-                'folio_c_amount' => $request->room['folio']['folioD']['amount'] ?? 0,
+                'folio_d_amount' => $request->room['folio']['folioD']['amount'] ?? 0,
             ]);
             if (($request->room['folio']['folioB']['amount'] ?? 0 > 0)
                     || ($request->room['folio']['folioC']['amount'] ?? 0 > 0)
@@ -330,6 +348,9 @@ class CreateTransactionRepository extends BaseRepository
                     ]);
                 }
 
+                // work out which part of the transaction this payment covers
+                $this->allocator->reconcile($transaction);
+
                 if ($request->payment['paymentType'] === 'CHEQUE') {
 
                     ChequePayment::create([
@@ -339,13 +360,7 @@ class CreateTransactionRepository extends BaseRepository
                         "bank_id" => $request->payment['bankId']
                     ]);
                 } elseif ($request->payment['paymentType'] === 'CREDIT_CARD') {
-                    $exp = $request->payment['expirationDate']; 
-                    $expiration = Carbon::createFromFormat('m/y', $exp)->endOfMonth();
-
-                    if ($expiration->lt(Carbon::now())) {
-                        return $this->error('Credit card is expired');
-                    }
-
+                    $exp = $request->payment['expirationDate'];
                     CreditCardPayment::create([
                         "payment_id" => $payment->id,
                         "card_number" => $request->payment['cardNumber'],
@@ -433,5 +448,12 @@ class CreateTransactionRepository extends BaseRepository
             DB::rollBack();
             return $this->error('Something went wrong: ' . $e->getMessage());
         }
+    }
+
+    private function fail($message)
+    {
+        DB::rollBack();
+
+        return $this->error($message);
     }
 }
