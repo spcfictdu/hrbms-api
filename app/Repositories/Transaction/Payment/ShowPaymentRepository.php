@@ -80,6 +80,10 @@ class ShowPaymentRepository extends BaseRepository
         $applied = $allocations->sum('amount');
         $creditUsed = $allocations->where('type', '!=', 'REFUND')->sum('amount');
 
+        $fullAddons = $transaction->bookingAddOn()
+            ->whereNotIn('payment_status', ['REFUNDED', 'VOIDED'])
+            ->get();
+
         return [
             'referenceNumber' => $transaction->reference_number,
             'guestName' => $transaction->guest->full_name,
@@ -89,9 +93,7 @@ class ShowPaymentRepository extends BaseRepository
             'addons' => $addons->values(),
             'payment' => $payment->amount_received,
             'paymentType' => $payment->payment_type,
-            // what this payment currently pays for (after any releases / refunds)
-            'totalPurchase' => number_format((float) $applied, 2, '.', ''),
-            // received but not applied to anything yet
+            'totalPurchase' => number_format((float)(((($room['totalPrice'] ?? 0) - ($room['discount'] ?? 0)) + ($fullAddons->sum('total_price') ?? 0))), 2, '.', ''),
             'unappliedCredit' => number_format((float) $payment->amount_received - (float) $creditUsed, 2, '.', ''),
         ];
     }
